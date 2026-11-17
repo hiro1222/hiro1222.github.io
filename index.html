@@ -225,9 +225,26 @@ button{font:inherit}
 .w-shot{grid-area:shot}
 .w-detail{grid-area:detail}
 @media (min-width:1024px){
-  .w-grid{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr); grid-template-areas:"shot head" "shot detail"; gap:0 52px}
+  /* 画像を左へ寄せて大きく：作品の枠だけ横幅いっぱい（端は画面の 3.5%） */
+  .p-work .wrap{max-width:none; padding-left:max(24px, 3.5vw); padding-right:max(24px, 3.5vw)}
+  .w-grid{grid-template-columns:minmax(0,1.35fr) minmax(0,1fr); grid-template-areas:"shot head" "shot detail"; gap:0 clamp(40px, 4.5vw, 88px)}
   .w-shot{align-self:center}
   .w-head{align-self:end}
+  .w-head, .w-detail{max-width:680px}
+  /* 情報も大きく */
+  .p-work h2{font-size:clamp(34px, 3.4vw, 52px)}
+  .w-head .eyebrow{font-size:14px}
+  .w-lead{font-size:16px; margin-top:12px}
+  .w-pts-head{margin-top:30px; padding-bottom:12px}
+  .w-pts-head h3{font-size:24px}
+  .w-role{font-size:13px}
+  .w-role b{font-size:16px}
+  .w-pts{margin-top:22px; gap:26px 34px}
+  .w-pts li{grid-template-columns:42px minmax(0,1fr); column-gap:14px}
+  .w-ic{width:42px; height:42px; font-size:14px}
+  .w-pts h4{font-size:17px}
+  .w-pts p{font-size:14.5px}
+  .w-more{margin-top:32px; padding:11px 44px; font-size:14px}
 }
 .w-head .eyebrow{color:var(--wa)}
 .w-idx{font-family:var(--f-mono); letter-spacing:.08em; color:var(--night-muted)}
