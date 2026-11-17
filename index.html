@@ -155,7 +155,12 @@ button{font:inherit}
 .who-block .name{margin:0}
 .who-block .facts{padding-bottom:6px}
 .pf-cols{display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); gap:0 48px; align-items:start}
-@media (min-width:1024px){ .pf-cols .cards{grid-template-columns:repeat(auto-fill, minmax(200px, 1fr))} }
+@media (min-width:1024px){
+  .pf-cols .cards{grid-template-columns:repeat(3, minmax(0,1fr)); gap:8px}
+  .pf-cols .card{padding:10px 12px}
+  .pf-cols .block{margin-top:32px}
+  .pf-cols .sg{margin:14px 0 6px}
+}
 @media (max-width:1023px){ .pf-cols{grid-template-columns:minmax(0,1fr)} }
 .block{margin-top:44px}
 .bh{font-family:var(--f-display); font-weight:800; font-size:22px; letter-spacing:.05em}
