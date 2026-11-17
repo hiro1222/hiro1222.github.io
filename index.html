@@ -199,14 +199,13 @@ button{font:inherit}
 /* プロフィールとその続き（自己PR など）：暗い背景・減り方の傾き */
 .p-profile, .p-pr{background:var(--slate)}
 .p-profile .bg svg, .p-pr .bg svg{width:100%; height:100%; display:block}
-.pr{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:0 48px; align-items:start}
+.pr{display:grid; grid-template-columns:minmax(0,1fr); align-items:start}  /* PC でも縦に 2 つ */
 .pr .block:first-child{margin-top:0}
-@media (min-width:1024px){ .pr .block:nth-child(2){margin-top:0} }
 .pr-box{margin-top:14px; background:rgba(255,255,255,.04); border:1px solid var(--night-line); border-radius:4px; padding:18px 22px; color:#C9D3DA}
 .pr-box p{line-height:1.95}
 .pr-box p + p{margin-top:10px}
+.pr .pr-box p{max-width:46em}
 .about-box p{max-width:46em}
-@media (max-width:1023px){ .pr{grid-template-columns:minmax(0,1fr)} }
 
 /* 03 作品：1 作品 = 全画面 1 枚。左に大きな画像、右に題・概要・注目点 4 つ・MORE。色は作品ごとの --wa */
 .p-work{background:var(--black)}
