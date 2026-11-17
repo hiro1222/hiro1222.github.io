@@ -156,7 +156,7 @@ button{font:inherit}
 .who-text{display:flex; flex-direction:column; gap:16px; min-width:0}
 .who-block .name{margin:0}
 @media (min-width:1024px){
-  .who-block, .pf-cols{grid-template-columns:minmax(0,.78fr) minmax(0,1fr) minmax(0,1.22fr); column-gap:36px}
+  .who-block{grid-template-columns:minmax(0,.78fr) minmax(0,1fr) minmax(0,1.22fr); column-gap:36px}
   .who-block{grid-template-areas:"text text photos"; row-gap:0; align-items:center}
   .who-text{grid-area:text}
   .who-block .photos{grid-area:photos}
@@ -169,6 +169,7 @@ button{font:inherit}
 @media (max-width:767px){ .photos{width:100%; max-width:400px} }
 .pf-cols{display:grid; grid-template-columns:minmax(0,1fr); align-items:start}
 @media (min-width:1024px){
+  .pf-cols{grid-template-columns:minmax(0,.78fr) minmax(0,1fr) minmax(0,1.22fr); column-gap:36px}
   /* スキルは 1 列に縦に詰める：アイコン・名前・年数を 1 行に */
   .pf-cols .cards{grid-template-columns:minmax(0,1fr); gap:6px}
   .pf-cols .card{grid-template-columns:26px minmax(0,1fr) auto; column-gap:10px; padding:7px 12px}
