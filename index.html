@@ -282,19 +282,19 @@ button{font:inherit}
 }
 @media (max-width:480px){ .w-pts{grid-template-columns:minmax(0,1fr); gap:16px} }
 
-/* 02 の続き：好きなゲーム体験。左にスクショのモザイク（3 段、横に流す）、右に解説。--fc は選んだ 1 本の色。
+/* 02 の続き：好きなゲーム体験。左にスクショのモザイク（6 段、横に流す。タイルは同じ比率で大きさ 3 つ）、右に解説。--fc は選んだ 1 本の色。
    背景は選んだ 1 本の色のにじみ、画像があればそれをぼかして暗くした物 */
 .p-fav{background:var(--black)}
 .p-fav .bg{background:radial-gradient(ellipse 55% 60% at 30% 55%, color-mix(in srgb, var(--fc, #7DB8D1) 16%, transparent), transparent 70%), var(--black)}
 .p-fav .bg::before{content:""; position:absolute; inset:-60px; background:var(--shot, none) center / cover no-repeat; filter:blur(28px) saturate(1.2) brightness(.5); transform:scale(1.06); opacity:0; transition:opacity .4s}
 .p-fav.has-shot .bg::before{opacity:1}
 .fav-head{margin-bottom:22px}
-.fav-grid{--sh:min(300px, 80vw); --ar:1.3; display:grid; grid-template-columns:minmax(0,1fr); gap:18px}
+.fav-grid{--sh:min(240px, 64vw); --ar:1.7778; display:grid; grid-template-columns:minmax(0,1fr); gap:18px}
 .fav-left{min-width:0}
 .fav-strip{height:var(--sh); overflow-x:auto; overflow-y:hidden; overscroll-behavior-x:contain; scrollbar-width:none; border-radius:4px; cursor:grab; user-select:none; -webkit-user-select:none}
 .fav-strip::-webkit-scrollbar{display:none}
 .fav-strip.dragging{cursor:grabbing}
-.fav-tiles{list-style:none; margin:0; padding:0; height:100%; width:max-content; display:grid; grid-template-rows:repeat(3, minmax(0,1fr)); grid-auto-columns:calc((var(--sh) - 8px) / 3 * var(--ar)); gap:4px}  /* 1 列の幅＝1 段の高さ × --ar（スマホは細めにして次の列をのぞかせる） */
+.fav-tiles{list-style:none; margin:0; padding:0; height:100%; width:max-content; display:grid; grid-template-rows:repeat(6, minmax(0,1fr)); grid-auto-columns:calc((var(--sh) - 20px) / 6 * var(--ar)); gap:4px}  /* 6 段。1 マス＝16:9（タイルは 2×2・3×3・4×4 マスなので、どれも同じ比率） */
 .fav-tiles > li{position:relative; min-width:0; min-height:0}
 .fav-tile{position:absolute; inset:0; width:100%; height:100%; padding:0; border:0; border-radius:3px; overflow:hidden; cursor:inherit; color:var(--night-ink); background:linear-gradient(135deg, color-mix(in srgb, var(--fc) 40%, #0B1015), color-mix(in srgb, var(--fc) 12%, #0B1015))}
 .fav-tile img{width:100%; height:100%; object-fit:cover; display:block; transition:transform .5s ease; -webkit-user-drag:none}
@@ -327,7 +327,7 @@ button{font:inherit}
 @media (min-width:1024px){
   .p-fav .wrap{max-width:none; padding-left:max(24px, 3.5vw); padding-right:max(24px, 3.5vw)}
   .p-fav{padding-top:calc(env(safe-area-inset-top, 0px) + var(--bar) + 24px); padding-bottom:32px}
-  .fav-grid{--sh:clamp(300px, calc(100vh - 300px), 600px); --ar:1.55; grid-template-columns:minmax(0,1.55fr) minmax(0,1fr); gap:0 clamp(28px, 3vw, 56px); align-items:start}
+  .fav-grid{--sh:clamp(300px, calc(100vh - 300px), 600px); grid-template-columns:minmax(0,1.55fr) minmax(0,1fr); gap:0 clamp(28px, 3vw, 56px); align-items:start}
   .fav-detail{min-height:var(--sh); padding:24px 28px}
   .fav-title{font-size:30px}
   .fav-scene{font-size:15.5px}
@@ -580,7 +580,7 @@ button{font:inherit}
   </section>
 
   <!-- 02 の続き：好きなゲーム体験。左にスクショのモザイク（横に流す、ループする。並べ方 3 種類・大きさは開くたびにランダム）、押すと右（スマホは下）に解説。
-       1 本 = li 1 つ。場所は style の grid-area（行 / 列 / 縦の数 / 横の数、3 段）、色は --fc。
+       1 本 = li 1 つ。場所は JS が決める（style の grid-area は JS が無い時の並び、6 段）、色は --fc。
        画像は .fav-tile の中に img（自分で撮ったスクショ）、解説は .fav-info の中（押すと右の欄へ写す） -->
   <section class="panel dark p-fav" id="fav" data-nav="profile" aria-labelledby="h-fav">
     <div class="bg"></div>
@@ -593,7 +593,7 @@ button{font:inherit}
         <div class="fav-left">
           <div class="fav-strip" id="fav-strip">
             <ul class="fav-tiles">
-              <li style="grid-area:1/1/span 2/span 2; --fc:#5E8FB0">
+              <li style="grid-area:1/1/span 4/span 4; --fc:#5E8FB0">
                 <button type="button" class="fav-tile" aria-controls="fav-detail" aria-pressed="false" aria-label="好きなゲーム体験 01（準備中）"><span class="fav-tag">01</span><span class="fav-ph" aria-hidden="true">SCREENSHOT</span></button>
                 <div class="fav-info" hidden>
                   <h3 class="fav-title"><span class="todo">ゲーム名（準備中）</span></h3>
@@ -607,7 +607,7 @@ button{font:inherit}
                   <p class="fav-credit">© <span class="todo">準備中</span></p>
                 </div>
               </li>
-              <li style="grid-area:3/1/span 1/span 2; --fc:#B07A5E">
+              <li style="grid-area:5/1/span 2/span 2; --fc:#B07A5E">
                 <button type="button" class="fav-tile" aria-controls="fav-detail" aria-pressed="false" aria-label="好きなゲーム体験 02（準備中）"><span class="fav-tag">02</span><span class="fav-ph" aria-hidden="true">SCREENSHOT</span></button>
                 <div class="fav-info" hidden>
                   <h3 class="fav-title"><span class="todo">ゲーム名（準備中）</span></h3>
@@ -621,7 +621,7 @@ button{font:inherit}
                   <p class="fav-credit">© <span class="todo">準備中</span></p>
                 </div>
               </li>
-              <li style="grid-area:1/3/span 1/span 1; --fc:#8A7BB8">
+              <li style="grid-area:5/3/span 2/span 2; --fc:#8A7BB8">
                 <button type="button" class="fav-tile" aria-controls="fav-detail" aria-pressed="false" aria-label="好きなゲーム体験 03（準備中）"><span class="fav-tag">03</span><span class="fav-ph" aria-hidden="true">SCREENSHOT</span></button>
                 <div class="fav-info" hidden>
                   <h3 class="fav-title"><span class="todo">ゲーム名（準備中）</span></h3>
@@ -635,7 +635,7 @@ button{font:inherit}
                   <p class="fav-credit">© <span class="todo">準備中</span></p>
                 </div>
               </li>
-              <li style="grid-area:2/3/span 2/span 1; --fc:#6FA287">
+              <li style="grid-area:1/5/span 3/span 3; --fc:#6FA287">
                 <button type="button" class="fav-tile" aria-controls="fav-detail" aria-pressed="false" aria-label="好きなゲーム体験 04（準備中）"><span class="fav-tag">04</span><span class="fav-ph" aria-hidden="true">SCREENSHOT</span></button>
                 <div class="fav-info" hidden>
                   <h3 class="fav-title"><span class="todo">ゲーム名（準備中）</span></h3>
@@ -649,7 +649,7 @@ button{font:inherit}
                   <p class="fav-credit">© <span class="todo">準備中</span></p>
                 </div>
               </li>
-              <li style="grid-area:1/4/span 1/span 2; --fc:#B8A05E">
+              <li style="grid-area:4/5/span 3/span 3; --fc:#B8A05E">
                 <button type="button" class="fav-tile" aria-controls="fav-detail" aria-pressed="false" aria-label="好きなゲーム体験 05（準備中）"><span class="fav-tag">05</span><span class="fav-ph" aria-hidden="true">SCREENSHOT</span></button>
                 <div class="fav-info" hidden>
                   <h3 class="fav-title"><span class="todo">ゲーム名（準備中）</span></h3>
@@ -663,7 +663,7 @@ button{font:inherit}
                   <p class="fav-credit">© <span class="todo">準備中</span></p>
                 </div>
               </li>
-              <li style="grid-area:2/4/span 1/span 1; --fc:#B06A84">
+              <li style="grid-area:1/8/span 2/span 2; --fc:#B06A84">
                 <button type="button" class="fav-tile" aria-controls="fav-detail" aria-pressed="false" aria-label="好きなゲーム体験 06（準備中）"><span class="fav-tag">06</span><span class="fav-ph" aria-hidden="true">SCREENSHOT</span></button>
                 <div class="fav-info" hidden>
                   <h3 class="fav-title"><span class="todo">ゲーム名（準備中）</span></h3>
@@ -677,7 +677,7 @@ button{font:inherit}
                   <p class="fav-credit">© <span class="todo">準備中</span></p>
                 </div>
               </li>
-              <li style="grid-area:2/5/span 1/span 1; --fc:#5EA6A2">
+              <li style="grid-area:3/8/span 2/span 2; --fc:#5EA6A2">
                 <button type="button" class="fav-tile" aria-controls="fav-detail" aria-pressed="false" aria-label="好きなゲーム体験 07（準備中）"><span class="fav-tag">07</span><span class="fav-ph" aria-hidden="true">SCREENSHOT</span></button>
                 <div class="fav-info" hidden>
                   <h3 class="fav-title"><span class="todo">ゲーム名（準備中）</span></h3>
@@ -691,7 +691,7 @@ button{font:inherit}
                   <p class="fav-credit">© <span class="todo">準備中</span></p>
                 </div>
               </li>
-              <li style="grid-area:3/4/span 1/span 2; --fc:#9A8F7E">
+              <li style="grid-area:5/8/span 2/span 2; --fc:#9A8F7E">
                 <button type="button" class="fav-tile" aria-controls="fav-detail" aria-pressed="false" aria-label="好きなゲーム体験 08（準備中）"><span class="fav-tag">08</span><span class="fav-ph" aria-hidden="true">SCREENSHOT</span></button>
                 <div class="fav-info" hidden>
                   <h3 class="fav-title"><span class="todo">ゲーム名（準備中）</span></h3>
@@ -705,7 +705,7 @@ button{font:inherit}
                   <p class="fav-credit">© <span class="todo">準備中</span></p>
                 </div>
               </li>
-              <li style="grid-area:1/6/span 2/span 2; --fc:#7F96C8">
+              <li style="grid-area:1/10/span 3/span 3; --fc:#7F96C8">
                 <button type="button" class="fav-tile" aria-controls="fav-detail" aria-pressed="false" aria-label="好きなゲーム体験 09（準備中）"><span class="fav-tag">09</span><span class="fav-ph" aria-hidden="true">SCREENSHOT</span></button>
                 <div class="fav-info" hidden>
                   <h3 class="fav-title"><span class="todo">ゲーム名（準備中）</span></h3>
@@ -719,7 +719,7 @@ button{font:inherit}
                   <p class="fav-credit">© <span class="todo">準備中</span></p>
                 </div>
               </li>
-              <li style="grid-area:3/6/span 1/span 2; --fc:#C08A5A">
+              <li style="grid-area:4/10/span 3/span 3; --fc:#C08A5A">
                 <button type="button" class="fav-tile" aria-controls="fav-detail" aria-pressed="false" aria-label="好きなゲーム体験 10（準備中）"><span class="fav-tag">10</span><span class="fav-ph" aria-hidden="true">SCREENSHOT</span></button>
                 <div class="fav-info" hidden>
                   <h3 class="fav-title"><span class="todo">ゲーム名（準備中）</span></h3>
@@ -1192,8 +1192,8 @@ button{font:inherit}
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ frame(performance.now() / 1000); });
 
   // ---- 好きなゲーム体験：タイルを押すと右（スマホは下）に解説。帯はループする ----
-  // 並べ方は 3 種類（どれも 3 段 × 7 列を穴なく埋める）。どの作品をどの大きさにするかは開くたびにランダム。
-  // 3 種類で 1 周（21 列）、それを 3 つ並べて真ん中を見せ、端へ寄ったら 1 周ぶん戻す（同じ並びなので継ぎ目は見えない）。
+  // タイルは同じ比率で大きさ 3 つ、並べ方は 3 種類。どの作品をどの大きさにするかは開くたびにランダム。
+  // 3 種類で 1 周（38 列）、それを 3 つ並べて真ん中を見せ、端へ寄ったら 1 周ぶん戻す（同じ並びなので継ぎ目は見えない）。
   // 真ん中の周の 1 種類目だけが元の li（読み上げ・Tab の対象）、ほかは写し。縦のホイールは今までどおり次の節へ
   (function(){
     var sec = document.getElementById('fav');
@@ -1201,14 +1201,24 @@ button{font:inherit}
     var strip = document.getElementById('fav-strip'), list = strip.querySelector('.fav-tiles');
     var items = Array.prototype.slice.call(list.children), n = items.length;
     var noEl = sec.querySelector('.fav-no'), body = sec.querySelector('.fav-body'), arrows = sec.querySelectorAll('.fav-arrow');
-    // [行, 列, 縦の数, 横の数]。A＝縦長から始まり縦長で終わる／C＝大と横長／B＝横長を積む
-    var PATTERNS = [
-      [[1,1,2,1],[3,1,1,1],[1,2,2,2],[3,2,1,2],[1,4,1,1],[2,4,2,1],[1,5,1,2],[2,5,2,2],[1,7,1,1],[2,7,2,1]],
-      [[1,1,2,2],[3,1,1,2],[1,3,1,1],[2,3,2,1],[1,4,1,2],[2,4,1,1],[2,5,1,1],[3,4,1,2],[1,6,2,2],[3,6,1,2]],
-      [[1,1,1,2],[2,1,2,2],[1,3,1,1],[2,3,1,1],[3,3,1,1],[1,4,2,2],[3,4,1,2],[1,6,1,2],[2,6,1,2],[3,6,1,2]]
-    ];
-    var PCOLS = 7, NP = PATTERNS.length, LAPS = 3, MID = 1;
-    if (n !== PATTERNS[0].length) return;   // 本数を変えたら並べ方も作り直す（それまでは HTML の並びのまま）
+    // 大きさは 3 つ（小 2×2・中 3×3・大 4×4 マス。マスが 16:9 なのでどれも同じ比率）。6 段を 4 種類の塊で埋める：
+    //  A＝大の下に小 2 つ（4 列）／A2＝小 2 つの下に大（4 列）／B＝中を 2 つ積む（3 列）／C＝小を 3 つ積む（2 列）。[段, 列のずれ, 大きさ]
+    var BLOCKS = {
+      A:  {w: 4, cells: [[1,0,4],[5,0,2],[5,2,2]]},
+      A2: {w: 4, cells: [[1,0,2],[1,2,2],[3,0,4]]},
+      B:  {w: 3, cells: [[1,0,3],[4,0,3]]},
+      C:  {w: 2, cells: [[1,0,2],[3,0,2],[5,0,2]]}
+    };
+    // 並べ方 3 種類（どれも 10 枚）。種類の境目でも同じ塊が隣り合わない順
+    var LAYOUTS = [['A','B','C','B'], ['C','B','A2','B'], ['A2','B','A','B']];
+    var PATTERNS = [], PSTART = [], LAPCOLS = 0;   // PATTERNS の 1 枚＝[段, 列, 大きさ]
+    LAYOUTS.forEach(function(lay){
+      var cells = [], c = 1;
+      lay.forEach(function(k){ BLOCKS[k].cells.forEach(function(e){ cells.push([e[0], c + e[1], e[2]]); }); c += BLOCKS[k].w; });
+      PATTERNS.push(cells); PSTART.push(LAPCOLS); LAPCOLS += c - 1;
+    });
+    var NP = PATTERNS.length, LAPS = 3, MID = 1;
+    if (PATTERNS.some(function(pt){ return pt.length !== n; })) return;   // 本数を変えたら並べ方も作り直す（それまでは HTML の並びのまま）
     // 作品の割り当て：種類ごとに並びを混ぜる。種類の境目の前後 3 枚に同じ作品が来ないように
     function shuffled(){ var a = [], i, j, t; for (i = 0; i < n; i++) a.push(i); for (i = n - 1; i > 0; i--){ j = Math.floor(Math.random() * (i + 1)); t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
     var perm, tries = 0, ok;
@@ -1232,7 +1242,7 @@ button{font:inherit}
             li.querySelector('.fav-tile').setAttribute('tabindex', '-1');
             var inf = li.querySelector('.fav-info'); if (inf) inf.parentNode.removeChild(inf);
           }
-          li.style.gridArea = cell[0] + ' / ' + (cell[1] + (lap * NP + q) * PCOLS) + ' / span ' + cell[2] + ' / span ' + cell[3];
+          li.style.gridArea = cell[0] + ' / ' + (cell[1] + lap * LAPCOLS + PSTART[q]) + ' / span ' + cell[2] + ' / span ' + cell[2];
           if (q === 0 && slot === 0) lapStart[lap] = li;
           all.push({li: li, g: g});
           frag.appendChild(li);
