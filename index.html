@@ -649,6 +649,8 @@ button{font:inherit}
     for (i = 0; i < st.free.length; i++){
       if (y > st.free[i][0] + 2 && y < st.free[i][1] - 2){ lastRest = y; return; }
     }
+    // もう止まる位置にいるなら動かさない（長い節の頭に着いた直後に、終わりまで引っぱらないように）
+    for (i = 0; i < st.list.length; i++){ if (Math.abs(st.list[i] - y) < 3){ lastRest = y; return; } }
     // 進んでいる先の止まる位置が近ければそこへ、通り過ぎたばかりなら戻す、どちらでもなければそのまま
     var dir = y - lastRest, ahead = null, behind = null, target = null;
     if (dir >= 0){
