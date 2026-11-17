@@ -1284,15 +1284,15 @@ button{font:inherit}
     function drawRoom(k){
       var R = size, d = doorGeom(), sl = R.portrait ? R.w : R.h, ll = R.portrait ? R.h : R.w;
       g.setLineDash([]);
-      g.strokeStyle = 'rgba(125,184,209,' + (0.45 * k + 0.1) + ')'; g.lineWidth = 1;
+      g.strokeStyle = 'rgba(125,184,209,' + (R.wide ? 0.55 : 0.18) + ')'; g.lineWidth = 1;   // 狭い画面は文章の後ろなので線も薄く
       g.strokeRect(Math.round(R.x) + .5, Math.round(R.y) + .5, Math.round(R.w), Math.round(R.h));
-      g.lineWidth = 2; g.strokeStyle = 'rgba(125,184,209,' + (0.6 * k + 0.1) + ')';
+      g.lineWidth = 2; g.strokeStyle = 'rgba(125,184,209,' + (R.wide ? 0.7 : 0.22) + ')';
       line(d.wa, 0, d.wa, d.b0); line(d.wa, d.b1, d.wa, sl);
       // 扉が動く範囲（点線の弧）と扉の板
       var h = P(d.wa, d.b0), a0 = R.portrait ? 0 : Math.PI / 2, a1 = R.portrait ? Math.PI / 2 : 0;
-      g.setLineDash([2, 4]); g.lineWidth = 1; g.strokeStyle = 'rgba(217,119,76,' + (0.35 * k + 0.1) + ')';
+      g.setLineDash([2, 4]); g.lineWidth = 1; g.strokeStyle = 'rgba(217,119,76,' + (R.wide ? 0.45 : 0.14) + ')';
       g.beginPath(); g.arc(h[0], h[1], d.L, Math.min(a0, a1), Math.max(a0, a1)); g.stroke();
-      g.setLineDash([]); g.lineWidth = 2.5; g.strokeStyle = 'rgba(217,119,76,' + (0.6 * k + 0.35) + ')';
+      g.setLineDash([]); g.lineWidth = 2.5; g.strokeStyle = 'rgba(217,119,76,' + (R.wide ? 0.95 : 0.38) + ')';
       line(d.wa, d.b0, d.ta, d.tb);
       if (R.wide){
         g.fillStyle = 'rgba(147,161,171,.75)'; g.font = '11px "IBM Plex Mono", Consolas, monospace'; g.textBaseline = 'top'; g.textAlign = 'left';
