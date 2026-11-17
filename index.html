@@ -151,10 +151,15 @@ button{font:inherit}
 .facts dd{margin:0; min-width:0}
 
 /* プロフィールの中の 使える技術・資格 */
-.who-block{display:flex; flex-wrap:wrap; align-items:flex-end; gap:24px 44px; margin-bottom:8px}
-.who-text{display:flex; flex-wrap:wrap; align-items:flex-end; gap:8px 48px; flex:1 1 320px; min-width:0}
+/* 名前・学部・卒業予定を縦に。PC は右に写真（下のスキル／資格の 2 列と揃える）、スマホは写真が上 */
+.who-block{display:grid; grid-template-columns:minmax(0,1fr); gap:24px; margin-bottom:8px}
+.who-text{display:flex; flex-direction:column; gap:16px; min-width:0}
 .who-block .name{margin:0}
-.who-block .facts{padding-bottom:6px}
+@media (min-width:1024px){
+  .who-block{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); grid-template-areas:"text photos"; gap:0 48px; align-items:center}
+  .who-text{grid-area:text}
+  .who-block .photos{grid-area:photos}
+}
 /* 写真 2 枚：高さが揃うように、横幅を縦横比で分ける（ベース 4:5・弓道 600:1220） */
 .photos{display:flex; align-items:flex-start; gap:10px; width:320px; max-width:100%}
 .photos img{display:block; min-width:0; height:auto; border-radius:3px; box-shadow:0 0 0 1px var(--paper-line); background:#fff}
