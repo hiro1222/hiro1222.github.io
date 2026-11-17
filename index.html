@@ -69,7 +69,7 @@ button{font:inherit}
 .menu-btn{display:none}
 
 /* ---------- サイドバー（スマホ） ---------- */
-.scrim{position:fixed; inset:0; z-index:55; background:rgba(8,12,16,.5); opacity:0; pointer-events:none; transition:opacity .25s ease}
+.scrim{position:fixed; inset:0; z-index:55; background:rgba(8,12,16,.5); opacity:0; pointer-events:none; transition:opacity .25s ease; touch-action:none}
 .scrim.open{opacity:1; pointer-events:auto}
 .drawer{
   position:fixed; top:0; bottom:0; left:0; z-index:60; width:min(82vw, 320px);
@@ -79,7 +79,7 @@ button{font:inherit}
   padding-bottom:env(safe-area-inset-bottom, 0px);
   transform:translateX(-104%); visibility:hidden;
   transition:transform .28s ease, visibility 0s linear .28s;
-  overflow-y:auto;
+  overflow-y:auto; overscroll-behavior:contain;
 }
 .drawer.open{transform:none; visibility:visible; transition:transform .28s ease}
 .close-btn{
@@ -462,14 +462,12 @@ button{font:inherit}
     drawer.removeAttribute('inert'); drawer.setAttribute('aria-hidden', 'false');
     drawer.classList.add('open'); scrim.classList.add('open');
     btn.setAttribute('aria-expanded', 'true');
-    document.documentElement.style.overflow = 'hidden';
     setTimeout(function(){ closeBtn.focus(); }, 30);
   }
   function closeDrawer(refocus){
     drawer.classList.remove('open'); scrim.classList.remove('open');
     drawer.setAttribute('aria-hidden', 'true'); drawer.setAttribute('inert', '');
     btn.setAttribute('aria-expanded', 'false');
-    document.documentElement.style.overflow = '';
     if (refocus !== false) btn.focus();
   }
   btn.addEventListener('click', openDrawer);
