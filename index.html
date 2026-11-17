@@ -204,16 +204,38 @@ button{font:inherit}
 .pr-box p + p{margin-top:10px}
 @media (max-width:1023px){ .pr{grid-template-columns:minmax(0,1fr)} }
 
-/* 03 作品 */
-.p-works{background:var(--black)}
-.p-works .bg{background:radial-gradient(ellipse 80% 70% at 70% 40%, #17222C 0%, var(--black) 70%)}
-.works{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:24px}
-.work{border:1px solid var(--night-line); border-radius:4px; overflow:hidden; background:rgba(255,255,255,.02)}
-.work .shot{aspect-ratio:16/9; max-width:100%; display:grid; place-items:center; background:repeating-linear-gradient(135deg, #0F151B 0 14px, #121A21 14px 28px); color:var(--night-muted); font-family:var(--f-label); letter-spacing:.2em; font-size:12px}
-.work .body{padding:16px 18px 18px; display:grid; gap:6px}
-.pill{justify-self:start; font-family:var(--f-mono); font-size:11.5px; color:var(--night-muted); border:1px solid var(--night-line); border-radius:999px; padding:0 10px}
-.work h3{font-size:19px; font-weight:600}
-.work p{font-size:13.5px; color:var(--night-muted)}
+/* 03 作品：1 作品 = 全画面 1 枚。左に大きな画像、右に題・概要・注目点 4 つ・MORE。色は作品ごとの --wa */
+.p-work{background:var(--black)}
+.p-work .bg{background:
+  radial-gradient(ellipse 60% 60% at 28% 50%, color-mix(in srgb, var(--wa) 15%, transparent), transparent 70%),
+  radial-gradient(ellipse 45% 45% at 88% 15%, color-mix(in srgb, var(--wa) 8%, transparent), transparent 70%),
+  var(--black)}
+.w-grid{display:grid; grid-template-columns:minmax(0,1fr); grid-template-areas:"head" "shot" "detail"; gap:22px}
+.w-head{grid-area:head}
+.w-shot{grid-area:shot}
+.w-detail{grid-area:detail}
+@media (min-width:1024px){
+  .w-grid{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr); grid-template-areas:"shot head" "shot detail"; gap:0 52px}
+  .w-shot{align-self:center}
+  .w-head{align-self:end}
+}
+.w-head .eyebrow{color:var(--wa)}
+.w-idx{font-family:var(--f-mono); letter-spacing:.08em; color:var(--night-muted)}
+.w-lead{margin-top:10px; font-size:14px; color:#C9D3DA}
+.w-shot{aspect-ratio:16/9; border-radius:8px; overflow:hidden; border:1px solid var(--night-line); background:repeating-linear-gradient(135deg, #0F151B 0 14px, #121A21 14px 28px); display:grid; place-items:center; color:var(--night-muted); font-family:var(--f-label); letter-spacing:.2em; font-size:12px; box-shadow:0 22px 50px rgba(0,0,0,.45)}
+.w-shot img{width:100%; height:100%; object-fit:cover; display:block}
+.w-pts-head{display:flex; align-items:flex-end; justify-content:space-between; gap:16px; margin-top:26px; padding-bottom:10px; border-bottom:1px solid var(--night-line)}
+.w-pts-head h3{font-family:var(--f-display); font-weight:800; font-size:20px; letter-spacing:.04em}
+.w-role{text-align:right; font-size:12px; color:var(--night-muted); line-height:1.5}
+.w-role b{display:block; font-size:14px; font-weight:700; color:var(--wa)}
+.w-pts{list-style:none; margin:18px 0 0; padding:0; display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:22px 28px}
+.w-pts li{display:grid; grid-template-columns:34px minmax(0,1fr); column-gap:12px; align-items:start}
+.w-ic{grid-row:1 / 3; width:34px; height:34px; border:1.5px solid var(--wa); border-radius:6px; display:grid; place-items:center; font-family:var(--f-mono); font-size:12px; color:var(--wa)}
+.w-pts h4{font-size:14.5px; font-weight:700; line-height:1.45}
+.w-pts p{font-size:13px; color:var(--night-muted); line-height:1.7; margin-top:2px}
+.w-more{display:inline-block; margin-top:28px; padding:9px 36px; border:1px solid var(--wa); border-radius:3px; color:var(--wa); font-family:var(--f-label); font-size:13px; letter-spacing:.22em; text-decoration:none}
+.w-more[aria-disabled="true"]{opacity:.45; cursor:default}
+@media (max-width:480px){ .w-pts{grid-template-columns:minmax(0,1fr); gap:16px} }
 
 /* 04 連絡先（波紋） */
 .p-contact{background:var(--accent); color:#F2F7FA; flex-direction:column; justify-content:center; align-items:stretch}
@@ -241,7 +263,6 @@ button{font:inherit}
   }
   .menu-btn svg{width:24px; height:24px}
   .logo .who{font-size:17px}
-  .works{grid-template-columns:minmax(0,1fr)}
   .panel{padding-top:calc(env(safe-area-inset-top, 0px) + var(--bar) + 32px); padding-bottom:48px}
   .head{margin-bottom:26px}
 }
@@ -456,24 +477,108 @@ button{font:inherit}
     </div>
   </section>
 
-  <!-- 03 作品 -->
-  <section class="panel dark p-works" id="works" aria-labelledby="h-works">
+  <!-- 03 作品：1 作品 = 全画面 1 枚（左に画像、右に題・概要・注目点 4 つ）。画像は .w-shot の中に img を入れる -->
+  <section class="panel dark p-work" id="works" aria-labelledby="w1-title" style="--wa:#7DB8D1">
     <div class="bg"></div>
     <div class="wrap">
-      <div class="head">
-        <p class="eyebrow"><span class="no">02</span>Works</p>
-        <h2 id="h-works">作品</h2>
-        <p class="muted" style="margin-top:8px; font-size:13.5px">準備中です。動画・設計の記録・コードを順に載せます。</p>
+      <div class="w-grid">
+        <div class="w-head">
+          <p class="eyebrow"><span class="no">02</span>Works <span class="w-idx">01 / 04</span></p>
+          <h2 id="w1-title">Idreal</h2>
+          <p class="w-lead">自作の音響エンジン。部屋ごとの残響、遮蔽、直接音の定位。</p>
+        </div>
+        <div class="w-shot">画像 準備中</div>
+        <div class="w-detail">
+          <div class="w-pts-head">
+            <h3>プロジェクト注目点</h3>
+            <p class="w-role">役割<b><span class="todo">準備中</span></b></p>
+          </div>
+          <ul class="w-pts">
+              <li><span class="w-ic" aria-hidden="true">01</span><h4><span class="todo">準備中</span></h4><p><span class="todo">準備中</span></p></li>
+              <li><span class="w-ic" aria-hidden="true">02</span><h4><span class="todo">準備中</span></h4><p><span class="todo">準備中</span></p></li>
+              <li><span class="w-ic" aria-hidden="true">03</span><h4><span class="todo">準備中</span></h4><p><span class="todo">準備中</span></p></li>
+              <li><span class="w-ic" aria-hidden="true">04</span><h4><span class="todo">準備中</span></h4><p><span class="todo">準備中</span></p></li>
+          </ul>
+          <span class="w-more" aria-disabled="true">MORE</span>
+        </div>
       </div>
-      <div class="works">
-        <article class="work">
-          <div class="shot">COMING SOON</div>
-          <div class="body"><span class="pill">準備中</span><h3>Idreal</h3><p>自作の音響エンジン。部屋ごとの残響、遮蔽、直接音の定位。</p></div>
-        </article>
-        <article class="work">
-          <div class="shot">COMING SOON</div>
-          <div class="body"><span class="pill">準備中</span><h3>屋内ホラーのデモ</h3><p>足音と響きで怖さを伝える探索ゲーム。Unreal Engine 5.6 ＋ Wwise。</p></div>
-        </article>
+    </div>
+  </section>
+  <section class="panel dark p-work" id="work-2" data-nav="works" aria-labelledby="w2-title" style="--wa:#E58A5E">
+    <div class="bg"></div>
+    <div class="wrap">
+      <div class="w-grid">
+        <div class="w-head">
+          <p class="eyebrow"><span class="no">02</span>Works <span class="w-idx">02 / 04</span></p>
+          <h2 id="w2-title">屋内ホラーのデモ</h2>
+          <p class="w-lead">足音と響きで怖さを伝える探索ゲーム。Unreal Engine 5.6 ＋ Wwise。</p>
+        </div>
+        <div class="w-shot">画像 準備中</div>
+        <div class="w-detail">
+          <div class="w-pts-head">
+            <h3>プロジェクト注目点</h3>
+            <p class="w-role">役割<b><span class="todo">準備中</span></b></p>
+          </div>
+          <ul class="w-pts">
+              <li><span class="w-ic" aria-hidden="true">01</span><h4><span class="todo">準備中</span></h4><p><span class="todo">準備中</span></p></li>
+              <li><span class="w-ic" aria-hidden="true">02</span><h4><span class="todo">準備中</span></h4><p><span class="todo">準備中</span></p></li>
+              <li><span class="w-ic" aria-hidden="true">03</span><h4><span class="todo">準備中</span></h4><p><span class="todo">準備中</span></p></li>
+              <li><span class="w-ic" aria-hidden="true">04</span><h4><span class="todo">準備中</span></h4><p><span class="todo">準備中</span></p></li>
+          </ul>
+          <span class="w-more" aria-disabled="true">MORE</span>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="panel dark p-work" id="work-3" data-nav="works" aria-labelledby="w3-title" style="--wa:#A595E0">
+    <div class="bg"></div>
+    <div class="wrap">
+      <div class="w-grid">
+        <div class="w-head">
+          <p class="eyebrow"><span class="no">02</span>Works <span class="w-idx">03 / 04</span></p>
+          <h2 id="w3-title"><span class="todo">準備中</span></h2>
+          <p class="w-lead"><span class="todo">準備中</span></p>
+        </div>
+        <div class="w-shot">画像 準備中</div>
+        <div class="w-detail">
+          <div class="w-pts-head">
+            <h3>プロジェクト注目点</h3>
+            <p class="w-role">役割<b><span class="todo">準備中</span></b></p>
+          </div>
+          <ul class="w-pts">
+              <li><span class="w-ic" aria-hidden="true">01</span><h4><span class="todo">準備中</span></h4><p><span class="todo">準備中</span></p></li>
+              <li><span class="w-ic" aria-hidden="true">02</span><h4><span class="todo">準備中</span></h4><p><span class="todo">準備中</span></p></li>
+              <li><span class="w-ic" aria-hidden="true">03</span><h4><span class="todo">準備中</span></h4><p><span class="todo">準備中</span></p></li>
+              <li><span class="w-ic" aria-hidden="true">04</span><h4><span class="todo">準備中</span></h4><p><span class="todo">準備中</span></p></li>
+          </ul>
+          <span class="w-more" aria-disabled="true">MORE</span>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="panel dark p-work" id="work-4" data-nav="works" aria-labelledby="w4-title" style="--wa:#8FC7A0">
+    <div class="bg"></div>
+    <div class="wrap">
+      <div class="w-grid">
+        <div class="w-head">
+          <p class="eyebrow"><span class="no">02</span>Works <span class="w-idx">04 / 04</span></p>
+          <h2 id="w4-title"><span class="todo">準備中</span></h2>
+          <p class="w-lead"><span class="todo">準備中</span></p>
+        </div>
+        <div class="w-shot">画像 準備中</div>
+        <div class="w-detail">
+          <div class="w-pts-head">
+            <h3>プロジェクト注目点</h3>
+            <p class="w-role">役割<b><span class="todo">準備中</span></b></p>
+          </div>
+          <ul class="w-pts">
+              <li><span class="w-ic" aria-hidden="true">01</span><h4><span class="todo">準備中</span></h4><p><span class="todo">準備中</span></p></li>
+              <li><span class="w-ic" aria-hidden="true">02</span><h4><span class="todo">準備中</span></h4><p><span class="todo">準備中</span></p></li>
+              <li><span class="w-ic" aria-hidden="true">03</span><h4><span class="todo">準備中</span></h4><p><span class="todo">準備中</span></p></li>
+              <li><span class="w-ic" aria-hidden="true">04</span><h4><span class="todo">準備中</span></h4><p><span class="todo">準備中</span></p></li>
+          </ul>
+          <span class="w-more" aria-disabled="true">MORE</span>
+        </div>
       </div>
     </div>
   </section>
