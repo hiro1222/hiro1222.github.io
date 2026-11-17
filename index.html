@@ -142,26 +142,28 @@ button{font:inherit}
 .facts dd{margin:0; min-width:0}
 
 /* プロフィールの中の スキル・資格・受賞記録 */
-/* PC は 3 列（スキル／資格／受賞記録）。頭の行もこの 3 列に乗せて、写真は受賞記録の列の上 */
+/* PC: 頭は 名前・志望など が左、写真が右（下の 資格｜受賞記録 の 2 列に揃える）。
+   スキルは 4 つの分類を横に並べ、分類の中は縦に積む。その下に 資格｜受賞記録 */
 .who-block{display:grid; grid-template-columns:minmax(0,1fr); gap:24px; margin-bottom:8px}
 .who-text{display:flex; flex-direction:column; gap:16px; min-width:0}
 .who-block .name{margin:0}
 @media (min-width:1024px){
-  .who-block{grid-template-columns:minmax(0,.78fr) minmax(0,1fr) minmax(0,1.22fr); column-gap:36px}
-  .who-block{grid-template-areas:"text text photos"; row-gap:0; align-items:center}
+  .who-block{grid-template-columns:minmax(0,1fr) minmax(0,1.2fr); grid-template-areas:"text photos"; gap:0 40px; align-items:center}
   .who-text{grid-area:text}
   .who-block .photos{grid-area:photos}
 }
 /* 写真 2 枚：高さが揃うように、横幅を縦横比で分ける（ベース 4:5・弓道 600:1220） */
-.photos{display:flex; align-items:flex-start; gap:10px; width:320px; max-width:100%}
+.photos{display:flex; align-items:flex-start; gap:10px; width:400px; max-width:100%}
 .photos img{display:block; min-width:0; height:auto; border-radius:3px; box-shadow:0 0 0 1px var(--night-line)}
 .photos .ph-bass{flex:.8 1 0}
 .photos .ph-kyudo{flex:.4918 1 0}
-@media (max-width:767px){ .photos{width:100%; max-width:400px} }
 .pf-cols{display:grid; grid-template-columns:minmax(0,1fr); align-items:start}
+.sk-groups{display:grid; grid-template-columns:minmax(0,1fr)}
 @media (min-width:1024px){
-  .pf-cols{grid-template-columns:minmax(0,.78fr) minmax(0,1fr) minmax(0,1.22fr); column-gap:36px}
-  /* スキルは 1 列に縦に詰める：アイコン・名前・年数を 1 行に */
+  .pf-cols{grid-template-columns:minmax(0,1fr) minmax(0,1.2fr); column-gap:40px}
+  .pf-skill{grid-column:1 / -1}
+  .sk-groups{grid-template-columns:repeat(4, minmax(0,1fr)); column-gap:20px}
+  /* 分類の中は縦に積む：アイコン・名前・年数を 1 行に */
   .pf-cols .cards{grid-template-columns:minmax(0,1fr); gap:6px}
   .pf-cols .card{grid-template-columns:26px minmax(0,1fr) auto; column-gap:10px; padding:7px 12px}
   .pf-cols .card .ic{grid-row:auto; width:26px; height:26px}
@@ -338,6 +340,7 @@ button{font:inherit}
         <div class="who-text">
           <p class="name"><ruby>竹内<rt>たけうち</rt></ruby><ruby>寛登<rt>ひろと</rt></ruby></p>
           <dl class="facts">
+            <dt>志望</dt><dd>サウンドプログラマー</dd>
             <dt>学部</dt><dd>ゲーム4年制学科・ゲーム制作コース</dd>
             <dt>卒業予定</dt><dd>2028年3月 卒業予定</dd>
           </dl>
@@ -347,27 +350,37 @@ button{font:inherit}
         <div class="pf-skill">
           <div class="block">
             <h3 class="bh">スキル</h3>
-            <p class="sg">ゲームエンジン</p>
-            <ul class="cards">
-              <li class="card" style="--c:#D5DCE1"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12.9288 4.2939 3.7997 2.1929c.1366.077.1415.2905 0 .3675l-4.515 2.6076a.4192.4192 0 0 1-.4246 0L7.274 6.8543c-.139-.0745-.1415-.293 0-.3675l3.7972-2.193V0L1.3758 5.5977V16.793l3.7177-2.1456v-4.3858c-.0025-.1565.1813-.2682.318-.1838l4.5148 2.6076a.4252.4252 0 0 1 .2136.3676v5.2127c.0025.1565-.1813.2682-.3179.1838l-3.7996-2.1929-3.7178 2.1457L12 24l9.6954-5.5977-3.7178-2.1457-3.7996 2.1929c-.1341.082-.3229-.0248-.3179-.1838V13.053c0-.1565.087-.2956.2136-.3676l4.5149-2.6076c.134-.082.3228.0224.3179.1838v4.3858l3.7177 2.1456V5.5977L12.9288 0Z"/></svg></span><span class="nm">Unity</span><span class="yr">3年</span></li>
-              <li class="card" style="--c:#D5DCE1"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0a12 12 0 1012 12A12 12 0 0012 0zm0 23.52A11.52 11.52 0 1123.52 12 11.52 11.52 0 0112 23.52zm7.13-9.791c-.206.997-1.126 3.557-4.06 4.942l-1.179-1.325-1.988 2a7.338 7.338 0 01-5.804-2.978 2.859 2.859 0 00.65.123c.326.006.678-.114.678-.66v-5.394a.89.89 0 00-1.116-.89c-.92.212-1.656 2.509-1.656 2.509a7.304 7.304 0 012.528-5.597 7.408 7.408 0 013.73-1.721c-1.006.573-1.57 1.507-1.57 2.29 0 1.262.76 1.109.984.923v7.28a1.157 1.157 0 00.148.256 1.075 1.075 0 00.88.445c.76 0 1.747-.868 1.747-.868V9.172c0-.6-.452-1.324-.905-1.572 0 0 .838-.149 1.484.346a5.537 5.537 0 01.387-.425c1.508-1.48 2.929-1.902 4.112-2.112 0 0-2.151 1.69-2.151 3.96 0 1.687.043 5.801.043 5.801.799.771 1.986-.342 3.059-1.441Z"/></svg></span><span class="nm">Unreal Engine</span><span class="yr">2年</span></li>
-              <li class="card" style="--c:#A595E0"><span class="ic txt" aria-hidden="true">DX</span><span class="nm">DXライブラリ</span><span class="yr">2年</span></li>
-            </ul>
-            <p class="sg">言語</p>
-            <ul class="cards">
-              <li class="card" style="--c:#5FA8E3"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22.394 6c-.167-.29-.398-.543-.652-.69L12.926.22c-.509-.294-1.34-.294-1.848 0L2.26 5.31c-.508.293-.923 1.013-.923 1.6v10.18c0 .294.104.62.271.91.167.29.398.543.652.69l8.816 5.09c.508.293 1.34.293 1.848 0l8.816-5.09c.254-.147.485-.4.652-.69.167-.29.27-.616.27-.91V6.91c.003-.294-.1-.62-.268-.91zM12 19.11c-3.92 0-7.109-3.19-7.109-7.11 0-3.92 3.19-7.11 7.11-7.11a7.133 7.133 0 016.156 3.553l-3.076 1.78a3.567 3.567 0 00-3.08-1.78A3.56 3.56 0 008.444 12 3.56 3.56 0 0012 15.555a3.57 3.57 0 003.08-1.778l3.078 1.78A7.135 7.135 0 0112 19.11zm7.11-6.715h-.79v.79h-.79v-.79h-.79v-.79h.79v-.79h.79v.79h.79zm2.962 0h-.79v.79h-.79v-.79h-.79v-.79h.79v-.79h.79v.79h.79z"/></svg></span><span class="nm">C++</span><span class="yr">3年</span></li>
-              <li class="card" style="--c:#C882C3"><span class="ic txt" aria-hidden="true">C#</span><span class="nm">C#</span><span class="yr">3年</span></li>
-            </ul>
-            <p class="sg">サウンド</p>
-            <ul class="cards">
-              <li class="card" style="--c:#4FA8F0"><span class="ic txt" aria-hidden="true">Ww</span><span class="nm">Wwise</span><span class="yr">2年</span></li>
-            </ul>
-            <p class="sg">開発環境</p>
-            <ul class="cards">
-              <li class="card noyr" style="--c:#A884DD"><span class="ic txt" aria-hidden="true">VS</span><span class="nm">Visual Studio</span></li>
-              <li class="card noyr" style="--c:#F05032"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.09 23.549a1.54 1.54 0 0 1-2.18 0L.451 13.089a1.54 1.54 0 0 1 0-2.179l7.191-7.19 2.733 2.733a1.85 1.85 0 0 0 .964 2.326v6.66a1.849 1.849 0 1 0 1.54 0V8.957l2.508 2.508a1.85 1.85 0 1 0 1.09-1.09l-2.634-2.634a1.85 1.85 0 0 0-2.378-2.377L8.73 2.63 10.91.451a1.54 1.54 0 0 1 2.179 0l10.459 10.46a1.54 1.54 0 0 1 0 2.179z"/></svg></span><span class="nm">Git</span></li>
-              <li class="card noyr" style="--c:#D5DCE1"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></span><span class="nm">GitHub</span></li>
-            </ul>
+            <div class="sk-groups">
+            <div class="sk-group">
+              <p class="sg">ゲームエンジン</p>
+              <ul class="cards">
+                <li class="card" style="--c:#D5DCE1"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12.9288 4.2939 3.7997 2.1929c.1366.077.1415.2905 0 .3675l-4.515 2.6076a.4192.4192 0 0 1-.4246 0L7.274 6.8543c-.139-.0745-.1415-.293 0-.3675l3.7972-2.193V0L1.3758 5.5977V16.793l3.7177-2.1456v-4.3858c-.0025-.1565.1813-.2682.318-.1838l4.5148 2.6076a.4252.4252 0 0 1 .2136.3676v5.2127c.0025.1565-.1813.2682-.3179.1838l-3.7996-2.1929-3.7178 2.1457L12 24l9.6954-5.5977-3.7178-2.1457-3.7996 2.1929c-.1341.082-.3229-.0248-.3179-.1838V13.053c0-.1565.087-.2956.2136-.3676l4.5149-2.6076c.134-.082.3228.0224.3179.1838v4.3858l3.7177 2.1456V5.5977L12.9288 0Z"/></svg></span><span class="nm">Unity</span><span class="yr">3年</span></li>
+                <li class="card" style="--c:#D5DCE1"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0a12 12 0 1012 12A12 12 0 0012 0zm0 23.52A11.52 11.52 0 1123.52 12 11.52 11.52 0 0112 23.52zm7.13-9.791c-.206.997-1.126 3.557-4.06 4.942l-1.179-1.325-1.988 2a7.338 7.338 0 01-5.804-2.978 2.859 2.859 0 00.65.123c.326.006.678-.114.678-.66v-5.394a.89.89 0 00-1.116-.89c-.92.212-1.656 2.509-1.656 2.509a7.304 7.304 0 012.528-5.597 7.408 7.408 0 013.73-1.721c-1.006.573-1.57 1.507-1.57 2.29 0 1.262.76 1.109.984.923v7.28a1.157 1.157 0 00.148.256 1.075 1.075 0 00.88.445c.76 0 1.747-.868 1.747-.868V9.172c0-.6-.452-1.324-.905-1.572 0 0 .838-.149 1.484.346a5.537 5.537 0 01.387-.425c1.508-1.48 2.929-1.902 4.112-2.112 0 0-2.151 1.69-2.151 3.96 0 1.687.043 5.801.043 5.801.799.771 1.986-.342 3.059-1.441Z"/></svg></span><span class="nm">Unreal Engine</span><span class="yr">2年</span></li>
+                <li class="card" style="--c:#A595E0"><span class="ic txt" aria-hidden="true">DX</span><span class="nm">DXライブラリ</span><span class="yr">2年</span></li>
+              </ul>
+            </div>
+            <div class="sk-group">
+              <p class="sg">言語</p>
+              <ul class="cards">
+                <li class="card" style="--c:#5FA8E3"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22.394 6c-.167-.29-.398-.543-.652-.69L12.926.22c-.509-.294-1.34-.294-1.848 0L2.26 5.31c-.508.293-.923 1.013-.923 1.6v10.18c0 .294.104.62.271.91.167.29.398.543.652.69l8.816 5.09c.508.293 1.34.293 1.848 0l8.816-5.09c.254-.147.485-.4.652-.69.167-.29.27-.616.27-.91V6.91c.003-.294-.1-.62-.268-.91zM12 19.11c-3.92 0-7.109-3.19-7.109-7.11 0-3.92 3.19-7.11 7.11-7.11a7.133 7.133 0 016.156 3.553l-3.076 1.78a3.567 3.567 0 00-3.08-1.78A3.56 3.56 0 008.444 12 3.56 3.56 0 0012 15.555a3.57 3.57 0 003.08-1.778l3.078 1.78A7.135 7.135 0 0112 19.11zm7.11-6.715h-.79v.79h-.79v-.79h-.79v-.79h.79v-.79h.79v.79h.79zm2.962 0h-.79v.79h-.79v-.79h-.79v-.79h.79v-.79h.79v.79h.79z"/></svg></span><span class="nm">C++</span><span class="yr">3年</span></li>
+                <li class="card" style="--c:#C882C3"><span class="ic txt" aria-hidden="true">C#</span><span class="nm">C#</span><span class="yr">3年</span></li>
+              </ul>
+            </div>
+            <div class="sk-group">
+              <p class="sg">サウンド</p>
+              <ul class="cards">
+                <li class="card" style="--c:#4FA8F0"><span class="ic txt" aria-hidden="true">Ww</span><span class="nm">Wwise</span><span class="yr">2年</span></li>
+              </ul>
+            </div>
+            <div class="sk-group">
+              <p class="sg">開発環境</p>
+              <ul class="cards">
+                <li class="card noyr" style="--c:#A884DD"><span class="ic txt" aria-hidden="true">VS</span><span class="nm">Visual Studio</span></li>
+                <li class="card noyr" style="--c:#F05032"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.09 23.549a1.54 1.54 0 0 1-2.18 0L.451 13.089a1.54 1.54 0 0 1 0-2.179l7.191-7.19 2.733 2.733a1.85 1.85 0 0 0 .964 2.326v6.66a1.849 1.849 0 1 0 1.54 0V8.957l2.508 2.508a1.85 1.85 0 1 0 1.09-1.09l-2.634-2.634a1.85 1.85 0 0 0-2.378-2.377L8.73 2.63 10.91.451a1.54 1.54 0 0 1 2.179 0l10.459 10.46a1.54 1.54 0 0 1 0 2.179z"/></svg></span><span class="nm">Git</span></li>
+                <li class="card noyr" style="--c:#D5DCE1"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></span><span class="nm">GitHub</span></li>
+              </ul>
+            </div>
+            </div>
           </div>
         </div>
         <div class="pf-lic">
