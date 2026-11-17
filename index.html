@@ -549,8 +549,8 @@ button{font:inherit}
     </div>
   </section>
 
-  <!-- 02 の続き：自己PR など（暗い背景） -->
-  <section class="panel dark p-pr" id="pr" data-nav="profile" aria-label="プログラマーとして意識していること">
+  <!-- 02 の続き：プログラマーとして意識していること（暗い背景）。中身が入るまで hidden で隠している（2026-11-18 本人「一旦なくしておこう」） -->
+  <section class="panel dark p-pr" id="pr" data-nav="profile" aria-label="プログラマーとして意識していること" hidden>
     <div class="bg">
       <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
         <g stroke="#7DB8D1" stroke-opacity=".09" stroke-width="1" fill="none">
@@ -941,7 +941,7 @@ button{font:inherit}
 (function(){
   var reduce = false;
   try{ reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){}
-  var sections = Array.prototype.slice.call(document.querySelectorAll('main > section'));
+  var sections = Array.prototype.slice.call(document.querySelectorAll('main > section')).filter(function(s){ return !s.hidden; });  // 隠した節は止まる位置に入れない
 
   // ---- 作品の画像をぼかして背景に（.w-shot の img を写す） ----
   document.querySelectorAll('.p-work').forEach(function(sec){
