@@ -170,10 +170,12 @@ button{font:inherit}
 .card .nm{font-weight:600; font-size:15px; line-height:1.35; overflow-wrap:anywhere}
 .card.noyr .nm{grid-row:1 / 3}
 .card .yr{font-family:var(--f-mono); font-weight:500; font-size:13px; color:var(--accent); line-height:1.4}
-.lic{list-style:none; margin:12px 0 0; padding:0; max-width:680px}
-.lic li{display:flex; flex-wrap:wrap; justify-content:space-between; align-items:baseline; gap:4px 16px; padding:12px 0; border-top:1px solid var(--paper-line)}
-.lic li:last-child{border-bottom:1px solid var(--paper-line)}
-.lic .ok{font-weight:600; color:#B4522B}
+.lic-box{margin-top:14px; max-width:680px; background:rgba(255,255,255,.88); border:1px solid var(--paper-line); border-radius:4px; padding:4px 20px}
+.lic{list-style:none; margin:0; padding:0}
+.lic li{display:flex; align-items:center; gap:14px; padding:13px 0; border-top:1px solid var(--paper-line)}
+.lic li:first-child{border-top:0}
+.lk{flex:none; min-width:5.2em; text-align:center; font-size:11.5px; font-weight:600; letter-spacing:.04em; color:var(--c); border:1px solid var(--c); border-radius:999px; padding:1px 8px; line-height:1.6}
+.ln{font-weight:500; min-width:0}
 
 /* 03 作品 */
 .p-works{background:var(--black)}
@@ -334,13 +336,15 @@ button{font:inherit}
       </div>
       <div class="block">
         <h3 class="bh">資格</h3>
-        <ul class="lic">
-          <li>基本情報技術者試験</li>
-          <li>J検 情報処理 2級</li>
-          <li>Wwise-101</li>
-          <li>弓道 二段</li>
-          <li>柔道 初段</li>
-        </ul>
+        <div class="lic-box">
+          <ul class="lic">
+            <li><span class="lk" style="--c:#1D5C78">情報</span><span class="ln">基本情報技術者試験</span></li>
+            <li><span class="lk" style="--c:#1D5C78">情報</span><span class="ln">J検 情報処理 2級</span></li>
+            <li><span class="lk" style="--c:#1E88E5">サウンド</span><span class="ln">Wwise-101</span></li>
+            <li><span class="lk" style="--c:#B4522B">武道</span><span class="ln">弓道 二段</span></li>
+            <li><span class="lk" style="--c:#B4522B">武道</span><span class="ln">柔道 初段</span></li>
+          </ul>
+        </div>
       </div>
     </div>
   </section>
