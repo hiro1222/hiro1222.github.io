@@ -456,11 +456,14 @@ button{font:inherit}
   var sections = Array.prototype.slice.call(document.querySelectorAll('main > section'));
 
   // ---- なめらかな吸い付き（ブラウザの scroll-snap の代わりに自前で動かす） ----
-  var anim = null, lastRest = window.scrollY, touching = false, lastInput = 'wheel', idleTimer = 0;
+  // 弱めの吸い付き：進んでいる先の止まる位置が画面の AHEAD 以内に来た時だけ引き寄せる。
+  // 止まる位置を BACK だけ通り過ぎたら戻す。それ以外（節の途中）は止まった所のまま
+  var SNAP_AHEAD = 0.4, SNAP_BACK = 0.1, SNAP_IDLE = 200;
+  var anim = null, lastRest = window.scrollY, touching = false, idleTimer = 0;
   function docY(el){ return el.getBoundingClientRect().top + window.scrollY; }
   function maxY(){ return document.documentElement.scrollHeight - window.innerHeight; }
   function easeInOut(t){ return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
-  function easeOut(t){ return 1 - Math.pow(1 - t, 4); }
+  function easeOut(t){ return 1 - Math.pow(1 - t, 3); }
   function stopAnim(){ anim = null; }
   function animateTo(y, dur, ease){
     y = Math.max(0, Math.min(maxY(), Math.round(y)));
@@ -494,26 +497,33 @@ button{font:inherit}
     for (i = 0; i < st.free.length; i++){
       if (y > st.free[i][0] + 2 && y < st.free[i][1] - 2){ lastRest = y; return; }
     }
-    // 動いた向きへ少しでも進んでいたら次へ、ほんの少しなら元へ
-    var dir = y - lastRest, bias = (lastInput === 'touch' ? 0.2 : 0.12) * vh, target = null;
-    if (dir > 0){ for (i = 0; i < st.list.length; i++){ if (st.list[i] >= y - bias){ target = st.list[i]; break; } } }
-    else if (dir < 0){ for (i = st.list.length - 1; i >= 0; i--){ if (st.list[i] <= y + bias){ target = st.list[i]; break; } } }
-    if (target === null){ target = st.list.reduce(function(p, c){ return Math.abs(c - y) < Math.abs(p - y) ? c : p; }, st.list[0]); }
+    // 進んでいる先の止まる位置が近ければそこへ、通り過ぎたばかりなら戻す、どちらでもなければそのまま
+    var dir = y - lastRest, ahead = null, behind = null, target = null;
+    if (dir >= 0){
+      for (i = 0; i < st.list.length; i++){ if (st.list[i] > y){ ahead = st.list[i]; break; } }
+      for (i = st.list.length - 1; i >= 0; i--){ if (st.list[i] <= y){ behind = st.list[i]; break; } }
+    } else {
+      for (i = st.list.length - 1; i >= 0; i--){ if (st.list[i] < y){ ahead = st.list[i]; break; } }
+      for (i = 0; i < st.list.length; i++){ if (st.list[i] >= y){ behind = st.list[i]; break; } }
+    }
+    if (ahead !== null && Math.abs(ahead - y) <= SNAP_AHEAD * vh) target = ahead;
+    else if (behind !== null && Math.abs(y - behind) <= SNAP_BACK * vh) target = behind;
+    if (target === null){ lastRest = y; return; }
     var dist = Math.abs(target - y);
     if (dist < 2){ lastRest = target; return; }
-    animateTo(target, 420 + 480 * Math.min(1, dist / vh), easeOut);
+    animateTo(target, 450 + 600 * Math.min(1, dist / vh), easeOut);
   }
   window.addEventListener('scroll', function(){
     if (anim) return;
     clearTimeout(idleTimer);
-    idleTimer = setTimeout(settle, 140);
+    idleTimer = setTimeout(settle, SNAP_IDLE);
   }, {passive: true});
-  window.addEventListener('wheel', function(){ lastInput = 'wheel'; stopAnim(); }, {passive: true});
-  window.addEventListener('touchstart', function(){ lastInput = 'touch'; touching = true; stopAnim(); }, {passive: true});
-  window.addEventListener('touchend', function(){ touching = false; clearTimeout(idleTimer); idleTimer = setTimeout(settle, 140); }, {passive: true});
+  window.addEventListener('wheel', function(){ stopAnim(); }, {passive: true});
+  window.addEventListener('touchstart', function(){ touching = true; stopAnim(); }, {passive: true});
+  window.addEventListener('touchend', function(){ touching = false; clearTimeout(idleTimer); idleTimer = setTimeout(settle, SNAP_IDLE); }, {passive: true});
   window.addEventListener('touchcancel', function(){ touching = false; }, {passive: true});
   window.addEventListener('keydown', function(e){
-    if (['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End', ' '].indexOf(e.key) >= 0){ lastInput = 'key'; stopAnim(); }
+    if (['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End', ' '].indexOf(e.key) >= 0) stopAnim();
   });
   window.addEventListener('pointerdown', function(e){ if (e.pointerType === 'mouse') stopAnim(); });
 
