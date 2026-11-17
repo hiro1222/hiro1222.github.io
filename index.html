@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="ゲームのサウンドプログラマーを目指す学生のポートフォリオ。音で空間を伝える音響エンジンを C++ で作っています。">
+<meta name="description" content="竹内寛登のポートフォリオ。ゲームのサウンドプログラマーを目指し、音で空間を伝える音響エンジンを C++ で作っています。">
 <meta name="robots" content="noindex">
-<title>ポートフォリオ</title>
+<title>ポートフォリオ 竹内寛登</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+JP:wght@400;500;600&family=Oswald:wght@400;500&family=Shippori+Mincho+B1:wght@600;800&display=swap">
@@ -51,8 +51,8 @@ button{font:inherit}
 }
 .bar-in{height:var(--bar); display:flex; align-items:center; gap:16px}
 .logo{display:flex; flex-direction:column; justify-content:center; text-decoration:none; color:var(--bar-ink); line-height:1.25; min-width:0}
-.logo .mark{font-family:var(--f-label); font-weight:500; font-size:20px; letter-spacing:.12em; text-transform:uppercase}
-.logo .who{font-size:12px; color:#5C6770}
+.logo .mark{font-size:11.5px; letter-spacing:.12em; color:#5C6770}
+.logo .who{font-weight:600; font-size:19px; letter-spacing:.08em}
 .todo{display:inline-block; font-family:var(--f-mono); font-size:.86em; letter-spacing:.04em; border-bottom:1px dashed currentColor; opacity:.75; line-height:1.4}
 .nav{margin-left:auto; display:flex; gap:clamp(18px, 3.2vw, 52px)}
 .nav a{
@@ -154,25 +154,7 @@ button{font:inherit}
 .timeline time{font-family:var(--f-mono); font-size:13px; color:var(--accent); padding-top:2px}
 .timeline .now time{color:#B4522B}
 
-/* 03 大事にしていること（減り方の傾き） */
-.p-approach{background:var(--slate)}
-.p-approach .bg svg{width:100%; height:100%; display:block}
-.ideas{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:32px 56px}
-.idea h3{font-family:var(--f-display); font-weight:800; font-size:21px; line-height:1.45; letter-spacing:.03em}
-.idea p{margin-top:8px; color:#C9D3DA}
-.idea .ex{margin-top:10px; padding-left:12px; border-left:2px solid var(--night-line); font-size:13.5px; color:var(--night-muted)}
-.ex b{font-family:var(--f-mono); font-weight:500; color:var(--night-ink)}
-
-/* 04 できること（波形の帯） */
-.p-skills{background:#F3F5F6}
-.p-skills .bg svg{position:absolute; left:0; right:0; bottom:0; width:100%; height:30%; opacity:.75}
-.skills{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:0 56px; margin:0}
-.skill{display:grid; grid-template-columns:9.5em minmax(0,1fr); gap:2px 20px; padding:13px 0; border-top:1px solid var(--paper-line)}
-.skill dt{font-weight:600}
-.skill dd{margin:0; min-width:0}
-.skill .what{display:block; font-size:12.5px; color:var(--paper-muted); margin-top:2px}
-
-/* 05 作品 */
+/* 03 作品 */
 .p-works{background:var(--black)}
 .p-works .bg{background:radial-gradient(ellipse 80% 70% at 70% 40%, #17222C 0%, var(--black) 70%)}
 .works{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:24px}
@@ -183,7 +165,7 @@ button{font:inherit}
 .work h3{font-size:19px; font-weight:600}
 .work p{font-size:13.5px; color:var(--night-muted)}
 
-/* 06 連絡先（波紋） */
+/* 04 連絡先（波紋） */
 .p-contact{background:var(--accent); color:#F2F7FA; flex-direction:column; justify-content:center; align-items:stretch}
 .p-contact .bg{background:repeating-radial-gradient(circle at 82% 72%, transparent 0 46px, rgba(255,255,255,.07) 46px 47px)}
 .p-contact .eyebrow{color:#BFE0EE}
@@ -192,6 +174,8 @@ button{font:inherit}
 .c-row:last-child{border-bottom:1px solid rgba(255,255,255,.25)}
 .c-row dt{font-size:13px; color:#BFE0EE}
 .c-row dd{margin:0; min-width:0; overflow-wrap:anywhere; font-family:var(--f-mono); font-size:14px}
+.c-row dd a{color:inherit; text-underline-offset:3px; text-decoration-color:rgba(255,255,255,.5)}
+.c-row dd a:hover{text-decoration-color:currentColor}
 .copy{font-size:12px; padding:3px 12px; border-radius:3px; border:1px solid rgba(255,255,255,.45); background:transparent; color:#F2F7FA; cursor:pointer}
 .copy:disabled{opacity:.4; cursor:default}
 .foot{margin-top:48px; display:flex; flex-wrap:wrap; justify-content:space-between; gap:8px 24px; font-size:12px; color:#BFE0EE}
@@ -206,12 +190,10 @@ button{font:inherit}
     background:transparent; border:0; color:var(--bar-ink); cursor:pointer;
   }
   .menu-btn svg{width:24px; height:24px}
-  .logo .mark{font-size:17px}
-  .two, .ideas, .skills, .works{grid-template-columns:minmax(0,1fr)}
+  .logo .who{font-size:17px}
+  .two, .works{grid-template-columns:minmax(0,1fr)}
   .panel{padding-top:calc(env(safe-area-inset-top, 0px) + var(--bar) + 32px); padding-bottom:48px}
   .head{margin-bottom:26px}
-  .ideas{gap:26px}
-  .skill{grid-template-columns:minmax(0,1fr)}
 }
 @media (max-width:480px){
   .c-row{grid-template-columns:minmax(0,1fr) auto}
@@ -231,13 +213,11 @@ button{font:inherit}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
     </button>
     <a class="logo" href="#top" data-go="top">
-      <span class="mark">Portfolio</span>
-      <span class="who"><span class="todo" data-field="name">氏名 未記入</span></span>
+      <span class="mark">ポートフォリオ</span>
+      <span class="who">竹内寛登</span>
     </a>
     <nav class="nav" aria-label="ページの中身">
       <a href="#profile" data-go="profile"><span class="en">Profile</span><span class="ja">プロフィール</span></a>
-      <a href="#approach" data-go="approach"><span class="en">Approach</span><span class="ja">大事にしていること</span></a>
-      <a href="#skills" data-go="skills"><span class="en">Skills</span><span class="ja">できること</span></a>
       <a href="#works" data-go="works"><span class="en">Works</span><span class="ja">作品</span></a>
       <a href="#contact" data-go="contact"><span class="en">Contact</span><span class="ja">連絡先</span></a>
     </nav>
@@ -252,8 +232,6 @@ button{font:inherit}
   <ul>
     <li><a href="#top" data-go="top">ホーム<span class="en">Home</span></a></li>
     <li><a href="#profile" data-go="profile">プロフィール<span class="en">Profile</span></a></li>
-    <li><a href="#approach" data-go="approach">大事にしていること<span class="en">Approach</span></a></li>
-    <li><a href="#skills" data-go="skills">できること<span class="en">Skills</span></a></li>
     <li><a href="#works" data-go="works">作品<span class="en">Works</span></a></li>
     <li><a href="#contact" data-go="contact">連絡先<span class="en">Contact</span></a></li>
   </ul>
@@ -285,7 +263,7 @@ button{font:inherit}
       <div class="two">
         <div>
           <dl class="facts">
-            <dt>氏名</dt><dd><span class="todo" data-field="name">未記入</span></dd>
+            <dt>氏名</dt><dd>竹内寛登</dd>
             <dt>ふりがな</dt><dd><span class="todo" data-field="kana">未記入</span></dd>
             <dt>学校・学部</dt><dd><span class="todo" data-field="school">未記入</span></dd>
             <dt>卒業予定</dt><dd><span class="todo" data-field="grad">未記入</span></dd>
@@ -307,106 +285,12 @@ button{font:inherit}
     </div>
   </section>
 
-  <!-- 03 大事にしていること：響きの減り方の傾き -->
-  <section class="panel dark p-approach" id="approach" aria-labelledby="h-approach">
-    <div class="bg">
-      <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-        <g stroke="#7DB8D1" stroke-opacity=".09" stroke-width="1" fill="none">
-          <path d="M80 120H1560M80 332H1560M80 544H1560M80 756H1560"/>
-        </g>
-        <g fill="#7DB8D1" fill-opacity=".22" font-family="IBM Plex Mono, Consolas, monospace" font-size="15">
-          <text x="1500" y="112">0 dB</text><text x="1490" y="324">−20</text><text x="1490" y="536">−40</text><text x="1490" y="748">−60</text>
-        </g>
-        <g stroke="#7DB8D1" stroke-width="1.5" fill="none" stroke-linecap="round">
-          <path d="M80 120L329 756" stroke-opacity=".20"/>
-          <path d="M80 120L689 756" stroke-opacity=".15"/>
-          <path d="M80 120L1298 756" stroke-opacity=".11"/>
-        </g>
-        <g fill="#7DB8D1" fill-opacity=".26" font-family="IBM Plex Mono, Consolas, monospace" font-size="14">
-          <text x="300" y="790">RT60 0.45 s</text><text x="660" y="790">RT60 1.10 s</text><text x="1268" y="790">RT60 2.20 s</text>
-        </g>
-      </svg>
-    </div>
-    <div class="wrap">
-      <div class="head">
-        <p class="eyebrow"><span class="no">02</span>Approach</p>
-        <h2 id="h-approach">大事にしていること</h2>
-      </div>
-      <div class="ideas">
-        <article class="idea">
-          <h3>形は物理から、量は耳で。</h3>
-          <p>響きの長さや減り方の形は室内音響の式から取ります。どれだけ聞かせるかは、耳とゲームの演出で決めます。</p>
-        </article>
-        <article class="idea">
-          <h3>正しさより、つながりを先に。</h3>
-          <p>歩いたり扉を開けたりしたときに音が跳ぶと、空間の印象が崩れます。値は二択で切り替えず、連続に動かします。</p>
-          <p class="ex">例: 反射を 1 本ずつ鳴らす作りは、歩くと跳ぶのでやめました。壁の近さは響きの形で伝えています。</p>
-        </article>
-        <article class="idea">
-          <h3>決まりは 1 つにする。</h3>
-          <p>物ごとの例外を増やすより、1 つの決まりがどこにでも効く形を探します。</p>
-          <p class="ex">例: 扉もシャッターも崩れた壁も、音源のまわり 5 点へのレイがどれだけ遮られたかで、こもりと音量を決めています。</p>
-        </article>
-        <article class="idea">
-          <h3>測ってから決める。</h3>
-          <p>変えたら、変える前と後を数字で比べます。悪くなった所も一緒に残します。</p>
-          <p class="ex">例: 音源 24 個の場面で、ゲームのスレッドにかかる時間は <b>0.52 ms</b>。611 個にしても、遮蔽のレイは <b>0.31 ms</b> で止まります。</p>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <!-- 04 できること：波形の帯 -->
-  <section class="panel light p-skills" id="skills" aria-labelledby="h-skills">
-    <div class="bg"><svg id="band" viewBox="0 0 1600 300" preserveAspectRatio="none" aria-hidden="true"></svg></div>
-    <div class="wrap">
-      <div class="head">
-        <p class="eyebrow"><span class="no">03</span>Skills</p>
-        <h2 id="h-skills">できること</h2>
-        <p class="muted" style="margin-top:8px; font-size:13.5px">（一時的な試し）長い節の吸い付きを試すため、仮の行を 24 行足しています。試し終わったら消します。</p>
-      </div>
-      <dl class="skills">
-        <div class="skill"><dt>C++</dt><dd>音響エンジンを一から書き、DLL としてゲームに載せる<span class="what">Idreal（2026.10〜）</span></dd></div>
-        <div class="skill"><dt>音の信号処理</dt><dd>FDN の残響、HRTF による直接音の定位、帯域ごとのこもり<span class="what">Idreal の残響・遮蔽・定位</span></dd></div>
-        <div class="skill"><dt>室内音響</dt><dd>部屋の形と材質から響きの長さ（RT60）を出す<span class="what">エリアごとの響き、ポータル</span></dd></div>
-        <div class="skill"><dt>Unreal Engine 5.6</dt><dd>自作エンジンを組み込み、レイで空間を測って渡す<span class="what">試聴の場・デモ</span></dd></div>
-        <div class="skill"><dt>Wwise 2025.1</dt><dd>発音とミックスを任せ、エンジンの値を RTPC で受ける<span class="what">試聴の場・デモ</span></dd></div>
-        <div class="skill"><dt>Unity / C#</dt><dd>最初の試作で扉と響きの聞こえ方を確かめた<span class="what">2026.06〜09</span></dd></div>
-
-        <div class="skill"><dt>仮の行 1</dt><dd>長い中身の試し。ここを読み進めてから次の節へ移る時の吸い付きを確かめる<span class="what">試し</span></dd></div>
-        <div class="skill"><dt>仮の行 2</dt><dd>長い中身の試し。ここを読み進めてから次の節へ移る時の吸い付きを確かめる<span class="what">試し</span></dd></div>
-        <div class="skill"><dt>仮の行 3</dt><dd>長い中身の試し。ここを読み進めてから次の節へ移る時の吸い付きを確かめる<span class="what">試し</span></dd></div>
-        <div class="skill"><dt>仮の行 4</dt><dd>長い中身の試し。ここを読み進めてから次の節へ移る時の吸い付きを確かめる<span class="what">試し</span></dd></div>
-        <div class="skill"><dt>仮の行 5</dt><dd>長い中身の試し。ここを読み進めてから次の節へ移る時の吸い付きを確かめる<span class="what">試し</span></dd></div>
-        <div class="skill"><dt>仮の行 6</dt><dd>長い中身の試し。ここを読み進めてから次の節へ移る時の吸い付きを確かめる<span class="what">試し</span></dd></div>
-        <div class="skill"><dt>仮の行 7</dt><dd>長い中身の試し。ここを読み進めてから次の節へ移る時の吸い付きを確かめる<span class="what">試し</span></dd></div>
-        <div class="skill"><dt>仮の行 8</dt><dd>長い中身の試し。ここを読み進めてから次の節へ移る時の吸い付きを確かめる<span class="what">試し</span></dd></div>
-        <div class="skill"><dt>仮の行 9</dt><dd>長い中身の試し。ここを読み進めてから次の節へ移る時の吸い付きを確かめる<span class="what">試し</span></dd></div>
-        <div class="skill"><dt>仮の行 10</dt><dd>長い中身の試し。ここを読み進めてから次の節へ移る時の吸い付きを確かめる<span class="what">試し</span></dd></div>
-        <div class="skill"><dt>仮の行 11</dt><dd>長い中身の試し。ここを読み進めてから次の節へ移る時の吸い付きを確かめる<span class="what">試し</span></dd></div>
-        <div class="skill"><dt>仮の行 12</dt><dd>長い中身の試し。ここを読み進めてから次の節へ移る時の吸い付きを確かめる<span class="what">試し</span></dd></div>
-        <div class="skill"><dt>仮の行 13</dt><dd>長い中身の試し。ここを読み進めてから次の節へ移る時の吸い付きを確かめる<span class="what">試し</span></dd></div>
-        <div class="skill"><dt>仮の行 14</dt><dd>長い中身の試し。ここを読み進めてから次の節へ移る時の吸い付きを確かめる<span class="what">試し</span></dd></div>
-        <div class="skill"><dt>仮の行 15</dt><dd>長い中身の試し。ここを読み進めてから次の節へ移る時の吸い付きを確かめる<span class="what">試し</span></dd></div>
-        <div class="skill"><dt>仮の行 16</dt><dd>長い中身の試し。ここを読み進めてから次の節へ移る時の吸い付きを確かめる<span class="what">試し</span></dd></div>
-        <div class="skill"><dt>仮の行 17</dt><dd>長い中身の試し。ここを読み進めてから次の節へ移る時の吸い付きを確かめる<span class="what">試し</span></dd></div>
-        <div class="skill"><dt>仮の行 18</dt><dd>長い中身の試し。ここを読み進めてから次の節へ移る時の吸い付きを確かめる<span class="what">試し</span></dd></div>
-        <div class="skill"><dt>仮の行 19</dt><dd>長い中身の試し。ここを読み進めてから次の節へ移る時の吸い付きを確かめる<span class="what">試し</span></dd></div>
-        <div class="skill"><dt>仮の行 20</dt><dd>長い中身の試し。ここを読み進めてから次の節へ移る時の吸い付きを確かめる<span class="what">試し</span></dd></div>
-        <div class="skill"><dt>仮の行 21</dt><dd>長い中身の試し。ここを読み進めてから次の節へ移る時の吸い付きを確かめる<span class="what">試し</span></dd></div>
-        <div class="skill"><dt>仮の行 22</dt><dd>長い中身の試し。ここを読み進めてから次の節へ移る時の吸い付きを確かめる<span class="what">試し</span></dd></div>
-        <div class="skill"><dt>仮の行 23</dt><dd>長い中身の試し。ここを読み進めてから次の節へ移る時の吸い付きを確かめる<span class="what">試し</span></dd></div>
-        <div class="skill"><dt>仮の行 24</dt><dd>長い中身の試し。ここを読み進めてから次の節へ移る時の吸い付きを確かめる<span class="what">試し</span></dd></div>
-      </dl>
-    </div>
-  </section>
-
-  <!-- 05 作品 -->
+  <!-- 03 作品 -->
   <section class="panel dark p-works" id="works" aria-labelledby="h-works">
     <div class="bg"></div>
     <div class="wrap">
       <div class="head">
-        <p class="eyebrow"><span class="no">04</span>Works</p>
+        <p class="eyebrow"><span class="no">02</span>Works</p>
         <h2 id="h-works">作品</h2>
         <p class="muted" style="margin-top:8px; font-size:13.5px">準備中です。動画・設計の記録・コードを順に載せます。</p>
       </div>
@@ -423,20 +307,19 @@ button{font:inherit}
     </div>
   </section>
 
-  <!-- 06 連絡先：波紋 -->
+  <!-- 04 連絡先：波紋 -->
   <section class="panel p-contact" id="contact" aria-labelledby="h-contact">
     <div class="bg"></div>
     <div class="wrap">
       <div class="head">
-        <p class="eyebrow"><span class="no">05</span>Contact</p>
+        <p class="eyebrow"><span class="no">03</span>Contact</p>
         <h2 id="h-contact">連絡先</h2>
       </div>
       <dl class="contact">
-        <div class="c-row"><dt>メール</dt><dd id="c-mail"><span class="todo" data-field="mail">未記入</span></dd><button type="button" class="copy" data-copy="c-mail" disabled>コピー</button></div>
-        <div class="c-row"><dt>GitHub</dt><dd id="c-github"><span class="todo" data-field="github">未記入</span></dd><button type="button" class="copy" data-copy="c-github" disabled>コピー</button></div>
-        <div class="c-row"><dt>その他</dt><dd id="c-other"><span class="todo" data-field="other">未記入</span></dd><button type="button" class="copy" data-copy="c-other" disabled>コピー</button></div>
+        <div class="c-row"><dt>メール</dt><dd id="c-mail"><a href="mailto:hiroto.takeuchi1222@gmail.com">hiroto.takeuchi1222@gmail.com</a></dd><button type="button" class="copy" data-copy="c-mail" disabled>コピー</button></div>
+        <div class="c-row"><dt>GitHub</dt><dd id="c-github"><a href="https://github.com/hiro1222" target="_blank" rel="noopener">github.com/hiro1222</a></dd><button type="button" class="copy" data-copy="c-github" data-text="https://github.com/hiro1222" disabled>コピー</button></div>
       </dl>
-      <div class="foot"><span><span class="todo" data-field="name">氏名 未記入</span></span><span>最終更新 <time datetime="2026-11-17">2026.11.17</time></span></div>
+      <div class="foot"><span>竹内寛登</span><span>最終更新 <time datetime="2026-11-17">2026.11.17</time></span></div>
     </div>
   </section>
 </main>
@@ -631,18 +514,6 @@ button{font:inherit}
   document.addEventListener('visibilitychange', function(){ if (document.hidden) stop(); });
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ frame(performance.now() / 1000); });
 
-  // ---- 04 の背景：波形の帯 ----
-  (function(){
-    var svg = document.getElementById('band'), d = '', N = 400;
-    for (var i = 0; i <= N; i++){
-      var x = i / N * 1600, u = i / N;
-      var env = 0.25 + 0.75 * Math.exp(-Math.pow((u - 0.18) / 0.12, 2)) + 0.4 * Math.exp(-u * 3);
-      var y = 150 + 110 * env * (0.6 * Math.sin(u * 160) + 0.3 * Math.sin(u * 410 + 1.3) + 0.1 * Math.sin(u * 970 + .4));
-      d += (i ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1);
-    }
-    svg.innerHTML = '<path d="' + d + '" fill="none" stroke="#1D5C78" stroke-opacity=".12" stroke-width="1.4" vector-effect="non-scaling-stroke"/>';
-  })();
-
   // ---- 開いた時に #名前 があればそこへ ----
   var h = (location.hash || '').slice(1);
   if (h && document.getElementById(h)) setTimeout(function(){ var y = docY(document.getElementById(h)); window.scrollTo(0, y); lastRest = y; }, 50);
@@ -652,7 +523,7 @@ button{font:inherit}
     var target = document.getElementById(b.dataset.copy);
     if (target && !target.querySelector('.todo')) b.disabled = false;
     b.addEventListener('click', function(){
-      var text = target.textContent.trim();
+      var text = b.dataset.text || target.textContent.trim();
       function done(){ var o = b.textContent; b.textContent = 'コピーしました'; setTimeout(function(){ b.textContent = o; }, 1500); }
       function fallback(){ var s = window.getSelection(), rg = document.createRange(); rg.selectNodeContents(target); s.removeAllRanges(); s.addRange(rg); }
       try{ navigator.clipboard.writeText(text).then(done, fallback); }catch(e){ fallback(); }
