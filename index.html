@@ -121,6 +121,19 @@ button{font:inherit}
 .p-top{background:var(--night); color:var(--night-ink)}
 @media (min-width:861px){ .p-top{padding-bottom:96px} }  /* 下の SCROLL と説明文が重ならないように */
 .p-top canvas{width:100%; height:100%; display:block}
+/* 背景の水面の説明と音のボタン。部屋が右にある時（.pond-wide）は部屋の下に固定（位置は JS）、それ以外は説明文の下 */
+.pond-ui{display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px 16px; margin-top:20px}
+.pond-cap{min-width:0; font-family:var(--f-mono); font-size:11.5px; line-height:1.7; letter-spacing:.02em; color:var(--night-muted)}
+.pond-cap .sub{display:block; color:#6C7B86}
+.pond-cap .w{display:none}
+.pond-snd{flex:none; display:inline-flex; align-items:center; gap:7px; padding:5px 14px 5px 11px; border:1px solid #33424D; border-radius:999px; background:rgba(255,255,255,.04); color:var(--night-ink); font-family:var(--f-mono); font-size:12px; letter-spacing:.04em; cursor:pointer}
+.pond-snd svg{width:16px; height:16px}
+.pond-snd .on, .pond-snd[aria-pressed="true"] .off{display:none}
+.pond-snd[aria-pressed="true"] .on{display:block}
+.pond-snd[aria-pressed="true"]{border-color:var(--accent-hi); color:var(--accent-hi); background:rgba(125,184,209,.1)}
+.pond-wide .pond-ui{position:fixed; margin:0; z-index:1}
+.pond-wide .pond-cap .w{display:inline}
+.pond-wide .pond-cap .n{display:none}
 .hero{max-width:36em}
 .hero .kicker{font-family:var(--f-label); font-size:13px; letter-spacing:.22em; text-transform:uppercase; color:var(--accent-hi)}
 .hero h1{font-family:var(--f-display); font-weight:800; font-size:clamp(38px, 5.4vw, 68px); line-height:1.22; letter-spacing:.03em; margin-top:16px}
@@ -424,6 +437,11 @@ button{font:inherit}
           <p class="role">サウンドプログラマー志望 ／ 2028年3月卒業予定</p>
         </div>
         <p class="lead">歩いた先の響き、扉の向こうから漏れる音。プレイヤーの動きに音が空間の手応えで応えると、ゲームはもっと臨場感を持ちます。その仕組みとして、残響・遮蔽・定位を受け持つ音響エンジンを C++ で一から書き、Unreal Engine と Wwise に載せて鳴らしています。</p>
+        <!-- 背景の水面の説明と音のボタン（PC は部屋の下に JS が置く、スマホは説明文の下） -->
+        <div class="pond-ui" id="pond-ui" hidden>
+          <p class="pond-cap"><span class="w">部屋を押すと水滴が落ちます。扉は押すと開け閉め</span><span class="n">背景を押すと水滴が落ちます。扉は押すと開け閉め</span><span class="sub">水面の波紋も部屋の響きも、同じ波の式。この絵はその式をその場で解いています</span></p>
+          <button type="button" class="pond-snd" id="pond-snd" aria-pressed="false"><svg class="off" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M17 9.5l4.5 4.5M21.5 9.5L17 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="on" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16.5 8.8a4.6 4.6 0 0 1 0 6.4M19 6.3a8.2 8.2 0 0 1 0 11.4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>音を出す</button>
+        </div>
       </div>
     </div>
     <a class="cue" href="#profile" data-go="profile">SCROLL</a>
@@ -1122,74 +1140,293 @@ button{font:inherit}
   document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && drawer.classList.contains('open')) closeDrawer(); });
   window.addEventListener('resize', function(){ if (window.innerWidth > 860 && drawer.classList.contains('open')) closeDrawer(false); });
 
-  // ---- 01 の背景：部屋の中を広がる音（壁で跳ね返った波面も、鏡に映した音源で描く） ----
-  var cv = document.getElementById('wave'), g = cv.getContext('2d');
-  var ROOM_M = [8, 5], C_SLOW = 343 / 100;          // 8 m × 5 m、音速の 1/100
-  var PERIOD = 3.6, running = false, t0 = performance.now() / 1000 - 0.9, size = {w:0, h:0, r:null};
-  function layout(){
-    var r = cv.getBoundingClientRect(), dpr = Math.min(window.devicePixelRatio || 1, 2);
-    cv.width = Math.round(r.width * dpr); cv.height = Math.round(r.height * dpr);
-    g.setTransform(dpr, 0, 0, dpr, 0, 0);
-    var W = r.width, H = r.height, narrow = W < 861, rw, rh, rx, ry;
-    // スマホは文章と重ならないように、画面全体に薄く広げた背景にする（点と寸法の文字は出さない）
-    if (narrow){ rx = 16; rw = W - 32; ry = 72; rh = H - ry - 40; }
-    else { rw = Math.min(W * 0.42, H * 0.58 * ROOM_M[0] / ROOM_M[1]); rh = rw * ROOM_M[1] / ROOM_M[0]; rx = W * 0.95 - rw; ry = (H - rh) / 2 + 20; }
-    size = {w: W, h: H, r: {x: rx, y: ry, w: rw, h: rh}, narrow: narrow};
-  }
-  function frame(now){
-    var W = size.w, H = size.h, R = size.r;
-    if (!R || R.w <= 0 || R.h <= 0) return;  // 大きさ 0 の時（隠れたタブなど）は描かない
-    g.clearRect(0, 0, W, H);
-    var pxPerM = R.w / ROOM_M[0], v = C_SLOW * pxPerM;
-    var sx = R.w * 0.7, sy = R.h * 0.58;            // 部屋の中の音源
-    var base = size.narrow ? 0.22 : 0.7;
-    // 部屋の線
-    g.strokeStyle = 'rgba(125,184,209,' + (base * 0.6) + ')'; g.lineWidth = 1;
-    g.strokeRect(Math.round(R.x) + .5, Math.round(R.y) + .5, Math.round(R.w), Math.round(R.h));
-    g.save(); g.beginPath(); g.rect(R.x, R.y, R.w, R.h); g.clip();
-    var t = now - t0;
-    for (var k = 0; k < 3; k++){
-      var age = (t % PERIOD) + k * PERIOD;
-      var rad = v * age, fade = Math.exp(-age / 2.2);
-      if (fade < 0.02) continue;
-      for (var n = -2; n <= 2; n++){
-        for (var m = -2; m <= 2; m++){
-          var order = Math.abs(n) + Math.abs(m);
-          if (order > 2) continue;
-          var px = n * R.w + ((n % 2 + 2) % 2 === 0 ? sx : R.w - sx);
-          var py = m * R.h + ((m % 2 + 2) % 2 === 0 ? sy : R.h - sy);
-          var a = base * fade * Math.pow(0.5, order);
-          if (a < 0.015) continue;
-          g.strokeStyle = 'rgba(150,210,235,' + a.toFixed(3) + ')';
-          g.lineWidth = order === 0 ? 1.6 : 1;
-          g.beginPath(); g.arc(R.x + px, R.y + py, rad, 0, Math.PI * 2); g.stroke();
+  // ---- 01 の背景：扉でつないだ 2 部屋の水面（2 次元の波の式をその場で解く） ----
+  // 押した所に水滴が落ち、波は壁で跳ね返り、扉の隙間から隣の部屋へ回り込んで漏れる（部屋の音の伝わり方と同じ式）。
+  // 減り方は部屋ごと（広い部屋は長く、狭い部屋は短く）。音のボタンを ON にした人だけ「ポチャン」と部屋の響きが鳴る
+  (function(){
+    var sec = document.getElementById('top'), cv = document.getElementById('wave'), g = cv.getContext('2d');
+    var ui = document.getElementById('pond-ui'), sndBtn = document.getElementById('pond-snd');
+    // 部屋（m）：長い向き 9・短い向き 5。仕切りは長い向き 5 m（左 5 m の広い部屋｜右 4 m の狭い部屋）、扉は短い向き 2〜3 m
+    var LM = 9, SM = 5, WALL_A = 5, DOOR_B0 = 2, DOOR_W = 1, OPEN = 80 * Math.PI / 180;
+    // 波の式：C2＝(速さ×時間刻み/マス)^2、NU＝細かい波だけ弱める、SPS＝1 秒の段、RT＝見た目の減り方（広い部屋・狭い部屋、秒）
+    var C2 = 0.45, NU = 0.015, SPS = 120, RT = [6, 3], SIG = 2.4;
+    var size = null, sim = null, running = false, lastT = 0, acc = 0, lastUser = -1e9, nextAuto = 0;
+    var door = {th: OPEN, target: OPEN};
+
+    // 部屋の置き場所：PC は文章の右、狭い画面は画面全体に薄く（縦長なら部屋も縦に）
+    function layout(){
+      var r = cv.getBoundingClientRect(), dpr = Math.min(window.devicePixelRatio || 1, 2);
+      cv.width = Math.round(r.width * dpr); cv.height = Math.round(r.height * dpr);
+      g.setTransform(dpr, 0, 0, dpr, 0, 0);
+      var W = r.width, H = r.height, wide = W >= 861, rx = 0, ry = 0, rw = 0, rh = 0;
+      if (wide){
+        var right = W * 0.95, hr = sec.querySelector('.hero').getBoundingClientRect();
+        rx = Math.max(hr.right + 40, W * 0.5);
+        rw = Math.min(right - rx, H * 0.56 * LM / SM);
+        if (rw < 320) wide = false;
+        else { rx = right - rw; rh = rw * SM / LM; ry = (H - rh) / 2 + 10; }
+      }
+      if (!wide){ rx = 16; rw = W - 32; ry = 72; rh = H - ry - 40; }
+      if (rw <= 0 || rh <= 0){ size = null; return; }
+      var portrait = !wide && rh > rw;
+      var m = Math.min((portrait ? rh : rw) / LM, (portrait ? rw : rh) / SM);
+      var dw = (portrait ? SM : LM) * m, dh = (portrait ? LM : SM) * m;
+      rx += (rw - dw) / 2; ry += (rh - dh) / 2;
+      size = {W: W, H: H, x: rx, y: ry, w: dw, h: dh, m: m, wide: wide, portrait: portrait};
+      sec.classList.toggle('pond-wide', wide);
+      if (wide){ ui.style.left = rx + 'px'; ui.style.top = (ry + dh + 12) + 'px'; ui.style.width = dw + 'px'; }
+      else { ui.style.left = ui.style.top = ui.style.width = ''; }
+      var NL = wide ? 200 : 170, ns = Math.round(NL * SM / LM);
+      var nx = portrait ? ns : NL, ny = portrait ? NL : ns;
+      if (!sim || sim.nx !== nx || sim.ny !== ny || sim.portrait !== portrait) makeSim(nx, ny, portrait);
+    }
+
+    // マスの用意（まわりに 1 マスの壁を付けて、隣を調べる時に端の確認をしない）
+    function makeSim(nx, ny, portrait){
+      var W2 = nx + 2, N = W2 * (ny + 2), dx = LM / Math.max(nx, ny);
+      var s = sim = {nx: nx, ny: ny, W2: W2, N: N, portrait: portrait,
+        u: new Float32Array(N), up: new Float32Array(N), un: new Float32Array(N), lp: new Float32Array(N), ln: new Float32Array(N),
+        base: new Uint8Array(N), wall: new Uint8Array(N), damp: new Float32Array(N), off: document.createElement('canvas')};
+      s.off.width = nx; s.off.height = ny; s.octx = s.off.getContext('2d'); s.img = s.octx.createImageData(nx, ny);
+      s.wa = Math.round(WALL_A / dx); s.d0 = Math.round(DOOR_B0 / dx); s.d1 = Math.round((DOOR_B0 + DOOR_W) / dx);
+      var dA = Math.pow(10, -3 / (RT[0] * SPS)), dB = Math.pow(10, -3 / (RT[1] * SPS));
+      for (var y = 0; y < ny + 2; y++) for (var x = 0; x < W2; x++){
+        var i = y * W2 + x, ga = portrait ? y - 1 : x - 1, gb = portrait ? x - 1 : y - 1;   // ga＝長い向き、gb＝短い向き
+        var border = x === 0 || y === 0 || x === W2 - 1 || y === ny + 1;
+        var inWall = (ga === s.wa || ga === s.wa + 1) && !(gb >= s.d0 && gb < s.d1);
+        s.base[i] = border || inWall ? 1 : 0;
+        s.damp[i] = ga < s.wa ? dA : dB;
+      }
+      applyDoor();
+    }
+    // 扉の板を壁のマスとして描き込む（蝶番は短い向き 2 m の側、狭い部屋の側へ開く）
+    function applyDoor(){
+      var s = sim; if (!s) return;
+      s.wall.set(s.base);
+      var L = s.d1 - s.d0, ah = s.wa + 1, bh = s.d0, ta = ah + L * Math.sin(door.th), tb = bh + L * Math.cos(door.th);
+      var n = Math.ceil(L * 2.5), na = s.portrait ? s.ny : s.nx, nb = s.portrait ? s.nx : s.ny;
+      for (var k = 0; k <= n; k++){
+        var t = k / n, fa = ah + (ta - ah) * t, fb = bh + (tb - bh) * t;
+        for (var ca = Math.floor(fa); ca <= Math.ceil(fa); ca++) for (var cb = Math.floor(fb); cb <= Math.ceil(fb); cb++){
+          if (ca < 0 || cb < 0 || ca >= na || cb >= nb) continue;
+          s.wall[s.portrait ? (ca + 1) * s.W2 + cb + 1 : (cb + 1) * s.W2 + ca + 1] = 1;
         }
       }
+      for (var i = 0; i < s.N; i++) if (s.wall[i]){ s.u[i] = 0; s.up[i] = 0; s.lp[i] = 0; }
     }
-    g.restore();
-    if (size.narrow) return;
-    // 音源の点
-    g.fillStyle = '#D9774C';
-    g.beginPath(); g.arc(R.x + sx, R.y + sy, 3.5, 0, Math.PI * 2); g.fill();
-    // 寸法
-    g.fillStyle = 'rgba(147,161,171,.85)';
-    g.font = '11px "IBM Plex Mono", Consolas, monospace'; g.textBaseline = 'top'; g.textAlign = 'left';
-    g.fillText('8 m × 5 m の部屋 ／ 音速の 1/100 で表示', R.x, R.y + R.h + 8);
-  }
-  function loop(){
-    if (!running) return;
-    frame(performance.now() / 1000);
-    requestAnimationFrame(loop);
-  }
-  function start(){ if (reduce || running) return; running = true; requestAnimationFrame(loop); }
-  function stop(){ running = false; }
-  layout(); frame(performance.now() / 1000);
-  if (window.ResizeObserver) new ResizeObserver(function(){ layout(); frame(performance.now() / 1000); }).observe(cv);
-  if ('IntersectionObserver' in window){
-    new IntersectionObserver(function(es){ es[0].isIntersecting && !document.hidden ? start() : stop(); }).observe(document.getElementById('top'));
-  } else start();
-  document.addEventListener('visibilitychange', function(){ if (document.hidden) stop(); });
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ frame(performance.now() / 1000); });
+    // 1 段進める。壁の隣は自分の値を使う（壁で跳ね返る）
+    function step(){
+      var s = sim, W2 = s.W2, u = s.u, up = s.up, un = s.un, lp = s.lp, ln = s.ln, wall = s.wall, damp = s.damp;
+      for (var y = 1; y <= s.ny; y++){
+        for (var i = y * W2 + 1, end = i + s.nx; i < end; i++){
+          if (wall[i]){ un[i] = 0; ln[i] = 0; continue; }
+          var c = u[i];
+          var l = (wall[i - 1] ? c : u[i - 1]) + (wall[i + 1] ? c : u[i + 1]) + (wall[i - W2] ? c : u[i - W2]) + (wall[i + W2] ? c : u[i + W2]) - 4 * c;
+          un[i] = (2 * c - up[i] + C2 * l + NU * (l - lp[i])) * damp[i];
+          ln[i] = l;
+        }
+      }
+      s.up = u; s.u = un; s.un = up; s.lp = ln; s.ln = lp;
+    }
+    // 画面の (px, py) に水滴。部屋の外なら false
+    function toCell(px, py){
+      var s = sim, R = size; if (!s || !R) return null;
+      var fx = (px - R.x) / R.w * s.nx, fy = (py - R.y) / R.h * s.ny;
+      if (fx < 0 || fy < 0 || fx >= s.nx || fy >= s.ny) return null;
+      return {fx: fx, fy: fy, room: (s.portrait ? fy : fx) < s.wa ? 0 : 1};
+    }
+    function drop(px, py, amp){
+      var c = toCell(px, py), s = sim; if (!c) return null;
+      var rad = Math.ceil(SIG * 3);
+      for (var y = Math.max(0, Math.floor(c.fy - rad)); y < Math.min(s.ny, c.fy + rad); y++)
+        for (var x = Math.max(0, Math.floor(c.fx - rad)); x < Math.min(s.nx, c.fx + rad); x++){
+          var i = (y + 1) * s.W2 + x + 1; if (s.wall[i]) continue;
+          var dx = x + 0.5 - c.fx, dy = y + 0.5 - c.fy, v = amp * Math.exp(-(dx * dx + dy * dy) / (2 * SIG * SIG));
+          s.u[i] += v; s.up[i] += v;
+        }
+      return c;
+    }
+    function autoDrop(){
+      if (!size) return;
+      var inA = Math.random() < 0.7, am = inA ? 0.6 + Math.random() * 3.8 : 5.6 + Math.random() * 2.8, bm = 0.6 + Math.random() * 3.8;
+      var R = size, px = R.x + (R.portrait ? bm : am) * R.m, py = R.y + (R.portrait ? am : bm) * R.m;
+      drop(px, py, 0.8);
+    }
+
+    // 描く：波の傾きで明暗（左上から光が当たった水面）。PC は濃く、狭い画面は文章の後ろなので薄く
+    function render(){
+      var s = sim, R = size; if (!s || !R) return;
+      var d = s.img.data, W2 = s.W2, u = s.u, wall = s.wall, p = 0, k = R.wide ? 1 : 0.42;
+      for (var y = 1; y <= s.ny; y++){
+        for (var i = y * W2 + 1, end = i + s.nx; i < end; i++, p += 4){
+          if (wall[i]){ d[p + 3] = 0; continue; }
+          var c = u[i];
+          var sh = (wall[i - 1] ? c : u[i - 1]) - (wall[i + 1] ? c : u[i + 1]) + (wall[i - W2] ? c : u[i - W2]) - (wall[i + W2] ? c : u[i + W2]);
+          var a = Math.pow(Math.abs(sh) * 7.6, 0.6); if (a > 1) a = 1;
+          if (sh > 0){ d[p] = 190; d[p + 1] = 230; d[p + 2] = 248; d[p + 3] = a * 204 * k; }
+          else { d[p] = 60; d[p + 1] = 120; d[p + 2] = 165; d[p + 3] = a * 163 * k; }
+        }
+      }
+      s.octx.putImageData(s.img, 0, 0);
+      g.clearRect(0, 0, R.W, R.H);
+      g.imageSmoothingEnabled = true;
+      g.drawImage(s.off, R.x, R.y, R.w, R.h);
+      drawRoom(k);
+    }
+    // 部屋の中の (a＝長い向き, b＝短い向き) px を画面へ
+    function P(a, b){ var R = size; return R.portrait ? [R.x + b, R.y + a] : [R.x + a, R.y + b]; }
+    function line(a0, b0, a1, b1){ var p0 = P(a0, b0), p1 = P(a1, b1); g.beginPath(); g.moveTo(p0[0], p0[1]); g.lineTo(p1[0], p1[1]); g.stroke(); }
+    function doorGeom(){
+      var s = sim, R = size, cp = (R.portrait ? R.h : R.w) / (s.portrait ? s.ny : s.nx);
+      var wa = (s.wa + 1) * cp, b0 = s.d0 * cp, b1 = s.d1 * cp, L = b1 - b0;
+      return {cp: cp, wa: wa, b0: b0, b1: b1, L: L, ta: wa + L * Math.sin(door.th), tb: b0 + L * Math.cos(door.th)};
+    }
+    function drawRoom(k){
+      var R = size, d = doorGeom(), sl = R.portrait ? R.w : R.h, ll = R.portrait ? R.h : R.w;
+      g.setLineDash([]);
+      g.strokeStyle = 'rgba(125,184,209,' + (0.45 * k + 0.1) + ')'; g.lineWidth = 1;
+      g.strokeRect(Math.round(R.x) + .5, Math.round(R.y) + .5, Math.round(R.w), Math.round(R.h));
+      g.lineWidth = 2; g.strokeStyle = 'rgba(125,184,209,' + (0.6 * k + 0.1) + ')';
+      line(d.wa, 0, d.wa, d.b0); line(d.wa, d.b1, d.wa, sl);
+      // 扉が動く範囲（点線の弧）と扉の板
+      var h = P(d.wa, d.b0), a0 = R.portrait ? 0 : Math.PI / 2, a1 = R.portrait ? Math.PI / 2 : 0;
+      g.setLineDash([2, 4]); g.lineWidth = 1; g.strokeStyle = 'rgba(217,119,76,' + (0.35 * k + 0.1) + ')';
+      g.beginPath(); g.arc(h[0], h[1], d.L, Math.min(a0, a1), Math.max(a0, a1)); g.stroke();
+      g.setLineDash([]); g.lineWidth = 2.5; g.strokeStyle = 'rgba(217,119,76,' + (0.6 * k + 0.35) + ')';
+      line(d.wa, d.b0, d.ta, d.tb);
+      if (R.wide){
+        g.fillStyle = 'rgba(147,161,171,.75)'; g.font = '11px "IBM Plex Mono", Consolas, monospace'; g.textBaseline = 'top'; g.textAlign = 'left';
+        g.fillText('響き：長い', R.x + 10, R.y + 9);
+        g.fillText('響き：短い', R.x + d.wa + 10, R.y + 9);
+      }
+    }
+    // 扉に当たったか（板の近く、または扉の口）
+    function hitDoor(px, py){
+      var R = size; if (!R || !sim) return false;
+      var d = doorGeom(), a = R.portrait ? py - R.y : px - R.x, b = R.portrait ? px - R.x : py - R.y;
+      var r = Math.max(14, 0.3 * R.m);
+      if (Math.abs(a - d.wa) < r && b > d.b0 - 4 && b < d.b1 + 4) return true;
+      var va = d.ta - d.wa, vb = d.tb - d.b0, t = Math.max(0, Math.min(1, ((a - d.wa) * va + (b - d.b0) * vb) / (va * va + vb * vb)));
+      var ea = a - (d.wa + va * t), eb = b - (d.b0 + vb * t);
+      return ea * ea + eb * eb < r * r;
+    }
+
+    function loop(now){
+      if (!running) return;
+      now /= 1000;
+      var dt = Math.min(0.05, Math.max(0, now - lastT)); lastT = now;
+      if (door.th !== door.target){
+        var dth = 2.6 * dt;
+        door.th = Math.abs(door.target - door.th) <= dth ? door.target : door.th + (door.target > door.th ? dth : -dth);
+        applyDoor();
+      }
+      // 誰も触っていない時は、ときどき自分で水滴を落とす
+      if (now - lastUser > 9 && now > nextAuto){ autoDrop(); nextAuto = now + 3.2 + Math.random() * 1.6; }
+      acc += dt * SPS; var n = Math.min(4, Math.floor(acc)); acc -= n;
+      for (var k = 0; k < n; k++) step();
+      render();
+      requestAnimationFrame(loop);
+    }
+    function start(){ if (reduce || running || !size) return; running = true; lastT = performance.now() / 1000; if (!nextAuto) nextAuto = lastT + 0.4; requestAnimationFrame(loop); }
+    function stop(){ running = false; }
+
+    // ---- 音（ボタンで ON にした人だけ）：水滴はピッチが上がる短い音、響きは部屋ごと（長い 1.3 秒・短い 0.55 秒）。
+    //      鳴った部屋の響きに加えて、扉の開き具合で隣の部屋の響きも少し（閉じていればこもって小さく）
+    var ac = null, master = null, conv = [];
+    function makeIR(rt, pre){
+      var sr = ac.sampleRate, p0 = Math.floor(sr * pre), len = p0 + Math.floor(sr * rt * 1.1), buf = ac.createBuffer(2, len, sr);
+      for (var ch = 0; ch < 2; ch++){
+        var d = buf.getChannelData(ch), y = 0, e = 0, n;
+        for (n = p0; n < len; n++){
+          var t = (n - p0) / sr, lp = 0.85 - 0.6 * Math.min(1, t / rt);   // 後ろほど暗く
+          y += lp * ((Math.random() * 2 - 1) - y);
+          d[n] = y * Math.exp(-6.91 * t / rt); e += d[n] * d[n];
+        }
+        var sc = 1 / Math.sqrt(e || 1); for (n = p0; n < len; n++) d[n] *= sc;   // 左右を同じ強さに
+      }
+      return buf;
+    }
+    function audioInit(){
+      var AC = window.AudioContext || window.webkitAudioContext; if (!AC) return false;
+      try{ if (navigator.audioSession) navigator.audioSession.type = 'playback'; }catch(e){}
+      ac = new AC();
+      master = ac.createGain(); master.gain.value = 0.7;
+      var comp = ac.createDynamicsCompressor(); comp.threshold.value = -14; comp.ratio.value = 4;
+      master.connect(comp); comp.connect(ac.destination);
+      [[1.3, 0.016], [0.55, 0.007]].forEach(function(q){ var c = ac.createConvolver(); c.buffer = makeIR(q[0], q[1]); c.connect(master); conv.push(c); });
+      return true;
+    }
+    function openness(){ return 1 - Math.cos(door.th); }
+    function sends(src, room, own){
+      var op = openness(), mine = ac.createGain(), other = ac.createGain(), lp = ac.createBiquadFilter();
+      mine.gain.value = own; other.gain.value = own * (0.08 + 0.45 * op);
+      lp.type = 'lowpass'; lp.frequency.value = 600 + 7000 * op;
+      src.connect(mine); mine.connect(conv[room]);
+      src.connect(other); other.connect(lp); lp.connect(conv[1 - room]);
+    }
+    function plip(px, room){
+      if (!ac || ac.state !== 'running' || !size) return;
+      var t = ac.currentTime + 0.005, o = ac.createOscillator(), env = ac.createGain(), out = env;
+      var f0 = 380 + Math.random() * 260 + (room ? 160 : 0);
+      o.type = 'sine';
+      o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(f0 * 2.8, t + 0.07);
+      env.gain.setValueAtTime(0.0001, t); env.gain.exponentialRampToValueAtTime(0.55, t + 0.004); env.gain.exponentialRampToValueAtTime(0.0001, t + 0.15);
+      o.connect(env);
+      if (ac.createStereoPanner){ var pan = ac.createStereoPanner(); pan.pan.value = Math.max(-1, Math.min(1, (px - (size.x + size.w / 2)) / (size.w / 2))) * 0.6; env.connect(pan); out = pan; }
+      var dry = ac.createGain(); dry.gain.value = 0.6; out.connect(dry); dry.connect(master);
+      sends(out, room, 0.5);
+      o.start(t); o.stop(t + 0.2);
+    }
+    function knock(){
+      if (!ac || ac.state !== 'running') return;
+      var t = ac.currentTime + 0.005, len = Math.floor(ac.sampleRate * 0.04), b = ac.createBuffer(1, len, ac.sampleRate), d = b.getChannelData(0);
+      for (var n = 0; n < len; n++) d[n] = (Math.random() * 2 - 1) * Math.exp(-n / (len * 0.18));
+      var src = ac.createBufferSource(), bp = ac.createBiquadFilter(), gn = ac.createGain();
+      src.buffer = b; bp.type = 'bandpass'; bp.frequency.value = 520; bp.Q.value = 1.4; gn.gain.value = 0.9;
+      src.connect(bp); bp.connect(gn); gn.connect(master); sends(gn, 1, 0.25);
+      src.start(t);
+    }
+    sndBtn.addEventListener('click', function(){
+      var on = sndBtn.getAttribute('aria-pressed') !== 'true';
+      if (on){ if (!ac && !audioInit()) return; ac.resume(); }
+      else if (ac) ac.suspend();
+      sndBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
+      // ON にした時は 1 滴落として聞かせる
+      if (on && size){
+        var R = size, px = R.x + (R.portrait ? 0.5 : 0.3) * R.w, py = R.y + (R.portrait ? 0.3 : 0.5) * R.h;
+        lastUser = performance.now() / 1000;
+        var c = drop(px, py, 1);
+        setTimeout(function(){ if (c) plip(px, c.room); }, 60);
+      }
+    });
+
+    // 押した所に水滴、扉なら開け閉め（リンクとボタンの上は除く）
+    sec.addEventListener('click', function(e){
+      if (!size || (e.target.closest && e.target.closest('a, button'))) return;
+      var r = cv.getBoundingClientRect(), px = e.clientX - r.left, py = e.clientY - r.top;
+      if (hitDoor(px, py)){
+        door.target = door.target > 0 ? 0 : OPEN;
+        if (reduce || !running){ door.th = door.target; applyDoor(); render(); }
+        knock(); lastUser = performance.now() / 1000; return;
+      }
+      var c = drop(px, py, 1);
+      if (c){ lastUser = performance.now() / 1000; plip(px, c.room); }
+    });
+    // PC で部屋の上なら指のカーソル
+    sec.addEventListener('pointermove', function(e){
+      if (e.pointerType !== 'mouse' || !size || !size.wide) return;
+      var r = cv.getBoundingClientRect(), px = e.clientX - r.left, py = e.clientY - r.top;
+      sec.style.cursor = (px > size.x && px < size.x + size.w && py > size.y && py < size.y + size.h) ? 'pointer' : '';
+    });
+
+    layout(); render(); ui.hidden = false;
+    if (window.ResizeObserver) new ResizeObserver(function(){ layout(); render(); }).observe(cv);
+    if ('IntersectionObserver' in window){
+      new IntersectionObserver(function(es){ es[0].isIntersecting && !document.hidden ? start() : stop(); }).observe(sec);
+    } else start();
+    document.addEventListener('visibilitychange', function(){ if (document.hidden) stop(); else if (sec.getBoundingClientRect().bottom > 0 && sec.getBoundingClientRect().top < window.innerHeight) start(); });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ layout(); render(); });
+  })();
 
   // ---- 好きなゲーム体験：タイルを押すと右（スマホは下）に解説。帯はループする ----
   // タイルは同じ比率で大きさ 3 つ、並べ方は 3 種類。どの作品をどの大きさにするかは開くたびにランダム。
