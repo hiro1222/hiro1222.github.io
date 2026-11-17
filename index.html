@@ -145,7 +145,7 @@ button{font:inherit}
 .name rt{font-family:var(--f-body); font-weight:500; font-size:.32em; letter-spacing:.18em; color:var(--night-muted)}
 .facts{display:grid; grid-template-columns:auto minmax(0,1fr); gap:10px 28px; margin:0}
 .facts dt{font-size:13px; color:var(--night-muted); white-space:nowrap}
-.facts dd{margin:0; min-width:0}
+.facts dd{margin:0; min-width:0; word-break:keep-all; overflow-wrap:anywhere}
 
 /* プロフィールの中の スキル・資格・受賞記録 */
 /* PC: 頭は 名前・志望など が左、写真が右（下の 資格｜受賞記録 の 2 列に揃える）。
@@ -404,7 +404,7 @@ button{font:inherit}
           <p class="name"><ruby>竹内<rt>たけうち</rt></ruby><ruby>寛登<rt>ひろと</rt></ruby></p>
           <dl class="facts">
             <dt>志望</dt><dd>サウンドプログラマー</dd>
-            <dt>所属</dt><dd>HAL大阪 ゲーム4年制学科・ゲーム制作コース</dd>
+            <dt>所属</dt><dd>HAL大阪 ゲーム4年制学科・<wbr>ゲーム制作コース</dd>
             <dt>卒業予定</dt><dd>2028年3月 卒業予定</dd>
           </dl>
         </div>
