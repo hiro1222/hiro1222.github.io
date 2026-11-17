@@ -119,7 +119,13 @@ button{font:inherit}
 
 /* 01 ホーム */
 .p-top{background:var(--night); color:var(--night-ink)}
-.p-top canvas{width:100%; height:100%; display:block}
+/* ホームは 文章｜地図 の 2 列（スマホは文章の下に地図） */
+.hero-grid{display:grid; grid-template-columns:minmax(0,1fr); gap:28px; align-items:center}
+@media (min-width:861px){ .hero-grid{grid-template-columns:minmax(0,1fr) minmax(0,1.05fr); gap:48px} }
+.hero-map{margin:0}
+.hero-map canvas{display:block; width:100%; aspect-ratio:20 / 10.6; cursor:pointer; -webkit-tap-highlight-color:transparent; touch-action:manipulation}
+.hero-map figcaption{margin-top:10px; font-family:var(--f-mono); font-size:11.5px; line-height:1.7; color:var(--night-muted)}
+.hero-map figcaption span{display:block}
 .hero{max-width:36em}
 .hero .kicker{font-family:var(--f-label); font-size:13px; letter-spacing:.22em; text-transform:uppercase; color:var(--accent-hi)}
 .hero h1{font-family:var(--f-display); font-weight:800; font-size:clamp(38px, 5.4vw, 68px); line-height:1.22; letter-spacing:.03em; margin-top:16px}
@@ -323,13 +329,19 @@ button{font:inherit}
 <main>
   <!-- 01 ホーム：タップできる小さな地図（Idreal で計算した響き） -->
   <section class="panel p-top" id="top" aria-label="ホーム">
-    <div class="bg"><canvas id="wave" aria-hidden="true"></canvas></div>
+    <div class="bg"></div>
     <div class="wrap">
+      <div class="hero-grid">
       <div class="hero">
         <p class="kicker">Sound Programmer Portfolio</p>
         <h1><span class="ln">音で、</span><span class="ln">空間を伝える。</span></h1>
         <p class="lead">いまどんな場所にいるのか。扉の向こうに何があるのか。ゲームの中でそれを音で伝える仕組みを作っています。残響・遮蔽・定位を受け持つ音響エンジンを C++ で一から書き、Unreal Engine と Wwise に載せて鳴らしています。</p>
         <p class="lead2">ゲームのサウンドプログラマーを目指しています。</p>
+      </div>
+      <figure class="hero-map">
+        <canvas id="wave" aria-label="小さな地図。押した所に立って鳴らした音の響きが聞こえます"></canvas>
+        <figcaption><span id="map-how">クリックした所に立って「ポーン」と鳴らします（ヘッドホン推奨）</span><span>響きは自作の音響エンジン Idreal で前もって計算した物です。波面は音速の 1/100 で表示</span></figcaption>
+      </figure>
       </div>
     </div>
     <a class="cue" href="#profile" data-go="profile">SCROLL</a>
@@ -804,6 +816,7 @@ button{font:inherit}
   // 地図は 20 m × 10 m、地図の右が +x・下が +y。部屋の中の 1 m おき（壁から 0.5 m）に、そこに立って「ポーン」と鳴らした音を
   // Idreal で書き出してある（audio/idreal/pNN.mp3、Idreal の Projects/tools/portfolio_bake）。聞く人は地図の上を向いている
   var cv = document.getElementById('wave'), g = cv.getContext('2d'), top = document.getElementById('top');
+  if ('ontouchstart' in window) document.getElementById('map-how').textContent = 'タップした所に立って「ポーン」と鳴らします（ヘッドホン推奨）';
   var MAP_W = 20, MAP_H = 10, C_SLOW = 343 / 100;   // 音速の 1/100 で描く
   var ROOMS = [
     {name: '広間', x0: 0, x1: 10, y0: 0, y1: 10, rt: 2.2},
@@ -817,10 +830,8 @@ button{font:inherit}
     var rc = cv.getBoundingClientRect(), dpr = Math.min(window.devicePixelRatio || 1, 2);
     cv.width = Math.round(rc.width * dpr); cv.height = Math.round(rc.height * dpr);
     g.setTransform(dpr, 0, 0, dpr, 0, 0);
-    var W = rc.width, H = rc.height, narrow = W < 861, rw, rh, rx, ry;
-    if (narrow){ rw = W - 32; rh = rw * MAP_H / MAP_W; rx = 16; ry = H - rh - 112; }
-    else { rw = Math.min(W * 0.44, H * 0.62 * MAP_W / MAP_H); rh = rw * MAP_H / MAP_W; rx = W * 0.95 - rw; ry = (H - rh) / 2 + 10; }
-    size = {w: W, h: H, r: {x: rx, y: ry, w: rw, h: rh}, narrow: narrow, k: rw / MAP_W};
+    var W = rc.width, H = rc.height, rw = W - 2, rh = rw * MAP_H / MAP_W;
+    size = {w: W, h: H, r: {x: 1, y: H - rh - 1, w: rw, h: rh}, narrow: window.innerWidth < 861, k: rw / MAP_W};
   }
   function roomAt(mx, my){
     for (var i = 0; i < ROOMS.length; i++){ var r = ROOMS[i]; if (mx >= r.x0 && mx <= r.x1 && my >= r.y0 && my <= r.y1) return r; }
@@ -892,11 +903,6 @@ button{font:inherit}
       pings = pings.filter(function(p){ return drawPing(p, now, base); });
       if (last) dot(last.x, last.y);
     }
-    // 説明
-    g.fillStyle = 'rgba(147,161,171,' + (size.narrow ? .7 : .85) + ')';
-    g.font = '11px "IBM Plex Mono", Consolas, monospace';
-    g.fillText((('ontouchstart' in window) ? 'タップ' : 'クリック') + 'した所に立って「ポーン」と鳴らす（ヘッドホン推奨）', R.x, R.y + R.h + 9);
-    g.fillText('響きは Idreal（自作の音響エンジン）で前もって計算 ／ 音速の 1/100 で表示', R.x, R.y + R.h + 25);
   }
   function loop(){
     if (!running) return;
@@ -936,11 +942,10 @@ button{font:inherit}
   function mapPoint(e){
     var R = size.r;
     if (!R) return null;
-    var mx = (e.clientX - R.x) / size.k, my = (e.clientY - R.y) / size.k, r = roomAt(mx, my);
+    var rc = cv.getBoundingClientRect(), mx = (e.clientX - rc.left - R.x) / size.k, my = (e.clientY - rc.top - R.y) / size.k, r = roomAt(mx, my);
     return r ? {room: r, mx: mx, my: my} : null;
   }
-  top.addEventListener('click', function(e){
-    if (e.target.closest && e.target.closest('a, button')) return;
+  cv.addEventListener('click', function(e){
     var hit = mapPoint(e);
     if (!hit || !ctx()) return;
     var sp = snap(hit.room, hit.mx, hit.my);
@@ -953,7 +958,7 @@ button{font:inherit}
     }, function(){});
     if (reduce) frame(performance.now() / 1000);
   });
-  top.addEventListener('mousemove', function(e){ top.style.cursor = (!(e.target.closest && e.target.closest('a, button')) && mapPoint(e)) ? 'pointer' : ''; });
+  cv.addEventListener('mousemove', function(e){ cv.style.cursor = mapPoint(e) ? 'pointer' : 'default'; });
 
   layout(); frame(performance.now() / 1000);
   if (window.ResizeObserver) new ResizeObserver(function(){ layout(); frame(performance.now() / 1000); }).observe(cv);
