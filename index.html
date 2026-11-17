@@ -925,7 +925,8 @@ button{font:inherit}
     cv.width = Math.round(r.width * dpr); cv.height = Math.round(r.height * dpr);
     g.setTransform(dpr, 0, 0, dpr, 0, 0);
     var W = r.width, H = r.height, narrow = W < 861, rw, rh, rx, ry;
-    if (narrow){ rw = W * 0.86; rh = rw * ROOM_M[1] / ROOM_M[0]; rx = (W - rw) / 2; ry = H - rh - 124; }
+    // スマホは文章と重ならないように、画面全体に薄く広げた背景にする（点と寸法の文字は出さない）
+    if (narrow){ rx = 16; rw = W - 32; ry = 72; rh = H - ry - 40; }
     else { rw = Math.min(W * 0.42, H * 0.58 * ROOM_M[0] / ROOM_M[1]); rh = rw * ROOM_M[1] / ROOM_M[0]; rx = W * 0.95 - rw; ry = (H - rh) / 2 + 20; }
     size = {w: W, h: H, r: {x: rx, y: ry, w: rw, h: rh}, narrow: narrow};
   }
@@ -935,7 +936,7 @@ button{font:inherit}
     g.clearRect(0, 0, W, H);
     var pxPerM = R.w / ROOM_M[0], v = C_SLOW * pxPerM;
     var sx = R.w * 0.7, sy = R.h * 0.58;            // 部屋の中の音源
-    var base = size.narrow ? 0.42 : 0.7;
+    var base = size.narrow ? 0.22 : 0.7;
     // 部屋の線
     g.strokeStyle = 'rgba(125,184,209,' + (base * 0.6) + ')'; g.lineWidth = 1;
     g.strokeRect(Math.round(R.x) + .5, Math.round(R.y) + .5, Math.round(R.w), Math.round(R.h));
@@ -960,11 +961,12 @@ button{font:inherit}
       }
     }
     g.restore();
+    if (size.narrow) return;
     // 音源の点
     g.fillStyle = '#D9774C';
     g.beginPath(); g.arc(R.x + sx, R.y + sy, 3.5, 0, Math.PI * 2); g.fill();
     // 寸法
-    g.fillStyle = 'rgba(147,161,171,' + (size.narrow ? .6 : .85) + ')';
+    g.fillStyle = 'rgba(147,161,171,.85)';
     g.font = '11px "IBM Plex Mono", Consolas, monospace'; g.textBaseline = 'top'; g.textAlign = 'left';
     g.fillText('8 m × 5 m の部屋 ／ 音速の 1/100 で表示', R.x, R.y + R.h + 8);
   }
