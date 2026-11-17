@@ -175,6 +175,9 @@ button{font:inherit}
 }
 .block{margin-top:44px}
 .bh{font-family:var(--f-display); font-weight:800; font-size:22px; letter-spacing:.05em; word-break:keep-all; overflow-wrap:anywhere}
+/* 英語の見出しに添える日本語（上のバーの「ホーム」などと同じ扱い）。スマホは下の行に */
+.bh-sub{display:inline-block; margin-left:14px; font-family:var(--f-body); font-weight:500; font-size:13px; letter-spacing:.08em; color:var(--night-muted); vertical-align:.15em}
+@media (max-width:480px){ .bh-sub{display:block; margin:2px 0 0} }
 .sg{font-size:13px; font-weight:600; color:var(--night-muted); letter-spacing:.08em; margin:20px 0 8px}
 .cards{list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(auto-fill, minmax(230px, 1fr)); gap:10px}
 .card{display:grid; grid-template-columns:34px minmax(0,1fr); column-gap:12px; align-items:center; padding:12px 14px; background:rgba(255,255,255,.045); border:1px solid var(--night-line); border-left:3px solid var(--c); border-radius:3px; min-width:0}
@@ -377,7 +380,7 @@ button{font:inherit}
       <div class="pf-cols">
         <div class="pf-about">
           <div class="block">
-            <h3 class="bh">What I Want to Create</h3>
+            <h3 class="bh">What I Want to Create<span class="bh-sub">どんなものが作りたい？</span></h3>
             <div class="pr-box about-box"><p><span class="todo">準備中</span></p></div>
           </div>
         </div>
