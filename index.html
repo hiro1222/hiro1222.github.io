@@ -119,13 +119,7 @@ button{font:inherit}
 
 /* 01 ホーム */
 .p-top{background:var(--night); color:var(--night-ink)}
-/* ホームは 文章｜地図 の 2 列（スマホは文章の下に地図） */
-.hero-grid{display:grid; grid-template-columns:minmax(0,1fr); gap:28px; align-items:center}
-@media (min-width:861px){ .hero-grid{grid-template-columns:minmax(0,1fr) minmax(0,1.05fr); gap:48px} }
-.hero-map{margin:0}
-.hero-map canvas{display:block; width:100%; aspect-ratio:20 / 10.6; cursor:pointer; -webkit-tap-highlight-color:transparent; touch-action:manipulation}
-.hero-map figcaption{margin-top:10px; font-family:var(--f-mono); font-size:11.5px; line-height:1.7; color:var(--night-muted)}
-.hero-map figcaption span{display:block}
+.p-top canvas{width:100%; height:100%; display:block}
 .hero{max-width:36em}
 .hero .kicker{font-family:var(--f-label); font-size:13px; letter-spacing:.22em; text-transform:uppercase; color:var(--accent-hi)}
 .hero h1{font-family:var(--f-display); font-weight:800; font-size:clamp(38px, 5.4vw, 68px); line-height:1.22; letter-spacing:.03em; margin-top:16px}
@@ -278,7 +272,6 @@ button{font:inherit}
   .logo .who{font-size:17px}
   .panel{padding-top:calc(env(safe-area-inset-top, 0px) + var(--bar) + 32px); padding-bottom:48px}
   .head{margin-bottom:26px}
-  .p-top .cue{display:none}  /* スマホは地図の説明と重なるので出さない */
 }
 @media (max-width:480px){
   .c-row{grid-template-columns:minmax(0,1fr) auto}
@@ -328,21 +321,15 @@ button{font:inherit}
 </aside>
 
 <main>
-  <!-- 01 ホーム：タップできる小さな地図（Idreal で計算した響き） -->
+  <!-- 01 ホーム：部屋の中を音が広がる -->
   <section class="panel p-top" id="top" aria-label="ホーム">
-    <div class="bg"></div>
+    <div class="bg"><canvas id="wave" aria-hidden="true"></canvas></div>
     <div class="wrap">
-      <div class="hero-grid">
       <div class="hero">
         <p class="kicker">Sound Programmer Portfolio</p>
         <h1><span class="ln">音で、</span><span class="ln">空間を伝える。</span></h1>
         <p class="lead">いまどんな場所にいるのか。扉の向こうに何があるのか。ゲームの中でそれを音で伝える仕組みを作っています。残響・遮蔽・定位を受け持つ音響エンジンを C++ で一から書き、Unreal Engine と Wwise に載せて鳴らしています。</p>
         <p class="lead2">ゲームのサウンドプログラマーを目指しています。</p>
-      </div>
-      <figure class="hero-map">
-        <canvas id="wave" aria-label="小さな地図。押した所に立って鳴らした音の響きが聞こえます"></canvas>
-        <figcaption><span id="map-how">クリックした所に立って「ポーン」と鳴らします（ヘッドホン推奨）</span><span>響きは自作の音響エンジン Idreal で前もって計算した物です。波面は音速の 1/100 で表示</span></figcaption>
-      </figure>
       </div>
     </div>
     <a class="cue" href="#profile" data-go="profile">SCROLL</a>
@@ -813,107 +800,57 @@ button{font:inherit}
   document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && drawer.classList.contains('open')) closeDrawer(); });
   window.addEventListener('resize', function(){ if (window.innerWidth > 860 && drawer.classList.contains('open')) closeDrawer(false); });
 
-  // ---- 01 の背景：タップできる小さな地図（Idreal で前もって計算した響きを鳴らす） ----
-  // 地図は 20 m × 10 m、地図の右が +x・下が +y。部屋の中の 1 m おき（壁から 0.5 m）に、そこに立って「ポーン」と鳴らした音を
-  // Idreal で書き出してある（audio/idreal/pNN.mp3、Idreal の Projects/tools/portfolio_bake）。聞く人は地図の上を向いている
-  var cv = document.getElementById('wave'), g = cv.getContext('2d'), top = document.getElementById('top');
-  if ('ontouchstart' in window) document.getElementById('map-how').textContent = 'タップした所に立って「ポーン」と鳴らします（ヘッドホン推奨）';
-  var MAP_W = 20, MAP_H = 10, C_SLOW = 343 / 100;   // 音速の 1/100 で描く
-  var ROOMS = [
-    {name: '広間', x0: 0, x1: 10, y0: 0, y1: 10, rt: 2.2},
-    {name: '廊下', x0: 10, x1: 16, y0: 4, y1: 6, rt: 1.1},
-    {name: '小部屋', x0: 16, x1: 20, y0: 3, y1: 7, rt: 0.45}
-  ];
-  var OPENINGS = [{x: 10, y0: 4, y1: 6}, {x: 16, y0: 4, y1: 6}];
-  (function(){ var off = 0; ROOMS.forEach(function(r){ r.nx = r.x1 - r.x0; r.ny = r.y1 - r.y0; r.off = off; off += r.nx * r.ny; }); })();
-  var running = false, size = {w: 0, h: 0, r: null}, pings = [], touched = false, last = null, idleT0 = performance.now() / 1000 - 1.2;
+  // ---- 01 の背景：部屋の中を広がる音（壁で跳ね返った波面も、鏡に映した音源で描く） ----
+  var cv = document.getElementById('wave'), g = cv.getContext('2d');
+  var ROOM_M = [8, 5], C_SLOW = 343 / 100;          // 8 m × 5 m、音速の 1/100
+  var PERIOD = 3.6, running = false, t0 = performance.now() / 1000 - 0.9, size = {w:0, h:0, r:null};
   function layout(){
-    var rc = cv.getBoundingClientRect(), dpr = Math.min(window.devicePixelRatio || 1, 2);
-    cv.width = Math.round(rc.width * dpr); cv.height = Math.round(rc.height * dpr);
+    var r = cv.getBoundingClientRect(), dpr = Math.min(window.devicePixelRatio || 1, 2);
+    cv.width = Math.round(r.width * dpr); cv.height = Math.round(r.height * dpr);
     g.setTransform(dpr, 0, 0, dpr, 0, 0);
-    var W = rc.width, H = rc.height, rw = W - 2, rh = rw * MAP_H / MAP_W;
-    size = {w: W, h: H, r: {x: 1, y: H - rh - 1, w: rw, h: rh}, narrow: window.innerWidth < 861, k: rw / MAP_W};
+    var W = r.width, H = r.height, narrow = W < 861, rw, rh, rx, ry;
+    if (narrow){ rw = W * 0.86; rh = rw * ROOM_M[1] / ROOM_M[0]; rx = (W - rw) / 2; ry = H - rh - 124; }
+    else { rw = Math.min(W * 0.42, H * 0.58 * ROOM_M[0] / ROOM_M[1]); rh = rw * ROOM_M[1] / ROOM_M[0]; rx = W * 0.95 - rw; ry = (H - rh) / 2 + 20; }
+    size = {w: W, h: H, r: {x: rx, y: ry, w: rw, h: rh}, narrow: narrow};
   }
-  function roomAt(mx, my){
-    for (var i = 0; i < ROOMS.length; i++){ var r = ROOMS[i]; if (mx >= r.x0 && mx <= r.x1 && my >= r.y0 && my <= r.y1) return r; }
-    return null;
-  }
-  // その部屋の一番近い点（書き出した点）と、その音の名前
-  function snap(r, mx, my){
-    var i = Math.max(0, Math.min(r.nx - 1, Math.floor(mx - r.x0))), j = Math.max(0, Math.min(r.ny - 1, Math.floor(my - r.y0)));
-    var n = r.off + i * r.ny + j;
-    return {x: r.x0 + i + 0.5, y: r.y0 + j + 0.5, id: 'p' + (n < 10 ? '0' + n : n)};
-  }
-  function wallPath(){
-    var R = size.r, k = size.k;
-    ROOMS.forEach(function(r){ g.strokeRect(Math.round(R.x + r.x0 * k) + .5, Math.round(R.y + r.y0 * k) + .5, Math.round((r.x1 - r.x0) * k), Math.round((r.y1 - r.y0) * k)); });
-    OPENINGS.forEach(function(o){ g.clearRect(R.x + o.x * k - 3, R.y + o.y0 * k + 1.5, 6, (o.y1 - o.y0) * k - 3); });
-  }
-  // 1 回のポーンの波面（壁で跳ね返った分は鏡に映した音源で、2 回まで）。薄れ方は部屋の RT60（60 dB 下がるまで）
-  function drawPing(p, now, base){
-    var R = size.r, k = size.k, r = p.room, age = now - p.t, v = C_SLOW * k;
-    if (age < 0) return true;
-    var fade = Math.pow(10, -3 * age / r.rt) * Math.exp(-age / 3);
-    if (fade < 0.015) return false;
-    var rx = R.x + r.x0 * k, ry = R.y + r.y0 * k, rw = (r.x1 - r.x0) * k, rh = (r.y1 - r.y0) * k, sx = (p.x - r.x0) * k, sy = (p.y - r.y0) * k;
-    g.save(); g.beginPath(); g.rect(rx, ry, rw, rh); g.clip();
-    for (var n = -2; n <= 2; n++){
-      for (var m = -2; m <= 2; m++){
-        var order = Math.abs(n) + Math.abs(m);
-        if (order > 2) continue;
-        var px = n * rw + ((n % 2 + 2) % 2 === 0 ? sx : rw - sx), py = m * rh + ((m % 2 + 2) % 2 === 0 ? sy : rh - sy);
-        var a = base * fade * Math.pow(0.5, order);
-        if (a < 0.012) continue;
-        g.strokeStyle = 'rgba(150,210,235,' + a.toFixed(3) + ')'; g.lineWidth = order === 0 ? 1.6 : 1;
-        g.beginPath(); g.arc(rx + px, ry + py, v * age, 0, Math.PI * 2); g.stroke();
+  function frame(now){
+    var W = size.w, H = size.h, R = size.r;
+    if (!R) return;
+    g.clearRect(0, 0, W, H);
+    var pxPerM = R.w / ROOM_M[0], v = C_SLOW * pxPerM;
+    var sx = R.w * 0.7, sy = R.h * 0.58;            // 部屋の中の音源
+    var base = size.narrow ? 0.42 : 0.7;
+    // 部屋の線
+    g.strokeStyle = 'rgba(125,184,209,' + (base * 0.6) + ')'; g.lineWidth = 1;
+    g.strokeRect(Math.round(R.x) + .5, Math.round(R.y) + .5, Math.round(R.w), Math.round(R.h));
+    g.save(); g.beginPath(); g.rect(R.x, R.y, R.w, R.h); g.clip();
+    var t = now - t0;
+    for (var k = 0; k < 3; k++){
+      var age = (t % PERIOD) + k * PERIOD;
+      var rad = v * age, fade = Math.exp(-age / 2.2);
+      if (fade < 0.02) continue;
+      for (var n = -2; n <= 2; n++){
+        for (var m = -2; m <= 2; m++){
+          var order = Math.abs(n) + Math.abs(m);
+          if (order > 2) continue;
+          var px = n * R.w + ((n % 2 + 2) % 2 === 0 ? sx : R.w - sx);
+          var py = m * R.h + ((m % 2 + 2) % 2 === 0 ? sy : R.h - sy);
+          var a = base * fade * Math.pow(0.5, order);
+          if (a < 0.015) continue;
+          g.strokeStyle = 'rgba(150,210,235,' + a.toFixed(3) + ')';
+          g.lineWidth = order === 0 ? 1.6 : 1;
+          g.beginPath(); g.arc(R.x + px, R.y + py, rad, 0, Math.PI * 2); g.stroke();
+        }
       }
     }
     g.restore();
-    return true;
-  }
-  // 聞く人（＝鳴らす所）の点と、向いている向き（地図の上）
-  function dot(mx, my){
-    var R = size.r, k = size.k, x = R.x + mx * k, y = R.y + my * k;
+    // 音源の点
     g.fillStyle = '#D9774C';
-    g.beginPath(); g.arc(x, y, 3.5, 0, Math.PI * 2); g.fill();
-    g.beginPath(); g.moveTo(x, y - 11); g.lineTo(x - 4, y - 6); g.lineTo(x + 4, y - 6); g.closePath(); g.fill();
-  }
-  function frame(now){
-    var W = size.w, H = size.h, R = size.r, k = size.k;
-    if (!R) return;
-    g.clearRect(0, 0, W, H);
-    var base = size.narrow ? 0.5 : 0.75;
-    // 部屋の床と壁、口
-    g.fillStyle = 'rgba(125,184,209,0.035)';
-    ROOMS.forEach(function(r){ g.fillRect(R.x + r.x0 * k, R.y + r.y0 * k, (r.x1 - r.x0) * k, (r.y1 - r.y0) * k); });
-    g.strokeStyle = 'rgba(125,184,209,' + (base * 0.7) + ')'; g.lineWidth = 1;
-    wallPath();
-    // 鳴らせる点（うすく）
-    g.fillStyle = 'rgba(125,184,209,0.22)';
-    ROOMS.forEach(function(r){ for (var i = 0; i < r.nx; i++) for (var j = 0; j < r.ny; j++) g.fillRect(R.x + (r.x0 + i + 0.5) * k - 0.75, R.y + (r.y0 + j + 0.5) * k - 0.75, 1.5, 1.5); });
-    // 部屋の名前と響きの長さ
-    g.fillStyle = 'rgba(147,161,171,' + (size.narrow ? .75 : .9) + ')';
-    g.font = '10.5px "IBM Plex Mono", Consolas, monospace'; g.textBaseline = 'top'; g.textAlign = 'left';
-    // 部屋の中に入りきらない名前は部屋の上に（右端からはみ出すなら右にそろえる）
-    ROOMS.forEach(function(r){
-      var label = r.name + ' ' + r.rt + 's', tw = g.measureText(label).width, left = R.x + r.x0 * k, right = R.x + r.x1 * k;
-      if (tw <= right - left - 10){ g.textAlign = 'left'; g.textBaseline = 'top'; g.fillText(label, left + 6, R.y + r.y0 * k + 5); }
-      else {
-        g.textBaseline = 'bottom';
-        if (left + tw > size.w - 1){ g.textAlign = 'right'; g.fillText(label, right, R.y + r.y0 * k - 4); }
-        else { g.textAlign = 'left'; g.fillText(label, left, R.y + r.y0 * k - 4); }
-      }
-    });
-    g.textAlign = 'left'; g.textBaseline = 'top';
-    // 波面：触る前は広間で音なしの見本、触った後はタップした所
-    if (!touched){
-      var per = 3.6, age = (now - idleT0) % per;
-      drawPing({room: ROOMS[0], x: 6.5, y: 5.5, t: now - age}, now, base * 0.8);
-      dot(6.5, 5.5);
-    } else {
-      pings = pings.filter(function(p){ return drawPing(p, now, base); });
-      if (last) dot(last.x, last.y);
-    }
+    g.beginPath(); g.arc(R.x + sx, R.y + sy, 3.5, 0, Math.PI * 2); g.fill();
+    // 寸法
+    g.fillStyle = 'rgba(147,161,171,' + (size.narrow ? .6 : .85) + ')';
+    g.font = '11px "IBM Plex Mono", Consolas, monospace'; g.textBaseline = 'top'; g.textAlign = 'left';
+    g.fillText('8 m × 5 m の部屋 ／ 音速の 1/100 で表示', R.x, R.y + R.h + 8);
   }
   function loop(){
     if (!running) return;
@@ -922,59 +859,10 @@ button{font:inherit}
   }
   function start(){ if (reduce || running) return; running = true; requestAnimationFrame(loop); }
   function stop(){ running = false; }
-
-  // 音：最初のタップで AudioContext を作り、点ごとの mp3 を取ってきて鳴らす（一度取った物は覚えておく）
-  var actx = null, bufs = {}, voices = [];
-  function ctx(){
-    if (!actx){
-      var AC = window.AudioContext || window.webkitAudioContext;
-      if (!AC) return null;
-      try{ if (navigator.audioSession) navigator.audioSession.type = 'playback'; }catch(e){}  // iPhone のマナーモードでも鳴るように
-      actx = new AC();
-    }
-    if (actx.state === 'suspended') actx.resume();
-    return actx;
-  }
-  function load(id){
-    if (bufs[id]) return bufs[id];
-    var c = ctx();
-    bufs[id] = fetch('audio/idreal/' + id + '.mp3').then(function(r){ if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); })
-      .then(function(ab){ return new Promise(function(ok, ng){ var p = c.decodeAudioData(ab, ok, ng); if (p && p.then) p.then(ok, ng); }); })
-      .catch(function(e){ delete bufs[id]; throw e; });
-    return bufs[id];
-  }
-  function play(buf){
-    var c = ctx(), s = c.createBufferSource(), gn = c.createGain();
-    s.buffer = buf; gn.gain.value = 0.9; s.connect(gn); gn.connect(c.destination); s.start();
-    voices.push(s);
-    s.onended = function(){ voices = voices.filter(function(v){ return v !== s; }); };
-    while (voices.length > 4){ try{ voices.shift().stop(); }catch(e){} }
-  }
-  function mapPoint(e){
-    var R = size.r;
-    if (!R) return null;
-    var rc = cv.getBoundingClientRect(), mx = (e.clientX - rc.left - R.x) / size.k, my = (e.clientY - rc.top - R.y) / size.k, r = roomAt(mx, my);
-    return r ? {room: r, mx: mx, my: my} : null;
-  }
-  cv.addEventListener('click', function(e){
-    var hit = mapPoint(e);
-    if (!hit || !ctx()) return;
-    var sp = snap(hit.room, hit.mx, hit.my);
-    touched = true; last = {x: sp.x, y: sp.y};
-    load(sp.id).then(function(buf){
-      play(buf);
-      pings.push({room: hit.room, x: sp.x, y: sp.y, t: performance.now() / 1000});
-      while (pings.length > 4) pings.shift();
-      if (reduce) frame(performance.now() / 1000);
-    }, function(){});
-    if (reduce) frame(performance.now() / 1000);
-  });
-  cv.addEventListener('mousemove', function(e){ cv.style.cursor = mapPoint(e) ? 'pointer' : 'default'; });
-
   layout(); frame(performance.now() / 1000);
   if (window.ResizeObserver) new ResizeObserver(function(){ layout(); frame(performance.now() / 1000); }).observe(cv);
   if ('IntersectionObserver' in window){
-    new IntersectionObserver(function(es){ es[0].isIntersecting && !document.hidden ? start() : stop(); }).observe(top);
+    new IntersectionObserver(function(es){ es[0].isIntersecting && !document.hidden ? start() : stop(); }).observe(document.getElementById('top'));
   } else start();
   document.addEventListener('visibilitychange', function(){ if (document.hidden) stop(); });
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ frame(performance.now() / 1000); });
