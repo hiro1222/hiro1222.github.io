@@ -95,14 +95,16 @@ button{font:inherit}
 
 /* ---------- 節（全画面） ---------- */
 .panel{
-  position:relative; isolation:isolate; overflow:hidden;
+  position:relative; isolation:isolate;
+  clip-path:inset(0);                 /* 中の固定の背景を、この節の範囲だけ見せる */
   min-height:100vh; min-height:100svh;
   display:flex; align-items:center;
   scroll-snap-align:start;
   padding-top:calc(env(safe-area-inset-top, 0px) + var(--bar) + 40px);
   padding-bottom:56px;
 }
-.bg{position:absolute; inset:0; z-index:-1; pointer-events:none}
+/* 背景は画面に固定した 1 枚。節の範囲だけ見えるので、節の境目が来ると次の背景に入れ替わる */
+.bg{position:fixed; inset:0; z-index:-1; pointer-events:none}
 .eyebrow{font-family:var(--f-label); font-size:13px; letter-spacing:.2em; text-transform:uppercase; display:flex; gap:12px; align-items:center}
 .eyebrow .no{font-variant-numeric:tabular-nums}
 .eyebrow .no::after{content:""; display:inline-block; width:28px; height:1px; background:currentColor; vertical-align:middle; margin-left:12px; opacity:.6}
