@@ -150,13 +150,14 @@ button{font:inherit}
 .facts dt{font-size:13px; color:var(--paper-muted); white-space:nowrap}
 .facts dd{margin:0; min-width:0}
 
-/* プロフィールの中の 使える技術・資格 */
-/* 名前・学部・卒業予定を縦に。PC は右に写真（下のスキル／資格の 2 列と揃える）、スマホは写真が上 */
+/* プロフィールの中の スキル・資格・受賞記録 */
+/* PC は 3 列（スキル／資格／受賞記録）。頭の行もこの 3 列に乗せて、写真は受賞記録の列の上 */
 .who-block{display:grid; grid-template-columns:minmax(0,1fr); gap:24px; margin-bottom:8px}
 .who-text{display:flex; flex-direction:column; gap:16px; min-width:0}
 .who-block .name{margin:0}
 @media (min-width:1024px){
-  .who-block{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); grid-template-areas:"text photos"; gap:0 48px; align-items:center}
+  .who-block, .pf-cols{grid-template-columns:minmax(0,.78fr) minmax(0,1fr) minmax(0,1.22fr); column-gap:36px}
+  .who-block{grid-template-areas:"text text photos"; row-gap:0; align-items:center}
   .who-text{grid-area:text}
   .who-block .photos{grid-area:photos}
 }
@@ -166,14 +167,18 @@ button{font:inherit}
 .photos .ph-bass{flex:.8 1 0}
 .photos .ph-kyudo{flex:.4918 1 0}
 @media (max-width:767px){ .photos{width:100%; max-width:400px} }
-.pf-cols{display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); gap:0 48px; align-items:start}
+.pf-cols{display:grid; grid-template-columns:minmax(0,1fr); align-items:start}
 @media (min-width:1024px){
-  .pf-cols .cards{grid-template-columns:repeat(3, minmax(0,1fr)); gap:8px}
-  .pf-cols .card{padding:10px 12px}
+  /* スキルは 1 列に縦に詰める：アイコン・名前・年数を 1 行に */
+  .pf-cols .cards{grid-template-columns:minmax(0,1fr); gap:6px}
+  .pf-cols .card{grid-template-columns:26px minmax(0,1fr) auto; column-gap:10px; padding:7px 12px}
+  .pf-cols .card .ic{grid-row:auto; width:26px; height:26px}
+  .pf-cols .card .ic svg{width:22px; height:22px}
+  .pf-cols .card .ic.txt{font-size:11px}
+  .pf-cols .card.noyr .nm{grid-row:auto}
   .pf-cols .block{margin-top:32px}
   .pf-cols .sg{margin:14px 0 6px}
 }
-@media (max-width:1023px){ .pf-cols{grid-template-columns:minmax(0,1fr)} }
 .block{margin-top:44px}
 .bh{font-family:var(--f-display); font-weight:800; font-size:22px; letter-spacing:.05em; word-break:keep-all; overflow-wrap:anywhere}
 .sg{font-size:13px; font-weight:600; color:var(--paper-muted); letter-spacing:.08em; margin:20px 0 8px}
@@ -330,7 +335,7 @@ button{font:inherit}
         </div>
       </div>
       <div class="pf-cols">
-        <div class="pf-left">
+        <div class="pf-skill">
           <div class="block">
             <h3 class="bh">スキル</h3>
             <p class="sg">ゲームエンジン</p>
@@ -356,7 +361,7 @@ button{font:inherit}
             </ul>
           </div>
         </div>
-        <div class="pf-right">
+        <div class="pf-lic">
           <div class="block">
             <h3 class="bh">資格</h3>
             <div class="lic-box">
@@ -369,6 +374,8 @@ button{font:inherit}
               </ul>
             </div>
           </div>
+        </div>
+        <div class="pf-aw">
           <div class="block">
             <h3 class="bh">受賞記録</h3>
             <div class="lic-box">
