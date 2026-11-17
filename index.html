@@ -243,6 +243,13 @@ button{font:inherit}
 .w-pts p{font-size:13px; color:var(--night-muted); line-height:1.7; margin-top:2px}
 .w-more{display:inline-block; margin-top:28px; padding:9px 36px; border:1px solid var(--wa); border-radius:3px; color:var(--wa); font-family:var(--f-label); font-size:13px; letter-spacing:.22em; text-decoration:none}
 .w-more[aria-disabled="true"]{opacity:.45; cursor:default}
+/* 01 開発環境・02 担当（人数・期間・担当の表）は横いっぱい、03・04 こだわりは半分ずつ */
+.w-pts li.wide{grid-column:1 / -1}
+.w-facts{margin:6px 0 0}
+.w-facts div{display:grid; grid-template-columns:3.6em minmax(0,1fr); column-gap:14px; padding:7px 0; border-bottom:1px solid var(--night-line)}
+.w-facts div:last-child{border-bottom:0}
+.w-facts dt{font-size:13px; font-weight:700; color:var(--wa); letter-spacing:.04em}
+.w-facts dd{margin:0; font-size:14px; line-height:1.7; color:#D5DCE1}
 /* PC の作品（基本の指定より後ろに置く：同じ強さだと後ろが勝つ） */
 @media (min-width:1024px){
   /* 画像を左へ寄せて大きく：作品の枠だけ横幅いっぱい（端は画面の 3.5%） */
@@ -264,6 +271,8 @@ button{font:inherit}
   .w-ic{width:46px; height:46px; font-size:15px}
   .w-pts h4{font-size:18px}
   .w-pts p{font-size:15.5px; line-height:1.85; margin-top:4px}
+  .w-facts dt{font-size:14px}
+  .w-facts dd{font-size:15.5px}
   .w-more{display:block; width:fit-content; margin:clamp(32px, 6vh, 68px) auto 0; padding:15px 68px; font-size:16px; letter-spacing:.26em}  /* 右へ寄せて（注目点の真ん中）・離して・大きく */
 }
 @media (max-width:480px){ .w-pts{grid-template-columns:minmax(0,1fr); gap:16px} }
@@ -532,8 +541,8 @@ button{font:inherit}
             <h3>プロジェクト注目点</h3>
           </div>
           <ul class="w-pts">
-              <li><span class="w-ic" aria-hidden="true">01</span><h4>開発環境</h4><p>C++（Visual Studio 2022）／Unreal Engine 5.6／Wwise 2025.1</p></li>
-              <li><span class="w-ic" aria-hidden="true">02</span><h4>担当箇所・<wbr>チーム規模</h4><p>個人制作<br><span class="todo">担当箇所は準備中</span></p></li>
+              <li class="wide"><span class="w-ic" aria-hidden="true">01</span><h4>開発環境</h4><p>C++（Visual Studio 2022）／Unreal Engine 5.6／Wwise 2025.1</p></li>
+              <li class="wide"><span class="w-ic" aria-hidden="true">02</span><h4>担当箇所・<wbr>チーム規模</h4><dl class="w-facts"><div><dt>人数</dt><dd>個人</dd></div><div><dt>期間</dt><dd>2026年7月〜制作中</dd></div><div><dt>担当</dt><dd>すべて</dd></div></dl></li>
               <li><span class="w-ic" aria-hidden="true">03</span><h4><span class="todo">こだわり 1（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
               <li><span class="w-ic" aria-hidden="true">04</span><h4><span class="todo">こだわり 2（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
           </ul>
@@ -557,8 +566,8 @@ button{font:inherit}
             <h3>プロジェクト注目点</h3>
           </div>
           <ul class="w-pts">
-              <li><span class="w-ic" aria-hidden="true">01</span><h4>開発環境</h4><p>Unreal Engine 5.6／Wwise 2025.1／自作の音響エンジン IdReal</p></li>
-              <li><span class="w-ic" aria-hidden="true">02</span><h4>担当箇所・<wbr>チーム規模</h4><p>個人制作<br><span class="todo">担当箇所は準備中</span></p></li>
+              <li class="wide"><span class="w-ic" aria-hidden="true">01</span><h4>開発環境</h4><p>Unreal Engine 5.6／Wwise 2025.1／自作の音響エンジン IdReal</p></li>
+              <li class="wide"><span class="w-ic" aria-hidden="true">02</span><h4>担当箇所・<wbr>チーム規模</h4><dl class="w-facts"><div><dt>人数</dt><dd>個人</dd></div><div><dt>期間</dt><dd><span class="todo">準備中</span></dd></div><div><dt>担当</dt><dd>すべて</dd></div></dl></li>
               <li><span class="w-ic" aria-hidden="true">03</span><h4><span class="todo">こだわり 1（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
               <li><span class="w-ic" aria-hidden="true">04</span><h4><span class="todo">こだわり 2（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
           </ul>
@@ -582,8 +591,8 @@ button{font:inherit}
             <h3>プロジェクト注目点</h3>
           </div>
           <ul class="w-pts">
-              <li><span class="w-ic" aria-hidden="true">01</span><h4>開発環境</h4><p><span class="todo">準備中</span></p></li>
-              <li><span class="w-ic" aria-hidden="true">02</span><h4>担当箇所・<wbr>チーム規模</h4><p>チーム制作・<wbr>サブリーダー<br><span class="todo">担当箇所は準備中</span></p></li>
+              <li class="wide"><span class="w-ic" aria-hidden="true">01</span><h4>開発環境</h4><p><span class="todo">準備中</span></p></li>
+              <li class="wide"><span class="w-ic" aria-hidden="true">02</span><h4>担当箇所・<wbr>チーム規模</h4><dl class="w-facts"><div><dt>人数</dt><dd>5人</dd></div><div><dt>期間</dt><dd>2026年7月27日〜29日（3日）、以降も継続開発</dd></div><div><dt>担当</dt><dd>サブリーダー、進捗管理、ネットワーク基盤設計、サウンド設計・実装</dd></div></dl></li>
               <li><span class="w-ic" aria-hidden="true">03</span><h4><span class="todo">こだわり 1（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
               <li><span class="w-ic" aria-hidden="true">04</span><h4><span class="todo">こだわり 2（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
           </ul>
@@ -607,8 +616,8 @@ button{font:inherit}
             <h3>プロジェクト注目点</h3>
           </div>
           <ul class="w-pts">
-              <li><span class="w-ic" aria-hidden="true">01</span><h4>開発環境</h4><p><span class="todo">準備中</span></p></li>
-              <li><span class="w-ic" aria-hidden="true">02</span><h4>担当箇所・<wbr>チーム規模</h4><p>チーム制作・<wbr>リーダー<br><span class="todo">担当箇所は準備中</span></p></li>
+              <li class="wide"><span class="w-ic" aria-hidden="true">01</span><h4>開発環境</h4><p><span class="todo">準備中</span></p></li>
+              <li class="wide"><span class="w-ic" aria-hidden="true">02</span><h4>担当箇所・<wbr>チーム規模</h4><dl class="w-facts"><div><dt>人数</dt><dd><span class="todo">準備中</span></dd></div><div><dt>期間</dt><dd><span class="todo">準備中</span></dd></div><div><dt>担当</dt><dd>リーダー、<span class="todo">ほかは準備中</span></dd></div></dl></li>
               <li><span class="w-ic" aria-hidden="true">03</span><h4><span class="todo">こだわり 1（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
               <li><span class="w-ic" aria-hidden="true">04</span><h4><span class="todo">こだわり 2（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
           </ul>
@@ -632,8 +641,8 @@ button{font:inherit}
             <h3>プロジェクト注目点</h3>
           </div>
           <ul class="w-pts">
-              <li><span class="w-ic" aria-hidden="true">01</span><h4>開発環境</h4><p><span class="todo">準備中</span></p></li>
-              <li><span class="w-ic" aria-hidden="true">02</span><h4>担当箇所・<wbr>チーム規模</h4><p>個人制作<br><span class="todo">担当箇所は準備中</span></p></li>
+              <li class="wide"><span class="w-ic" aria-hidden="true">01</span><h4>開発環境</h4><p><span class="todo">準備中</span></p></li>
+              <li class="wide"><span class="w-ic" aria-hidden="true">02</span><h4>担当箇所・<wbr>チーム規模</h4><dl class="w-facts"><div><dt>人数</dt><dd>個人</dd></div><div><dt>期間</dt><dd><span class="todo">準備中</span></dd></div><div><dt>担当</dt><dd>すべて</dd></div></dl></li>
               <li><span class="w-ic" aria-hidden="true">03</span><h4><span class="todo">こだわり 1（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
               <li><span class="w-ic" aria-hidden="true">04</span><h4><span class="todo">こだわり 2（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
           </ul>
@@ -657,8 +666,8 @@ button{font:inherit}
             <h3>プロジェクト注目点</h3>
           </div>
           <ul class="w-pts">
-              <li><span class="w-ic" aria-hidden="true">01</span><h4>開発環境</h4><p><span class="todo">準備中</span></p></li>
-              <li><span class="w-ic" aria-hidden="true">02</span><h4>担当箇所・<wbr>チーム規模</h4><p>サウンド面で協力<br><span class="todo">担当箇所は準備中</span></p></li>
+              <li class="wide"><span class="w-ic" aria-hidden="true">01</span><h4>開発環境</h4><p><span class="todo">準備中</span></p></li>
+              <li class="wide"><span class="w-ic" aria-hidden="true">02</span><h4>担当箇所・<wbr>チーム規模</h4><dl class="w-facts"><div><dt>人数</dt><dd><span class="todo">準備中</span></dd></div><div><dt>期間</dt><dd><span class="todo">準備中</span></dd></div><div><dt>担当</dt><dd>サウンド面で協力、<span class="todo">詳しくは準備中</span></dd></div></dl></li>
               <li><span class="w-ic" aria-hidden="true">03</span><h4><span class="todo">こだわり 1（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
               <li><span class="w-ic" aria-hidden="true">04</span><h4><span class="todo">こだわり 2（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
           </ul>
@@ -682,8 +691,8 @@ button{font:inherit}
             <h3>プロジェクト注目点</h3>
           </div>
           <ul class="w-pts">
-              <li><span class="w-ic" aria-hidden="true">01</span><h4>開発環境</h4><p><span class="todo">準備中</span></p></li>
-              <li><span class="w-ic" aria-hidden="true">02</span><h4>担当箇所・<wbr>チーム規模</h4><p>サウンド面で協力<br><span class="todo">担当箇所は準備中</span></p></li>
+              <li class="wide"><span class="w-ic" aria-hidden="true">01</span><h4>開発環境</h4><p><span class="todo">準備中</span></p></li>
+              <li class="wide"><span class="w-ic" aria-hidden="true">02</span><h4>担当箇所・<wbr>チーム規模</h4><dl class="w-facts"><div><dt>人数</dt><dd><span class="todo">準備中</span></dd></div><div><dt>期間</dt><dd><span class="todo">準備中</span></dd></div><div><dt>担当</dt><dd>サウンド面で協力、<span class="todo">詳しくは準備中</span></dd></div></dl></li>
               <li><span class="w-ic" aria-hidden="true">03</span><h4><span class="todo">こだわり 1（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
               <li><span class="w-ic" aria-hidden="true">04</span><h4><span class="todo">こだわり 2（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
           </ul>
