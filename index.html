@@ -612,14 +612,27 @@ button{font:inherit}
   // 止まる位置を BACK だけ通り過ぎたら戻す。それ以外（節の途中）は止まった所のまま
   var SNAP_AHEAD = 0.4, SNAP_BACK = 0.1, SNAP_IDLE = 200;
   var anim = null, lastRest = window.scrollY, touching = false, idleTimer = 0;
+  // ホイールの慣性：目盛りぶんの行き先へ、すっと減速しながら近づく（GLIDE_TAU 秒で残りが 1/e。マウスの目盛りは GLIDE_MUL 倍進む）
+  var GLIDE_TAU = 0.14, GLIDE_MUL = 1.2;
+  var glide = {on: false, cur: 0, tgt: 0, last: 0};
   function docY(el){ return el.getBoundingClientRect().top + window.scrollY; }
   function maxY(){ return document.documentElement.scrollHeight - window.innerHeight; }
   function easeInOut(t){ return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
   function easeOut(t){ return 1 - Math.pow(1 - t, 3); }
   function stopAnim(){ anim = null; }
+  function stopAll(){ anim = null; glide.on = false; }
+  function glideStep(now){
+    if (!glide.on) return;
+    var dt = Math.min(0.05, Math.max(0, (now - glide.last) / 1000));
+    glide.last = now;
+    glide.cur += (glide.tgt - glide.cur) * (1 - Math.exp(-dt / GLIDE_TAU));
+    if (Math.abs(glide.tgt - glide.cur) < 0.5){ glide.cur = glide.tgt; glide.on = false; }
+    window.scrollTo(0, glide.cur);
+    if (glide.on) requestAnimationFrame(glideStep);
+  }
   function animateTo(y, dur, ease){
     y = Math.max(0, Math.min(maxY(), Math.round(y)));
-    stopAnim();
+    stopAll();
     if (reduce || Math.abs(y - window.scrollY) < 2){ window.scrollTo(0, y); lastRest = y; return; }
     var y0 = window.scrollY, t0 = performance.now(), me = {};
     anim = me;
@@ -644,7 +657,7 @@ button{font:inherit}
     return {list: list, free: free};
   }
   function settle(){
-    if (anim || touching || reduce) return;
+    if (anim || glide.on || touching || reduce) return;
     var y = window.scrollY, vh = window.innerHeight, st = stops(), i;
     for (i = 0; i < st.free.length; i++){
       if (y > st.free[i][0] + 2 && y < st.free[i][1] - 2){ lastRest = y; return; }
@@ -672,14 +685,29 @@ button{font:inherit}
     clearTimeout(idleTimer);
     idleTimer = setTimeout(settle, SNAP_IDLE);
   }, {passive: true});
-  window.addEventListener('wheel', function(){ stopAnim(); }, {passive: true});
-  window.addEventListener('touchstart', function(){ touching = true; stopAnim(); }, {passive: true});
+  window.addEventListener('wheel', function(e){
+    stopAnim();
+    // 拡大縮小・横のスクロール・サイドバーの中・動きを減らす設定 はブラウザに任せる
+    if (reduce || e.ctrlKey || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+    if (e.target.closest && e.target.closest('#drawer')) return;
+    var dy = e.deltaY * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? window.innerHeight : 1);
+    e.preventDefault();
+    if (!glide.on){
+      glide.cur = glide.tgt = window.scrollY;
+      glide.last = performance.now();
+      glide.on = true;
+      requestAnimationFrame(glideStep);
+    }
+    // マウスの目盛り（大きい差分）は少し多めに進める。タッチパッドの細かい差分はそのまま
+    glide.tgt = Math.max(0, Math.min(maxY(), glide.tgt + dy * (Math.abs(dy) >= 50 ? GLIDE_MUL : 1)));
+  }, {passive: false});
+  window.addEventListener('touchstart', function(){ touching = true; stopAll(); }, {passive: true});
   window.addEventListener('touchend', function(){ touching = false; clearTimeout(idleTimer); idleTimer = setTimeout(settle, SNAP_IDLE); }, {passive: true});
   window.addEventListener('touchcancel', function(){ touching = false; }, {passive: true});
   window.addEventListener('keydown', function(e){
-    if (['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End', ' '].indexOf(e.key) >= 0) stopAnim();
+    if (['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End', ' '].indexOf(e.key) >= 0) stopAll();
   });
-  window.addEventListener('pointerdown', function(e){ if (e.pointerType === 'mouse') stopAnim(); });
+  window.addEventListener('pointerdown', function(e){ if (e.pointerType === 'mouse') stopAll(); });
 
   // ---- 押したらその節までスクロール ----
   function go(id){
