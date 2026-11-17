@@ -243,6 +243,11 @@ button{font:inherit}
 .w-pts p{font-size:13px; color:var(--night-muted); line-height:1.7; margin-top:2px}
 .w-more{display:inline-block; margin-top:28px; padding:9px 36px; border:1px solid var(--wa); border-radius:3px; color:var(--wa); font-family:var(--f-label); font-size:13px; letter-spacing:.22em; text-decoration:none}
 .w-more[aria-disabled="true"]{opacity:.45; cursor:default}
+/* 制作中の印（題の横、点がゆっくり明滅） */
+.w-wip{display:inline-flex; align-items:center; gap:7px; margin-left:16px; padding:3px 12px 3px 10px; border:1px solid var(--wa); border-radius:999px; color:var(--wa); font-family:var(--f-body); font-weight:700; font-size:13px; letter-spacing:.12em; line-height:1.5; vertical-align:middle; white-space:nowrap; transform:translateY(-.12em)}
+.w-wip::before{content:""; width:7px; height:7px; border-radius:50%; background:currentColor; animation:wip 1.8s ease-in-out infinite}
+@keyframes wip{50%{opacity:.2}}
+@media (prefers-reduced-motion: reduce){ .w-wip::before{animation:none} }
 /* 作品の概要の表（人数・期間・担当・環境）。注目点の見出しのすぐ下、こだわり 2 つの上 */
 .w-facts{margin:14px 0 0}
 .w-facts div{display:grid; grid-template-columns:3.6em minmax(0,1fr); column-gap:14px; padding:7px 0; border-bottom:1px solid var(--night-line)}
@@ -272,11 +277,12 @@ button{font:inherit}
   .w-pts p{font-size:15.5px; line-height:1.85; margin-top:4px}
   .w-facts dt{font-size:14px}
   .w-facts dd{font-size:15.5px}
+  .w-wip{font-size:14px}
   .w-more{display:block; width:fit-content; margin:clamp(32px, 6vh, 68px) auto 0; padding:15px 68px; font-size:16px; letter-spacing:.26em}  /* 右へ寄せて（注目点の真ん中）・離して・大きく */
 }
 @media (max-width:480px){ .w-pts{grid-template-columns:minmax(0,1fr); gap:16px} }
 
-/* 02 の続き：ゲームでの好きな体験。左にスクショのモザイク（3 段、横に流す）、右に解説。--fc は選んだ 1 本の色。
+/* 02 の続き：好きなゲーム体験。左にスクショのモザイク（3 段、横に流す）、右に解説。--fc は選んだ 1 本の色。
    背景は選んだ 1 本の色のにじみ、画像があればそれをぼかして暗くした物 */
 .p-fav{background:var(--black)}
 .p-fav .bg{background:radial-gradient(ellipse 55% 60% at 30% 55%, color-mix(in srgb, var(--fc, #7DB8D1) 16%, transparent), transparent 70%), var(--black)}
@@ -302,7 +308,6 @@ button{font:inherit}
 .fav-ctrl{display:flex; align-items:center; gap:10px; margin-top:12px}
 .fav-arrow{flex:none; width:40px; height:40px; display:grid; place-items:center; border:1px solid var(--night-line); border-radius:50%; background:rgba(255,255,255,.04); color:var(--night-ink); cursor:pointer}
 .fav-arrow svg{width:18px; height:18px}
-.fav-arrow:disabled{opacity:.3; cursor:default}
 .fav-hint{margin-left:6px; font-size:12.5px; color:var(--night-muted)}
 .fav-hint .sp{display:none}
 @media (max-width:860px){ .fav-hint .pc{display:none} .fav-hint .sp{display:inline} }
@@ -573,7 +578,7 @@ button{font:inherit}
     </div>
   </section>
 
-  <!-- 02 の続き：ゲームでの好きな体験。左にスクショのモザイク（横に流す）、押すと右（スマホは下）に解説。
+  <!-- 02 の続き：好きなゲーム体験。左にスクショのモザイク（横に流す、ループする）、押すと右（スマホは下）に解説。
        1 本 = li 1 つ。場所は style の grid-area（行 / 列 / 縦の数 / 横の数、3 段）、色は --fc。
        画像は .fav-tile の中に img（自分で撮ったスクショ）、解説は .fav-info の中（押すと右の欄へ写す） -->
   <section class="panel dark p-fav" id="fav" data-nav="profile" aria-labelledby="h-fav">
@@ -581,14 +586,14 @@ button{font:inherit}
     <div class="wrap">
       <div class="fav-head">
         <p class="eyebrow"><span class="no">01</span>Favorite Games</p>
-        <h2 id="h-fav">ゲームでの好きな体験</h2>
+        <h2 id="h-fav">好きなゲーム体験</h2>
       </div>
       <div class="fav-grid">
         <div class="fav-left">
           <div class="fav-strip" id="fav-strip">
             <ul class="fav-tiles">
               <li style="grid-area:1/1/span 2/span 2; --fc:#5E8FB0">
-                <button type="button" class="fav-tile" aria-controls="fav-detail" aria-pressed="false" aria-label="好きな体験 01（準備中）"><span class="fav-tag">01</span><span class="fav-ph" aria-hidden="true">SCREENSHOT</span></button>
+                <button type="button" class="fav-tile" aria-controls="fav-detail" aria-pressed="false" aria-label="好きなゲーム体験 01（準備中）"><span class="fav-tag">01</span><span class="fav-ph" aria-hidden="true">SCREENSHOT</span></button>
                 <div class="fav-info" hidden>
                   <h3 class="fav-title"><span class="todo">ゲーム名（準備中）</span></h3>
                   <p class="fav-scene"><span class="todo">場面（準備中）</span></p>
@@ -602,7 +607,7 @@ button{font:inherit}
                 </div>
               </li>
               <li style="grid-area:3/1/span 1/span 2; --fc:#B07A5E">
-                <button type="button" class="fav-tile" aria-controls="fav-detail" aria-pressed="false" aria-label="好きな体験 02（準備中）"><span class="fav-tag">02</span><span class="fav-ph" aria-hidden="true">SCREENSHOT</span></button>
+                <button type="button" class="fav-tile" aria-controls="fav-detail" aria-pressed="false" aria-label="好きなゲーム体験 02（準備中）"><span class="fav-tag">02</span><span class="fav-ph" aria-hidden="true">SCREENSHOT</span></button>
                 <div class="fav-info" hidden>
                   <h3 class="fav-title"><span class="todo">ゲーム名（準備中）</span></h3>
                   <p class="fav-scene"><span class="todo">場面（準備中）</span></p>
@@ -616,7 +621,7 @@ button{font:inherit}
                 </div>
               </li>
               <li style="grid-area:1/3/span 1/span 1; --fc:#8A7BB8">
-                <button type="button" class="fav-tile" aria-controls="fav-detail" aria-pressed="false" aria-label="好きな体験 03（準備中）"><span class="fav-tag">03</span><span class="fav-ph" aria-hidden="true">SCREENSHOT</span></button>
+                <button type="button" class="fav-tile" aria-controls="fav-detail" aria-pressed="false" aria-label="好きなゲーム体験 03（準備中）"><span class="fav-tag">03</span><span class="fav-ph" aria-hidden="true">SCREENSHOT</span></button>
                 <div class="fav-info" hidden>
                   <h3 class="fav-title"><span class="todo">ゲーム名（準備中）</span></h3>
                   <p class="fav-scene"><span class="todo">場面（準備中）</span></p>
@@ -630,7 +635,7 @@ button{font:inherit}
                 </div>
               </li>
               <li style="grid-area:2/3/span 2/span 1; --fc:#6FA287">
-                <button type="button" class="fav-tile" aria-controls="fav-detail" aria-pressed="false" aria-label="好きな体験 04（準備中）"><span class="fav-tag">04</span><span class="fav-ph" aria-hidden="true">SCREENSHOT</span></button>
+                <button type="button" class="fav-tile" aria-controls="fav-detail" aria-pressed="false" aria-label="好きなゲーム体験 04（準備中）"><span class="fav-tag">04</span><span class="fav-ph" aria-hidden="true">SCREENSHOT</span></button>
                 <div class="fav-info" hidden>
                   <h3 class="fav-title"><span class="todo">ゲーム名（準備中）</span></h3>
                   <p class="fav-scene"><span class="todo">場面（準備中）</span></p>
@@ -644,7 +649,7 @@ button{font:inherit}
                 </div>
               </li>
               <li style="grid-area:1/4/span 1/span 2; --fc:#B8A05E">
-                <button type="button" class="fav-tile" aria-controls="fav-detail" aria-pressed="false" aria-label="好きな体験 05（準備中）"><span class="fav-tag">05</span><span class="fav-ph" aria-hidden="true">SCREENSHOT</span></button>
+                <button type="button" class="fav-tile" aria-controls="fav-detail" aria-pressed="false" aria-label="好きなゲーム体験 05（準備中）"><span class="fav-tag">05</span><span class="fav-ph" aria-hidden="true">SCREENSHOT</span></button>
                 <div class="fav-info" hidden>
                   <h3 class="fav-title"><span class="todo">ゲーム名（準備中）</span></h3>
                   <p class="fav-scene"><span class="todo">場面（準備中）</span></p>
@@ -658,7 +663,7 @@ button{font:inherit}
                 </div>
               </li>
               <li style="grid-area:2/4/span 1/span 1; --fc:#B06A84">
-                <button type="button" class="fav-tile" aria-controls="fav-detail" aria-pressed="false" aria-label="好きな体験 06（準備中）"><span class="fav-tag">06</span><span class="fav-ph" aria-hidden="true">SCREENSHOT</span></button>
+                <button type="button" class="fav-tile" aria-controls="fav-detail" aria-pressed="false" aria-label="好きなゲーム体験 06（準備中）"><span class="fav-tag">06</span><span class="fav-ph" aria-hidden="true">SCREENSHOT</span></button>
                 <div class="fav-info" hidden>
                   <h3 class="fav-title"><span class="todo">ゲーム名（準備中）</span></h3>
                   <p class="fav-scene"><span class="todo">場面（準備中）</span></p>
@@ -672,7 +677,7 @@ button{font:inherit}
                 </div>
               </li>
               <li style="grid-area:2/5/span 1/span 1; --fc:#5EA6A2">
-                <button type="button" class="fav-tile" aria-controls="fav-detail" aria-pressed="false" aria-label="好きな体験 07（準備中）"><span class="fav-tag">07</span><span class="fav-ph" aria-hidden="true">SCREENSHOT</span></button>
+                <button type="button" class="fav-tile" aria-controls="fav-detail" aria-pressed="false" aria-label="好きなゲーム体験 07（準備中）"><span class="fav-tag">07</span><span class="fav-ph" aria-hidden="true">SCREENSHOT</span></button>
                 <div class="fav-info" hidden>
                   <h3 class="fav-title"><span class="todo">ゲーム名（準備中）</span></h3>
                   <p class="fav-scene"><span class="todo">場面（準備中）</span></p>
@@ -686,7 +691,7 @@ button{font:inherit}
                 </div>
               </li>
               <li style="grid-area:3/4/span 1/span 2; --fc:#9A8F7E">
-                <button type="button" class="fav-tile" aria-controls="fav-detail" aria-pressed="false" aria-label="好きな体験 08（準備中）"><span class="fav-tag">08</span><span class="fav-ph" aria-hidden="true">SCREENSHOT</span></button>
+                <button type="button" class="fav-tile" aria-controls="fav-detail" aria-pressed="false" aria-label="好きなゲーム体験 08（準備中）"><span class="fav-tag">08</span><span class="fav-ph" aria-hidden="true">SCREENSHOT</span></button>
                 <div class="fav-info" hidden>
                   <h3 class="fav-title"><span class="todo">ゲーム名（準備中）</span></h3>
                   <p class="fav-scene"><span class="todo">場面（準備中）</span></p>
@@ -700,7 +705,7 @@ button{font:inherit}
                 </div>
               </li>
               <li style="grid-area:1/6/span 2/span 2; --fc:#7F96C8">
-                <button type="button" class="fav-tile" aria-controls="fav-detail" aria-pressed="false" aria-label="好きな体験 09（準備中）"><span class="fav-tag">09</span><span class="fav-ph" aria-hidden="true">SCREENSHOT</span></button>
+                <button type="button" class="fav-tile" aria-controls="fav-detail" aria-pressed="false" aria-label="好きなゲーム体験 09（準備中）"><span class="fav-tag">09</span><span class="fav-ph" aria-hidden="true">SCREENSHOT</span></button>
                 <div class="fav-info" hidden>
                   <h3 class="fav-title"><span class="todo">ゲーム名（準備中）</span></h3>
                   <p class="fav-scene"><span class="todo">場面（準備中）</span></p>
@@ -714,7 +719,7 @@ button{font:inherit}
                 </div>
               </li>
               <li style="grid-area:3/6/span 1/span 2; --fc:#C08A5A">
-                <button type="button" class="fav-tile" aria-controls="fav-detail" aria-pressed="false" aria-label="好きな体験 10（準備中）"><span class="fav-tag">10</span><span class="fav-ph" aria-hidden="true">SCREENSHOT</span></button>
+                <button type="button" class="fav-tile" aria-controls="fav-detail" aria-pressed="false" aria-label="好きなゲーム体験 10（準備中）"><span class="fav-tag">10</span><span class="fav-ph" aria-hidden="true">SCREENSHOT</span></button>
                 <div class="fav-info" hidden>
                   <h3 class="fav-title"><span class="todo">ゲーム名（準備中）</span></h3>
                   <p class="fav-scene"><span class="todo">場面（準備中）</span></p>
@@ -750,10 +755,10 @@ button{font:inherit}
       <div class="w-grid">
         <div class="w-head">
           <p class="eyebrow"><span class="no">02</span>Works <span class="w-idx">01 / 07</span></p>
-          <h2 id="w1-title">IdReal</h2>
+          <h2 id="w1-title">IdReal<span class="w-wip">制作中</span></h2>
           <p class="w-lead">自作の音響エンジン。部屋ごとの残響、遮蔽、直接音の定位。</p>
         </div>
-        <div class="w-shot"><img src="img/works/idreal.jpg" width="1400" height="838" alt="IdReal のデバッグ表示（耳のまわりのレイと部屋の地図）" decoding="async"></div>
+        <div class="w-shot" style="aspect-ratio:1400/691"><img src="img/works/idreal.jpg?v=2" width="1400" height="691" alt="IdReal のデバッグ表示（今いるエリアの響きの値と、耳から出る 16 本のレイを描いた部屋の地図）" decoding="async"></div>
         <div class="w-detail">
           <div class="w-pts-head">
             <h3>プロジェクト注目点</h3>
@@ -774,10 +779,10 @@ button{font:inherit}
       <div class="w-grid">
         <div class="w-head">
           <p class="eyebrow"><span class="no">02</span>Works <span class="w-idx">02 / 07</span></p>
-          <h2 id="w2-title">探索型ホラーゲーム</h2>
+          <h2 id="w2-title">探索型ホラーゲーム<span class="w-wip">制作中</span></h2>
           <p class="w-lead">足音と響きで怖さを伝える探索ゲーム。Unreal Engine 5.6 ＋ Wwise。</p>
         </div>
-        <div class="w-shot">画像 準備中</div>
+        <div class="w-shot"><img src="img/works/horror.jpg" width="1400" height="788" alt="探索型ホラーゲームの画面（懐中電灯で照らした暗い部屋、隅に人形、奥に扉）" decoding="async"></div>
         <div class="w-detail">
           <div class="w-pts-head">
             <h3>プロジェクト注目点</h3>
@@ -870,7 +875,7 @@ button{font:inherit}
       <div class="w-grid">
         <div class="w-head">
           <p class="eyebrow"><span class="no">02</span>Works <span class="w-idx">06 / 07</span></p>
-          <h2 id="w6-title">友人作品A</h2>
+          <h2 id="w6-title">友人作品A<span class="w-wip">制作中</span></h2>
           <p class="w-lead"><span class="todo">準備中</span></p>
         </div>
         <div class="w-shot">画像 準備中</div>
@@ -894,7 +899,7 @@ button{font:inherit}
       <div class="w-grid">
         <div class="w-head">
           <p class="eyebrow"><span class="no">02</span>Works <span class="w-idx">07 / 07</span></p>
-          <h2 id="w7-title">友人作品B</h2>
+          <h2 id="w7-title">友人作品B<span class="w-wip">制作中</span></h2>
           <p class="w-lead"><span class="todo">準備中</span></p>
         </div>
         <div class="w-shot">画像 準備中</div>
@@ -1185,18 +1190,50 @@ button{font:inherit}
   document.addEventListener('visibilitychange', function(){ if (document.hidden) stop(); });
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ frame(performance.now() / 1000); });
 
-  // ---- 好きな体験：タイルを押すと右（スマホは下）に解説。横はドラッグ・← → でも動く ----
-  // 縦のホイールは今までどおり次の節へ（横のスクロールだけブラウザに任せている）
+  // ---- 好きなゲーム体験：タイルを押すと右（スマホは下）に解説。帯はループする ----
+  // 同じ 1 組（li の並び）を 5 組並べて真ん中の組（元の li）を見せ、端へ寄ったら 1 組ぶん戻す（見た目が同じなので継ぎ目は見えない）。
+  // 横はタッチパッド・ドラッグ・← →。縦のホイールは今までどおり次の節へ
   (function(){
     var sec = document.getElementById('fav');
     if (!sec) return;
-    var strip = document.getElementById('fav-strip');
-    var items = Array.prototype.slice.call(sec.querySelectorAll('.fav-tiles > li'));
+    var strip = document.getElementById('fav-strip'), list = strip.querySelector('.fav-tiles');
+    var items = Array.prototype.slice.call(list.children);
     var noEl = sec.querySelector('.fav-no'), body = sec.querySelector('.fav-body'), arrows = sec.querySelectorAll('.fav-arrow');
-    var dragging = false, dragMoved = false, dragX = 0, dragL = 0;
+    var COPIES = 5, MID = 2, cols = 0, copies = [];
+    var base = items.map(function(li){ return parseInt(li.style.gridColumnStart, 10) || 1; });
+    items.forEach(function(li, i){ cols = Math.max(cols, base[i] + (parseInt((li.style.gridColumnEnd || '').replace('span', ''), 10) || 1) - 1); });
+    // 組を作る（真ん中は元の li、ほかは写し：読み上げ・Tab の対象にしない）
+    for (var k = 0; k < COPIES; k++){
+      copies.push(items.map(function(li, i){
+        var c = li;
+        if (k !== MID){
+          c = li.cloneNode(true);
+          c.setAttribute('aria-hidden', 'true');
+          c.querySelector('.fav-tile').setAttribute('tabindex', '-1');
+          var inf = c.querySelector('.fav-info'); if (inf) inf.parentNode.removeChild(inf);
+        }
+        c.style.gridColumnStart = String(base[i] + cols * k);
+        return c;
+      }));
+    }
+    var pre = document.createDocumentFragment(), post = document.createDocumentFragment();
+    copies.forEach(function(set, k){ if (k !== MID) set.forEach(function(c){ (k < MID ? pre : post).appendChild(c); }); });
+    list.insertBefore(pre, list.firstChild); list.appendChild(post);
+
+    var dragging = false, dragMoved = false, dragX = 0, dragL = 0, touching = false, glideAnim = null, idle = 0;
+    function setW(){ return copies[1][0].offsetLeft - copies[0][0].offsetLeft; }
+    // 今の位置が lo〜hi 組の外なら 1 組ずつ戻す。戻した量を返す
+    function wrap(lo, hi){
+      var W = setW(); if (W <= 0) return 0;
+      var x = strip.scrollLeft, d = 0;
+      while (x + d < W * lo) d += W;
+      while (x + d > W * hi) d -= W;
+      if (d) strip.scrollLeft = x + d;
+      return d;
+    }
     function pad(n){ return (n < 10 ? '0' : '') + n; }
     function select(i){
-      items.forEach(function(li, k){ li.querySelector('.fav-tile').setAttribute('aria-pressed', k === i ? 'true' : 'false'); });
+      copies.forEach(function(set){ set.forEach(function(li, j){ li.querySelector('.fav-tile').setAttribute('aria-pressed', j === i ? 'true' : 'false'); }); });
       var li = items[i], info = li.querySelector('.fav-info'), img = li.querySelector('.fav-tile img');
       body.innerHTML = info ? info.innerHTML : '';
       noEl.textContent = pad(i + 1) + ' / ' + pad(items.length);
@@ -1204,46 +1241,70 @@ button{font:inherit}
       if (img){ sec.style.setProperty('--shot', 'url("' + img.getAttribute('src') + '")'); sec.classList.add('has-shot'); }
       else sec.classList.remove('has-shot');
     }
+    copies.forEach(function(set){
+      set.forEach(function(li, i){
+        li.querySelector('.fav-tile').addEventListener('click', function(e){ if (dragMoved){ e.preventDefault(); return; } select(i); });
+      });
+    });
+    // ← → キーで隣の 1 本へ（端からは反対の端へ）
     items.forEach(function(li, i){
-      var b = li.querySelector('.fav-tile');
-      b.addEventListener('click', function(e){ if (dragMoved){ e.preventDefault(); return; } select(i); });
-      // ← → で隣の 1 本へ
-      b.addEventListener('keydown', function(e){
+      li.querySelector('.fav-tile').addEventListener('keydown', function(e){
         if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
-        var j = i + (e.key === 'ArrowRight' ? 1 : -1);
-        if (j < 0 || j >= items.length) return;
         e.preventDefault();
+        var j = (i + (e.key === 'ArrowRight' ? 1 : -1) + items.length) % items.length;
         items[j].querySelector('.fav-tile').focus();
         select(j);
       });
     });
-    function upd(){
-      var m = strip.scrollWidth - strip.clientWidth;
-      arrows[0].disabled = strip.scrollLeft <= 2;
-      arrows[1].disabled = strip.scrollLeft >= m - 2;
+    // ← → のボタン：0.8 画面ぶん滑らせる（途中で継ぎ目を越えたら行き先ごと 1 組戻す）
+    function glide(dist){
+      if (reduce){ strip.scrollLeft += dist; wrap(1.4, 2.7); return; }
+      var from = strip.scrollLeft, to = from + dist, t0 = performance.now(), me = {};
+      glideAnim = me;
+      (function step(now){
+        if (glideAnim !== me) return;
+        var t = Math.min(1, Math.max(0, (now - t0) / 480)), e = 1 - Math.pow(1 - t, 3);
+        strip.scrollLeft = from + (to - from) * e;
+        var d = wrap(1, 3); if (d){ from += d; to += d; }
+        if (t < 1) requestAnimationFrame(step); else glideAnim = null;
+      })(t0);
     }
-    arrows.forEach(function(a){
-      a.addEventListener('click', function(){ strip.scrollBy({left: +a.dataset.dir * strip.clientWidth * 0.8, behavior: reduce ? 'auto' : 'smooth'}); });
-    });
-    strip.addEventListener('scroll', upd, {passive: true});
-    window.addEventListener('resize', upd);
+    arrows.forEach(function(a){ a.addEventListener('click', function(){ glide(+a.dataset.dir * strip.clientWidth * 0.8); }); });
+    // 指やタッチパッドで動かした後は、止まってから真ん中の組へ戻す（動いている最中に位置を変えると慣性が止まるので）
+    strip.addEventListener('scroll', function(){
+      if (!touching && !dragging && !glideAnim) wrap(0.5, 3.5);
+      clearTimeout(idle);
+      idle = setTimeout(function(){ if (!touching && !dragging && !glideAnim) wrap(1.4, 2.7); }, 160);
+    }, {passive: true});
+    strip.addEventListener('touchstart', function(){ touching = true; glideAnim = null; }, {passive: true});
+    strip.addEventListener('touchend', function(){ touching = false; }, {passive: true});
+    strip.addEventListener('touchcancel', function(){ touching = false; }, {passive: true});
     // マウスはつかんで横に動かせる（6 px 以上動いたらドラッグ扱い、その時は押した扱いにしない）
     strip.addEventListener('pointerdown', function(e){
       if (e.pointerType !== 'mouse' || e.button !== 0) return;
-      dragging = true; dragMoved = false; dragX = e.clientX; dragL = strip.scrollLeft;
+      glideAnim = null; dragging = true; dragMoved = false; dragX = e.clientX; dragL = strip.scrollLeft;
     });
     window.addEventListener('pointermove', function(e){
       if (!dragging) return;
       var dx = e.clientX - dragX;
       if (!dragMoved && Math.abs(dx) > 6){ dragMoved = true; strip.classList.add('dragging'); }
-      if (dragMoved) strip.scrollLeft = dragL - dx;
+      if (!dragMoved) return;
+      strip.scrollLeft = dragL - dx;
+      dragL += wrap(1, 3);
     });
     window.addEventListener('pointerup', function(){
       if (!dragging) return;
       dragging = false; strip.classList.remove('dragging');
       setTimeout(function(){ dragMoved = false; }, 0);
     });
-    select(0); upd();
+    // 画面の大きさが変わったら、組の中の同じ所を保つ
+    var lastW = setW();
+    window.addEventListener('resize', function(){
+      var W = setW(); if (W <= 0 || lastW <= 0){ lastW = W; return; }
+      strip.scrollLeft = strip.scrollLeft / lastW * W; lastW = W; wrap(1.4, 2.7);
+    });
+    strip.scrollLeft = setW() * MID;
+    select(0);
   })();
 
   // ---- 開いた時に #名前 があればそこへ ----
