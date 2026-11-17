@@ -285,10 +285,10 @@ button{font:inherit}
 .fav-head{margin-bottom:22px}
 .fav-grid{--sh:min(330px, 88vw); display:grid; grid-template-columns:minmax(0,1fr); gap:18px}
 .fav-left{min-width:0}
-.fav-strip{height:var(--sh); overflow-x:auto; overflow-y:hidden; overscroll-behavior-x:contain; scroll-snap-type:x proximity; scrollbar-width:thin; scrollbar-color:var(--night-line) transparent; border-radius:4px; cursor:grab; user-select:none; -webkit-user-select:none}
-.fav-strip.dragging{cursor:grabbing; scroll-snap-type:none}
+.fav-strip{height:var(--sh); overflow-x:auto; overflow-y:hidden; overscroll-behavior-x:contain; scrollbar-width:thin; scrollbar-color:var(--night-line) transparent; border-radius:4px; cursor:grab; user-select:none; -webkit-user-select:none}
+.fav-strip.dragging{cursor:grabbing}
 .fav-tiles{list-style:none; margin:0; padding:0; height:100%; width:max-content; display:grid; grid-template-rows:repeat(3, minmax(0,1fr)); grid-auto-columns:calc((var(--sh) - 8px) / 3 * 1.55); gap:4px}
-.fav-tiles > li{position:relative; min-width:0; min-height:0; scroll-snap-align:start}
+.fav-tiles > li{position:relative; min-width:0; min-height:0}
 .fav-tile{position:absolute; inset:0; width:100%; height:100%; padding:0; border:0; border-radius:3px; overflow:hidden; cursor:inherit; color:var(--night-ink); background:linear-gradient(135deg, color-mix(in srgb, var(--fc) 40%, #0B1015), color-mix(in srgb, var(--fc) 12%, #0B1015))}
 .fav-tile img{width:100%; height:100%; object-fit:cover; display:block; transition:transform .5s ease; -webkit-user-drag:none}
 .fav-tile:hover img{transform:scale(1.04)}
@@ -1132,7 +1132,7 @@ button{font:inherit}
   }
   function frame(now){
     var W = size.w, H = size.h, R = size.r;
-    if (!R) return;
+    if (!R || R.w <= 0 || R.h <= 0) return;  // 大きさ 0 の時（隠れたタブなど）は描かない
     g.clearRect(0, 0, W, H);
     var pxPerM = R.w / ROOM_M[0], v = C_SLOW * pxPerM;
     var sx = R.w * 0.7, sy = R.h * 0.58;            // 部屋の中の音源
