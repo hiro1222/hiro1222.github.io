@@ -525,7 +525,12 @@ button{font:inherit}
     b.addEventListener('click', function(){
       var text = b.dataset.text || target.textContent.trim();
       function done(){ var o = b.textContent; b.textContent = 'コピーしました'; setTimeout(function(){ b.textContent = o; }, 1500); }
-      function fallback(){ var s = window.getSelection(), rg = document.createRange(); rg.selectNodeContents(target); s.removeAllRanges(); s.addRange(rg); }
+      // 書き込みを断られたら、選んでから古い方法でもう一度。それもだめなら選んだまま（長押しでコピーできる）
+      function fallback(){
+        var s = window.getSelection(), rg = document.createRange(); rg.selectNodeContents(target); s.removeAllRanges(); s.addRange(rg);
+        var ok = false; try{ ok = document.execCommand('copy'); }catch(e){}
+        if (ok){ s.removeAllRanges(); done(); }
+      }
       try{ navigator.clipboard.writeText(text).then(done, fallback); }catch(e){ fallback(); }
     });
   });
