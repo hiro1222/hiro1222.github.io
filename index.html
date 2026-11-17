@@ -161,7 +161,7 @@ button{font:inherit}
 .sk-groups{display:grid; grid-template-columns:minmax(0,1fr)}
 @media (min-width:1024px){
   .pf-cols{grid-template-columns:minmax(0,1fr) minmax(0,1.2fr); column-gap:40px}
-  .pf-about, .pf-skill{grid-column:1 / -1}
+  .pf-pr, .pf-about, .pf-skill{grid-column:1 / -1}
   .sk-groups{grid-template-columns:repeat(4, minmax(0,1fr)); column-gap:20px}
   /* 分類の中は縦に積む：アイコン・名前・年数を 1 行に */
   .pf-cols .cards{grid-template-columns:minmax(0,1fr); gap:6px}
@@ -398,6 +398,12 @@ button{font:inherit}
         </div>
       </div>
       <div class="pf-cols">
+        <div class="pf-pr">
+          <div class="block" id="pr-self">
+            <h3 class="bh">自己PR</h3>
+            <div class="pr-box about-box"><p><span class="todo">準備中</span></p></div>
+          </div>
+        </div>
         <div class="pf-about">
           <div class="block">
             <h3 class="bh">What I Want to Create<span class="bh-sub">どんなものが作りたい？</span></h3>
@@ -494,14 +500,6 @@ button{font:inherit}
     </div>
     <div class="wrap">
       <div class="pr">
-        <div class="block" id="pr-self">
-          <h3 class="bh">自己PR</h3>
-          <div class="pr-box"><p><span class="todo">準備中</span></p></div>
-        </div>
-        <div class="block" id="pr-why">
-          <h3 class="bh">なぜプログラマーを<wbr>目指すのか</h3>
-          <div class="pr-box"><p><span class="todo">準備中</span></p></div>
-        </div>
         <div class="block" id="pr-mind">
           <h3 class="bh">プログラマーとして<wbr>意識していること</h3>
           <div class="pr-box"><p><span class="todo">準備中</span></p></div>
