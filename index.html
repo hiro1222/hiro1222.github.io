@@ -163,7 +163,7 @@ button{font:inherit}
 }
 @media (max-width:1023px){ .pf-cols{grid-template-columns:minmax(0,1fr)} }
 .block{margin-top:44px}
-.bh{font-family:var(--f-display); font-weight:800; font-size:22px; letter-spacing:.05em}
+.bh{font-family:var(--f-display); font-weight:800; font-size:22px; letter-spacing:.05em; word-break:keep-all; overflow-wrap:anywhere}
 .sg{font-size:13px; font-weight:600; color:var(--paper-muted); letter-spacing:.08em; margin:20px 0 8px}
 .cards{list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(auto-fill, minmax(230px, 1fr)); gap:10px}
 .card{display:grid; grid-template-columns:34px minmax(0,1fr); column-gap:12px; align-items:center; padding:12px 14px; background:rgba(255,255,255,.82); border:1px solid var(--paper-line); border-left:3px solid var(--c); border-radius:3px; min-width:0}
@@ -186,7 +186,8 @@ button{font:inherit}
 .p-pr{background:var(--slate)}
 .p-pr .bg svg{width:100%; height:100%; display:block}
 .pr{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:0 48px; align-items:start}
-.pr .block:nth-child(-n+2){margin-top:0}
+.pr .block:first-child{margin-top:0}
+@media (min-width:1024px){ .pr .block:nth-child(2){margin-top:0} }
 .pr-box{margin-top:14px; background:rgba(255,255,255,.04); border:1px solid var(--night-line); border-radius:4px; padding:18px 22px; color:#C9D3DA}
 .pr-box p{line-height:1.95}
 .pr-box p + p{margin-top:10px}
@@ -393,15 +394,15 @@ button{font:inherit}
           <div class="pr-box"><p><span class="todo">準備中</span></p></div>
         </div>
         <div class="block" id="pr-why">
-          <h3 class="bh">なぜプログラマーを目指すのか</h3>
+          <h3 class="bh">なぜプログラマーを<wbr>目指すのか</h3>
           <div class="pr-box"><p><span class="todo">準備中</span></p></div>
         </div>
         <div class="block" id="pr-mind">
-          <h3 class="bh">プログラマーとして意識していること</h3>
+          <h3 class="bh">プログラマーとして<wbr>意識していること</h3>
           <div class="pr-box"><p><span class="todo">準備中</span></p></div>
         </div>
         <div class="block" id="pr-game">
-          <h3 class="bh">ゲームでの好きな体験</h3>
+          <h3 class="bh">ゲームでの<wbr>好きな体験</h3>
           <div class="pr-box"><p><span class="todo">準備中</span></p></div>
         </div>
       </div>
