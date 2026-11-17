@@ -143,23 +143,16 @@ button{font:inherit}
     linear-gradient(90deg, rgba(29,92,120,.045) 1px, transparent 1px);
   background-size:120px 120px,120px 120px,24px 24px,24px 24px;
 }
-.two{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:32px 64px; align-items:start}
 .name{font-family:var(--f-display); font-weight:800; font-size:clamp(30px, 3.6vw, 40px); letter-spacing:.1em; line-height:1.7; margin:0 0 18px}
 .name ruby + ruby{margin-left:.45em}
 .name rt{font-family:var(--f-body); font-weight:500; font-size:.32em; letter-spacing:.18em; color:var(--paper-muted)}
 .facts{display:grid; grid-template-columns:auto minmax(0,1fr); gap:10px 28px; margin:0}
 .facts dt{font-size:13px; color:var(--paper-muted); white-space:nowrap}
 .facts dd{margin:0; min-width:0}
-.intro{margin-top:24px; max-width:32em}
-.sub{font-size:13px; font-weight:600; color:var(--paper-muted); letter-spacing:.06em; margin-bottom:8px}
-.timeline{list-style:none; margin:0; padding:0}
-.timeline li{display:grid; grid-template-columns:6.5em minmax(0,1fr); gap:2px 18px; padding:12px 0; border-top:1px solid var(--paper-line)}
-.timeline li:last-child{border-bottom:1px solid var(--paper-line)}
-.timeline time{font-family:var(--f-mono); font-size:13px; color:var(--accent); padding-top:2px}
-.timeline .now time{color:#B4522B}
 
 /* プロフィールの中の 使える技術・資格 */
-.block{margin-top:52px}
+.who-block{margin-bottom:8px}
+.block{margin-top:44px}
 .bh{font-family:var(--f-display); font-weight:800; font-size:22px; letter-spacing:.05em}
 .sg{font-size:13px; font-weight:600; color:var(--paper-muted); letter-spacing:.08em; margin:20px 0 8px}
 .cards{list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(auto-fill, minmax(230px, 1fr)); gap:10px}
@@ -176,6 +169,8 @@ button{font:inherit}
 .lic li:first-child{border-top:0}
 .lk{flex:none; min-width:5.2em; text-align:center; font-size:11.5px; font-weight:600; letter-spacing:.04em; color:var(--c); border:1px solid var(--c); border-radius:999px; padding:1px 8px; line-height:1.6}
 .ln{font-weight:500; min-width:0}
+.ay{flex:none; font-family:var(--f-mono); font-size:13px; color:var(--paper-muted)}
+.ap{flex:none; margin-left:auto; font-weight:700; color:#B4522B}
 
 /* 03 作品 */
 .p-works{background:var(--black)}
@@ -214,14 +209,13 @@ button{font:inherit}
   }
   .menu-btn svg{width:24px; height:24px}
   .logo .who{font-size:17px}
-  .two, .works{grid-template-columns:minmax(0,1fr)}
+  .works{grid-template-columns:minmax(0,1fr)}
   .panel{padding-top:calc(env(safe-area-inset-top, 0px) + var(--bar) + 32px); padding-bottom:48px}
   .head{margin-bottom:26px}
 }
 @media (max-width:480px){
   .c-row{grid-template-columns:minmax(0,1fr) auto}
   .c-row dt{grid-column:1 / -1}
-  .timeline li{grid-template-columns:5.5em minmax(0,1fr)}
   .cards{grid-template-columns:repeat(2, minmax(0,1fr)); gap:8px}
   .card{grid-template-columns:28px minmax(0,1fr); column-gap:10px; padding:10px 10px}
   .card .ic{width:28px; height:28px}
@@ -289,26 +283,12 @@ button{font:inherit}
         <p class="eyebrow"><span class="no">01</span>Profile</p>
         <h2 id="h-profile">プロフィール</h2>
       </div>
-      <div class="two">
-        <div>
-          <p class="name"><ruby>竹内<rt>たけうち</rt></ruby><ruby>寛登<rt>ひろと</rt></ruby></p>
-          <dl class="facts">
-            <dt>学校・学部</dt><dd><span class="todo" data-field="school">未記入</span></dd>
-            <dt>卒業予定</dt><dd><span class="todo" data-field="grad">未記入</span></dd>
-            <dt>志望</dt><dd>ゲームのサウンドプログラマー</dd>
-          </dl>
-          <p class="intro">扉を少し開けたときに音がどう変わるかを確かめたくて、2026 年 6 月に Unity で試作を始めました。今は、中身を全部自分の言葉で説明できるように、音響エンジンを一から書き直しています。名前は Idreal（理想とリアル）です。</p>
-        </div>
-        <div>
-          <p class="sub">これまで</p>
-          <ol class="timeline">
-            <li><time datetime="2026-06">2026.06</time><span>Unity で扉と響きの試作を始める</span></li>
-            <li><time datetime="2026-09">2026.09</time><span>音の計算を C++ のエンジンに集める</span></li>
-            <li><time datetime="2026-09">2026.09</time><span>鳴らすのを Wwise に、試聴の場を Unreal Engine 5.6 に移す</span></li>
-            <li><time datetime="2026-10">2026.10</time><span>エンジンを一から書き直す（Idreal）</span></li>
-            <li class="now"><time datetime="2026-11">2026.11</time><span>Idreal を載せた屋内ホラーのデモを制作中</span></li>
-          </ol>
-        </div>
+      <div class="who-block">
+        <p class="name"><ruby>竹内<rt>たけうち</rt></ruby><ruby>寛登<rt>ひろと</rt></ruby></p>
+        <dl class="facts">
+          <dt>学校・学部</dt><dd><span class="todo" data-field="school">未記入</span></dd>
+          <dt>卒業予定</dt><dd><span class="todo" data-field="grad">未記入</span></dd>
+        </dl>
       </div>
       <div class="block">
         <h3 class="bh">スキル</h3>
@@ -343,6 +323,15 @@ button{font:inherit}
             <li><span class="lk" style="--c:#1E88E5">サウンド</span><span class="ln">Wwise-101</span></li>
             <li><span class="lk" style="--c:#B4522B">武道</span><span class="ln">弓道 二段</span></li>
             <li><span class="lk" style="--c:#B4522B">武道</span><span class="ln">柔道 初段</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="block">
+        <h3 class="bh">受賞記録</h3>
+        <div class="lic-box">
+          <ul class="lic aw">
+            <li><span class="ay">2024</span><span class="ln">2Dゲーム学内コンペ</span><span class="ap">技術力賞</span></li>
+            <li><span class="ay">2024</span><span class="ln">HAL大阪 HAL・EVENT・WEEK</span><span class="ap">技術賞</span></li>
           </ul>
         </div>
       </div>
