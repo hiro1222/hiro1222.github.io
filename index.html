@@ -151,9 +151,16 @@ button{font:inherit}
 .facts dd{margin:0; min-width:0}
 
 /* プロフィールの中の 使える技術・資格 */
-.who-block{display:flex; flex-wrap:wrap; align-items:flex-end; gap:8px 48px; margin-bottom:8px}
+.who-block{display:flex; flex-wrap:wrap; align-items:flex-end; gap:24px 44px; margin-bottom:8px}
+.who-text{display:flex; flex-wrap:wrap; align-items:flex-end; gap:8px 48px; flex:1 1 320px; min-width:0}
 .who-block .name{margin:0}
 .who-block .facts{padding-bottom:6px}
+/* 写真 2 枚：高さが揃うように、横幅を縦横比で分ける（ベース 4:5・弓道 600:1220） */
+.photos{display:flex; align-items:flex-start; gap:10px; width:320px; max-width:100%}
+.photos img{display:block; min-width:0; height:auto; border-radius:3px; box-shadow:0 0 0 1px var(--paper-line); background:#fff}
+.photos .ph-bass{flex:.8 1 0}
+.photos .ph-kyudo{flex:.4918 1 0}
+@media (max-width:767px){ .photos{width:100%; max-width:400px} }
 .pf-cols{display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); gap:0 48px; align-items:start}
 @media (min-width:1024px){
   .pf-cols .cards{grid-template-columns:repeat(3, minmax(0,1fr)); gap:8px}
@@ -305,11 +312,17 @@ button{font:inherit}
         <h2 id="h-profile">プロフィール</h2>
       </div>
       <div class="who-block">
-        <p class="name"><ruby>竹内<rt>たけうち</rt></ruby><ruby>寛登<rt>ひろと</rt></ruby></p>
-        <dl class="facts">
-          <dt>学部</dt><dd>ゲーム4年制学科・ゲーム制作コース</dd>
-          <dt>卒業予定</dt><dd>2028年3月 卒業予定</dd>
-        </dl>
+        <div class="photos">
+          <img class="ph-bass" src="img/photo-bass.jpg" width="640" height="800" alt="ベースを持った写真">
+          <img class="ph-kyudo" src="img/photo-kyudo.jpg" width="600" height="1220" alt="弓道の大会で弓を引いている写真">
+        </div>
+        <div class="who-text">
+          <p class="name"><ruby>竹内<rt>たけうち</rt></ruby><ruby>寛登<rt>ひろと</rt></ruby></p>
+          <dl class="facts">
+            <dt>学部</dt><dd>ゲーム4年制学科・ゲーム制作コース</dd>
+            <dt>卒業予定</dt><dd>2028年3月 卒業予定</dd>
+          </dl>
+        </div>
       </div>
       <div class="pf-cols">
         <div class="pf-left">
