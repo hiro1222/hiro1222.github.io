@@ -278,6 +278,7 @@ button{font:inherit}
   .logo .who{font-size:17px}
   .panel{padding-top:calc(env(safe-area-inset-top, 0px) + var(--bar) + 32px); padding-bottom:48px}
   .head{margin-bottom:26px}
+  .p-top .cue{display:none}  /* スマホは地図の説明と重なるので出さない */
 }
 @media (max-width:480px){
   .c-row{grid-template-columns:minmax(0,1fr) auto}
@@ -893,7 +894,17 @@ button{font:inherit}
     // 部屋の名前と響きの長さ
     g.fillStyle = 'rgba(147,161,171,' + (size.narrow ? .75 : .9) + ')';
     g.font = '10.5px "IBM Plex Mono", Consolas, monospace'; g.textBaseline = 'top'; g.textAlign = 'left';
-    ROOMS.forEach(function(r){ g.fillText(r.name + ' ' + r.rt + 's', R.x + r.x0 * k + 6, R.y + r.y0 * k + 5); });
+    // 部屋の中に入りきらない名前は部屋の上に（右端からはみ出すなら右にそろえる）
+    ROOMS.forEach(function(r){
+      var label = r.name + ' ' + r.rt + 's', tw = g.measureText(label).width, left = R.x + r.x0 * k, right = R.x + r.x1 * k;
+      if (tw <= right - left - 10){ g.textAlign = 'left'; g.textBaseline = 'top'; g.fillText(label, left + 6, R.y + r.y0 * k + 5); }
+      else {
+        g.textBaseline = 'bottom';
+        if (left + tw > size.w - 1){ g.textAlign = 'right'; g.fillText(label, right, R.y + r.y0 * k - 4); }
+        else { g.textAlign = 'left'; g.fillText(label, left, R.y + r.y0 * k - 4); }
+      }
+    });
+    g.textAlign = 'left'; g.textBaseline = 'top';
     // 波面：触る前は広間で音なしの見本、触った後はタップした所
     if (!touched){
       var per = 3.6, age = (now - idleT0) % per;
