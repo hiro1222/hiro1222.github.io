@@ -182,6 +182,13 @@ button{font:inherit}
 .ay{flex:none; font-family:var(--f-mono); font-size:13px; color:var(--paper-muted)}
 .ap{flex:none; margin-left:auto; font-weight:700; color:#B4522B}
 
+/* プロフィールの中の文章（自己PR など） */
+.pr{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:0 48px; align-items:start}
+.pr-box{margin-top:14px; background:rgba(255,255,255,.88); border:1px solid var(--paper-line); border-radius:4px; padding:18px 22px}
+.pr-box p{line-height:1.95}
+.pr-box p + p{margin-top:10px}
+@media (max-width:1023px){ .pr{grid-template-columns:minmax(0,1fr)} }
+
 /* 03 作品 */
 .p-works{background:var(--black)}
 .p-works .bg{background:radial-gradient(ellipse 80% 70% at 70% 40%, #17222C 0%, var(--black) 70%)}
@@ -351,6 +358,24 @@ button{font:inherit}
               </ul>
             </div>
           </div>
+        </div>
+      </div>
+      <div class="pr">
+        <div class="block" id="pr-self">
+          <h3 class="bh">自己PR</h3>
+          <div class="pr-box"><p><span class="todo">準備中</span></p></div>
+        </div>
+        <div class="block" id="pr-why">
+          <h3 class="bh">なぜプログラマーを目指すのか</h3>
+          <div class="pr-box"><p><span class="todo">準備中</span></p></div>
+        </div>
+        <div class="block" id="pr-mind">
+          <h3 class="bh">プログラマーとして意識していること</h3>
+          <div class="pr-box"><p><span class="todo">準備中</span></p></div>
+        </div>
+        <div class="block" id="pr-game">
+          <h3 class="bh">ゲームでの好きな体験</h3>
+          <div class="pr-box"><p><span class="todo">準備中</span></p></div>
         </div>
       </div>
     </div>
