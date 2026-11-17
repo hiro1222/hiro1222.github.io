@@ -158,18 +158,23 @@ button{font:inherit}
 .timeline time{font-family:var(--f-mono); font-size:13px; color:var(--accent); padding-top:2px}
 .timeline .now time{color:#B4522B}
 
-/* 03 スキル（波形の帯） */
-.p-skills{background:#F3F5F6}
-.p-skills .bg svg{position:absolute; left:0; right:0; bottom:0; width:100%; height:30%; opacity:.75}
-.sk{margin:0}
-.sk > div{display:grid; grid-template-columns:8.5em minmax(0,1fr); gap:6px 20px; padding:13px 0; border-top:1px solid var(--paper-line)}
-.sk > div:last-child{border-bottom:1px solid var(--paper-line)}
-.sk dt{font-size:13px; color:var(--paper-muted); padding-top:3px}
-.sk dd{margin:0; min-width:0}
-.tg{list-style:none; margin:0; padding:0; display:flex; flex-wrap:wrap; gap:6px 8px}
-.tg li{font-family:var(--f-mono); font-size:13px; padding:2px 10px; border:1px solid var(--paper-line); border-radius:3px; background:rgba(255,255,255,.65)}
+/* プロフィールの中の 使える技術・資格 */
+.block{margin-top:52px}
+.bh{font-family:var(--f-display); font-weight:800; font-size:22px; letter-spacing:.05em}
+.sg{font-size:13px; font-weight:600; color:var(--paper-muted); letter-spacing:.08em; margin:20px 0 8px}
+.cards{list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(auto-fill, minmax(230px, 1fr)); gap:10px}
+.card{display:grid; grid-template-columns:34px minmax(0,1fr); column-gap:12px; align-items:center; padding:12px 14px; background:rgba(255,255,255,.82); border:1px solid var(--paper-line); border-left:3px solid var(--c); border-radius:3px; min-width:0}
+.card .ic{grid-row:1 / 3; width:32px; height:32px; display:grid; place-items:center; color:var(--c)}
+.card .ic svg{width:28px; height:28px; fill:currentColor}
+.card .ic.txt{box-sizing:border-box; border:1.5px solid var(--c); border-radius:5px; font-family:var(--f-mono); font-weight:500; font-size:12px; letter-spacing:.02em}
+.card .nm{font-weight:600; font-size:15px; line-height:1.35; overflow-wrap:anywhere}
+.card .yr{font-family:var(--f-mono); font-weight:500; font-size:13px; color:var(--accent); line-height:1.4}
+.lic{list-style:none; margin:12px 0 0; padding:0; max-width:680px}
+.lic li{display:flex; flex-wrap:wrap; justify-content:space-between; align-items:baseline; gap:4px 16px; padding:12px 0; border-top:1px solid var(--paper-line)}
+.lic li:last-child{border-bottom:1px solid var(--paper-line)}
+.lic .ok{font-weight:600; color:#B4522B}
 
-/* 04 作品 */
+/* 03 作品 */
 .p-works{background:var(--black)}
 .p-works .bg{background:radial-gradient(ellipse 80% 70% at 70% 40%, #17222C 0%, var(--black) 70%)}
 .works{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:24px}
@@ -180,7 +185,7 @@ button{font:inherit}
 .work h3{font-size:19px; font-weight:600}
 .work p{font-size:13.5px; color:var(--night-muted)}
 
-/* 05 連絡先（波紋） */
+/* 04 連絡先（波紋） */
 .p-contact{background:var(--accent); color:#F2F7FA; flex-direction:column; justify-content:center; align-items:stretch}
 .p-contact .bg{background:repeating-radial-gradient(circle at 82% 72%, transparent 0 46px, rgba(255,255,255,.07) 46px 47px)}
 .p-contact .eyebrow{color:#BFE0EE}
@@ -214,7 +219,11 @@ button{font:inherit}
   .c-row{grid-template-columns:minmax(0,1fr) auto}
   .c-row dt{grid-column:1 / -1}
   .timeline li{grid-template-columns:5.5em minmax(0,1fr)}
-  .sk > div{grid-template-columns:minmax(0,1fr)}
+  .cards{grid-template-columns:repeat(2, minmax(0,1fr)); gap:8px}
+  .card{grid-template-columns:28px minmax(0,1fr); column-gap:10px; padding:10px 10px}
+  .card .ic{width:28px; height:28px}
+  .card .ic svg{width:24px; height:24px}
+  .card .nm{font-size:14px}
 }
 @media (prefers-reduced-motion: reduce){
   html{scroll-behavior:auto}
@@ -235,7 +244,6 @@ button{font:inherit}
     <nav class="nav" aria-label="ページの中身">
       <a href="#top" data-go="top"><span class="en">Home</span><span class="ja">ホーム</span></a>
       <a href="#profile" data-go="profile"><span class="en">Profile</span><span class="ja">プロフィール</span></a>
-      <a href="#skills" data-go="skills"><span class="en">Skills</span><span class="ja">スキル</span></a>
       <a href="#works" data-go="works"><span class="en">Works</span><span class="ja">作品</span></a>
       <a href="#contact" data-go="contact"><span class="en">Contact</span><span class="ja">連絡先</span></a>
     </nav>
@@ -250,7 +258,6 @@ button{font:inherit}
   <ul>
     <li><a href="#top" data-go="top">ホーム<span class="en">Home</span></a></li>
     <li><a href="#profile" data-go="profile">プロフィール<span class="en">Profile</span></a></li>
-    <li><a href="#skills" data-go="skills">スキル<span class="en">Skills</span></a></li>
     <li><a href="#works" data-go="works">作品<span class="en">Works</span></a></li>
     <li><a href="#contact" data-go="contact">連絡先<span class="en">Contact</span></a></li>
   </ul>
@@ -300,41 +307,44 @@ button{font:inherit}
           </ol>
         </div>
       </div>
+      <div class="block">
+        <h3 class="bh">使える技術</h3>
+        <p class="sg">サウンド</p>
+        <ul class="cards">
+          <li class="card" style="--c:#1E88E5"><span class="ic txt" aria-hidden="true">Ww</span><span class="nm">Wwise</span><span class="yr"><span class="todo">— 年</span></span></li>
+        </ul>
+        <p class="sg">言語</p>
+        <ul class="cards">
+          <li class="card" style="--c:#00599C"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22.394 6c-.167-.29-.398-.543-.652-.69L12.926.22c-.509-.294-1.34-.294-1.848 0L2.26 5.31c-.508.293-.923 1.013-.923 1.6v10.18c0 .294.104.62.271.91.167.29.398.543.652.69l8.816 5.09c.508.293 1.34.293 1.848 0l8.816-5.09c.254-.147.485-.4.652-.69.167-.29.27-.616.27-.91V6.91c.003-.294-.1-.62-.268-.91zM12 19.11c-3.92 0-7.109-3.19-7.109-7.11 0-3.92 3.19-7.11 7.11-7.11a7.133 7.133 0 016.156 3.553l-3.076 1.78a3.567 3.567 0 00-3.08-1.78A3.56 3.56 0 008.444 12 3.56 3.56 0 0012 15.555a3.57 3.57 0 003.08-1.778l3.078 1.78A7.135 7.135 0 0112 19.11zm7.11-6.715h-.79v.79h-.79v-.79h-.79v-.79h.79v-.79h.79v.79h.79zm2.962 0h-.79v.79h-.79v-.79h-.79v-.79h.79v-.79h.79v.79h.79z"/></svg></span><span class="nm">C++</span><span class="yr"><span class="todo">— 年</span></span></li>
+          <li class="card" style="--c:#9B4F96"><span class="ic txt" aria-hidden="true">C#</span><span class="nm">C#</span><span class="yr"><span class="todo">— 年</span></span></li>
+        </ul>
+        <p class="sg">エンジン</p>
+        <ul class="cards">
+          <li class="card" style="--c:#1B1D2A"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0a12 12 0 1012 12A12 12 0 0012 0zm0 23.52A11.52 11.52 0 1123.52 12 11.52 11.52 0 0112 23.52zm7.13-9.791c-.206.997-1.126 3.557-4.06 4.942l-1.179-1.325-1.988 2a7.338 7.338 0 01-5.804-2.978 2.859 2.859 0 00.65.123c.326.006.678-.114.678-.66v-5.394a.89.89 0 00-1.116-.89c-.92.212-1.656 2.509-1.656 2.509a7.304 7.304 0 012.528-5.597 7.408 7.408 0 013.73-1.721c-1.006.573-1.57 1.507-1.57 2.29 0 1.262.76 1.109.984.923v7.28a1.157 1.157 0 00.148.256 1.075 1.075 0 00.88.445c.76 0 1.747-.868 1.747-.868V9.172c0-.6-.452-1.324-.905-1.572 0 0 .838-.149 1.484.346a5.537 5.537 0 01.387-.425c1.508-1.48 2.929-1.902 4.112-2.112 0 0-2.151 1.69-2.151 3.96 0 1.687.043 5.801.043 5.801.799.771 1.986-.342 3.059-1.441Z"/></svg></span><span class="nm">Unreal Engine</span><span class="yr"><span class="todo">— 年</span></span></li>
+          <li class="card" style="--c:#222222"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12.9288 4.2939 3.7997 2.1929c.1366.077.1415.2905 0 .3675l-4.515 2.6076a.4192.4192 0 0 1-.4246 0L7.274 6.8543c-.139-.0745-.1415-.293 0-.3675l3.7972-2.193V0L1.3758 5.5977V16.793l3.7177-2.1456v-4.3858c-.0025-.1565.1813-.2682.318-.1838l4.5148 2.6076a.4252.4252 0 0 1 .2136.3676v5.2127c.0025.1565-.1813.2682-.3179.1838l-3.7996-2.1929-3.7178 2.1457L12 24l9.6954-5.5977-3.7178-2.1457-3.7996 2.1929c-.1341.082-.3229-.0248-.3179-.1838V13.053c0-.1565.087-.2956.2136-.3676l4.5149-2.6076c.134-.082.3228.0224.3179.1838v4.3858l3.7177 2.1456V5.5977L12.9288 0Z"/></svg></span><span class="nm">Unity</span><span class="yr"><span class="todo">— 年</span></span></li>
+        </ul>
+        <p class="sg">開発環境</p>
+        <ul class="cards">
+          <li class="card" style="--c:#5C2D91"><span class="ic txt" aria-hidden="true">VS</span><span class="nm">Visual Studio</span><span class="yr"><span class="todo">— 年</span></span></li>
+          <li class="card" style="--c:#F05032"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.09 23.549a1.54 1.54 0 0 1-2.18 0L.451 13.089a1.54 1.54 0 0 1 0-2.179l7.191-7.19 2.733 2.733a1.85 1.85 0 0 0 .964 2.326v6.66a1.849 1.849 0 1 0 1.54 0V8.957l2.508 2.508a1.85 1.85 0 1 0 1.09-1.09l-2.634-2.634a1.85 1.85 0 0 0-2.378-2.377L8.73 2.63 10.91.451a1.54 1.54 0 0 1 2.179 0l10.459 10.46a1.54 1.54 0 0 1 0 2.179z"/></svg></span><span class="nm">Git</span><span class="yr"><span class="todo">— 年</span></span></li>
+          <li class="card" style="--c:#181717"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></span><span class="nm">GitHub</span><span class="yr"><span class="todo">— 年</span></span></li>
+        </ul>
+      </div>
+      <div class="block">
+        <h3 class="bh">資格</h3>
+        <ul class="lic">
+          <li><span class="todo" data-field="license">未記入</span></li>
+        </ul>
+      </div>
     </div>
   </section>
 
-  <!-- 03 スキル：波形の帯 -->
-  <section class="panel light p-skills" id="skills" aria-labelledby="h-skills">
-    <div class="bg"><svg id="band" viewBox="0 0 1600 300" preserveAspectRatio="none" aria-hidden="true"></svg></div>
-    <div class="wrap">
-      <div class="head">
-        <p class="eyebrow"><span class="no">02</span>Skills</p>
-        <h2 id="h-skills">スキル</h2>
-      </div>
-      <div class="two">
-        <div>
-          <p class="sub">扱えるツール・言語</p>
-          <dl class="sk">
-            <div><dt>言語</dt><dd><ul class="tg"><li>C++</li><li>C#</li></ul></dd></div>
-            <div><dt>ゲームエンジン</dt><dd><ul class="tg"><li>Unreal Engine 5.6</li><li>Unity</li></ul></dd></div>
-            <div><dt>サウンド</dt><dd><ul class="tg"><li>Wwise 2025.1</li></ul></dd></div>
-            <div><dt>開発環境</dt><dd><ul class="tg"><li>Visual Studio</li><li>Git / GitHub</li></ul></dd></div>
-          </dl>
-        </div>
-        <div>
-          <p class="sub">資格</p>
-          <p><span class="todo" data-field="license">未記入</span></p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 04 作品 -->
+  <!-- 03 作品 -->
   <section class="panel dark p-works" id="works" aria-labelledby="h-works">
     <div class="bg"></div>
     <div class="wrap">
       <div class="head">
-        <p class="eyebrow"><span class="no">03</span>Works</p>
+        <p class="eyebrow"><span class="no">02</span>Works</p>
         <h2 id="h-works">作品</h2>
         <p class="muted" style="margin-top:8px; font-size:13.5px">準備中です。動画・設計の記録・コードを順に載せます。</p>
       </div>
@@ -351,12 +361,12 @@ button{font:inherit}
     </div>
   </section>
 
-  <!-- 05 連絡先：波紋 -->
+  <!-- 04 連絡先：波紋 -->
   <section class="panel p-contact" id="contact" aria-labelledby="h-contact">
     <div class="bg"></div>
     <div class="wrap">
       <div class="head">
-        <p class="eyebrow"><span class="no">04</span>Contact</p>
+        <p class="eyebrow"><span class="no">03</span>Contact</p>
         <h2 id="h-contact">連絡先</h2>
       </div>
       <dl class="contact">
@@ -558,20 +568,6 @@ button{font:inherit}
   } else start();
   document.addEventListener('visibilitychange', function(){ if (document.hidden) stop(); });
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ frame(performance.now() / 1000); });
-
-  // ---- スキルの背景：波形の帯 ----
-  (function(){
-    var svg = document.getElementById('band');
-    if (!svg) return;
-    var d = '', N = 400;
-    for (var i = 0; i <= N; i++){
-      var x = i / N * 1600, u = i / N;
-      var env = 0.25 + 0.75 * Math.exp(-Math.pow((u - 0.18) / 0.12, 2)) + 0.4 * Math.exp(-u * 3);
-      var y = 150 + 110 * env * (0.6 * Math.sin(u * 160) + 0.3 * Math.sin(u * 410 + 1.3) + 0.1 * Math.sin(u * 970 + .4));
-      d += (i ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1);
-    }
-    svg.innerHTML = '<path d="' + d + '" fill="none" stroke="#1D5C78" stroke-opacity=".12" stroke-width="1.4" vector-effect="non-scaling-stroke"/>';
-  })();
 
   // ---- 開いた時に #名前 があればそこへ ----
   var h = (location.hash || '').slice(1);
