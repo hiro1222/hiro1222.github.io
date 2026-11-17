@@ -161,7 +161,7 @@ button{font:inherit}
 .sk-groups{display:grid; grid-template-columns:minmax(0,1fr)}
 @media (min-width:1024px){
   .pf-cols{grid-template-columns:minmax(0,1fr) minmax(0,1.2fr); column-gap:40px}
-  .pf-skill{grid-column:1 / -1}
+  .pf-about, .pf-skill{grid-column:1 / -1}
   .sk-groups{grid-template-columns:repeat(4, minmax(0,1fr)); column-gap:20px}
   /* 分類の中は縦に積む：アイコン・名前・年数を 1 行に */
   .pf-cols .cards{grid-template-columns:minmax(0,1fr); gap:6px}
@@ -202,6 +202,7 @@ button{font:inherit}
 .pr-box{margin-top:14px; background:rgba(255,255,255,.04); border:1px solid var(--night-line); border-radius:4px; padding:18px 22px; color:#C9D3DA}
 .pr-box p{line-height:1.95}
 .pr-box p + p{margin-top:10px}
+.about-box p{max-width:46em}
 @media (max-width:1023px){ .pr{grid-template-columns:minmax(0,1fr)} }
 
 /* 03 作品：1 作品 = 全画面 1 枚。左に大きな画像、右に題・概要・注目点 4 つ・MORE。色は作品ごとの --wa */
@@ -368,6 +369,12 @@ button{font:inherit}
         </div>
       </div>
       <div class="pf-cols">
+        <div class="pf-about">
+          <div class="block">
+            <h3 class="bh">アバウト</h3>
+            <div class="pr-box about-box"><p><span class="todo">準備中</span></p></div>
+          </div>
+        </div>
         <div class="pf-skill">
           <div class="block">
             <h3 class="bh">スキル</h3>
