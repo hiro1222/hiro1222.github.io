@@ -1153,7 +1153,7 @@ button{font:inherit}
     var V = 343 / 100, TAU = [2.2, 1.0];                 // 音速の 1/100、減り方（秒、広い部屋・狭い部屋）
     var size = null, running = false, lastT = 0, drops = [], pend = [];   // 自動では鳴らさない（押した時だけ）
     var door = {th: OPEN, target: OPEN};
-    var lis = {a: 7.3, b: 3.4}, lastHit = -1e9, drag = null;              // 耳は最初、狭い部屋に
+    var lis = {a: 7.3, b: 3.4, moved: false}, lastHit = -1e9, drag = null;   // 耳は最初、狭い部屋に
     function now(){ return performance.now() / 1000; }
     function lisRoom(){ return lis.a < WALL_A ? 0 : 1; }
 
@@ -1177,6 +1177,8 @@ button{font:inherit}
       var dw = (portrait ? SM : LM) * m, dh = (portrait ? LM : SM) * m;
       rx += (rw - dw) / 2; ry += (rh - dh) / 2;
       size = {W: W, H: H, x: rx, y: ry, w: dw, h: dh, m: m, wide: wide, portrait: portrait};
+      // 縦長の画面は、説明の文に重ならない右下から（動かした後はそのまま）
+      if (!lis.moved){ lis.a = portrait ? 8.5 : 7.3; lis.b = portrait ? 4.2 : 3.4; }
       sec.classList.toggle('pond-wide', wide);
       if (wide){ ui.style.left = rx + 'px'; ui.style.top = (ry + dh + 12) + 'px'; ui.style.width = dw + 'px'; }
       else { ui.style.left = ui.style.top = ui.style.width = ''; }
@@ -1298,7 +1300,7 @@ button{font:inherit}
     function moveListener(px, py){
       var q = toRoom(px, py), a = Math.max(0.25, Math.min(LM - 0.25, q[0])), b = Math.max(0.25, Math.min(SM - 0.25, q[1]));
       if (Math.abs(a - WALL_A) < 0.25) a = lis.a < WALL_A ? WALL_A - 0.25 : WALL_A + 0.25;
-      lis.a = a; lis.b = b;
+      lis.a = a; lis.b = b; lis.moved = true;
       if (!running) draw(now());
     }
     // 画面の (px, py) で鳴らす。部屋の外・壁の上なら null
