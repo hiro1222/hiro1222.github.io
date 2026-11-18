@@ -645,7 +645,7 @@ html.dlg-open{overflow:hidden}
   <!-- 02 の続き：好きなゲーム体験。左にスクショのモザイク（横に流す、ループする。並べ方 3 種類・大きさは開くたびにランダム）、押すと右（スマホは下）に解説。
        1 本 = li 1 つ。場所は JS が決める（style の grid-area は JS が無い時の並び、6 段）、色は --fc。
        画像は .fav-tile の中に img（自分で撮ったスクショ）、解説は .fav-info の中（押すと右の欄へ写す） -->
-  <section class="panel dark p-fav" id="fav" data-nav="profile" aria-labelledby="h-fav">
+  <section class="panel dark p-fav" id="fav" data-nav="profile" aria-labelledby="h-fav" hidden>
     <div class="bg"></div>
     <div class="wrap">
       <div class="fav-head">
@@ -825,7 +825,7 @@ html.dlg-open{overflow:hidden}
         <div class="w-shot" style="aspect-ratio:1400/691"><img src="img/works/idreal.jpg?v=2" width="1400" height="691" alt="IdReal のデバッグ表示（今いるエリアの響きの値と、耳から出る 16 本のレイを描いた部屋の地図）" decoding="async"></div>
         <div class="w-detail">
           <dl class="w-facts"><div><dt>人数</dt><dd>個人</dd></div><div><dt>期間</dt><dd>2026年7月〜制作中</dd></div><div><dt>担当</dt><dd>すべて</dd></div><div><dt>環境</dt><dd>C++（Visual Studio 2022）／Unreal Engine 5.6／Wwise 2025.1</dd></div></dl>
-          <div class="w-acts">
+          <div class="w-acts" hidden>
             <button type="button" class="w-more" aria-haspopup="dialog">MORE</button>
             <button type="button" class="w-doc" data-pdf="docs/idreal.pdf" data-title="IdReal 詳細資料" aria-haspopup="dialog" disabled title="準備中">詳細資料</button>
           </div>
@@ -852,7 +852,7 @@ html.dlg-open{overflow:hidden}
         <div class="w-shot"><img src="img/works/horror.jpg" width="1400" height="788" alt="探索型ホラーゲームの画面（懐中電灯で照らした暗い部屋、隅に人形、奥に扉）" decoding="async"></div>
         <div class="w-detail">
           <dl class="w-facts"><div><dt>人数</dt><dd>個人</dd></div><div><dt>期間</dt><dd>2026年9月〜制作中</dd></div><div><dt>担当</dt><dd>すべて</dd></div><div><dt>環境</dt><dd>Unreal Engine 5.6／Wwise 2025.1／自作の音響エンジン IdReal</dd></div></dl>
-          <div class="w-acts">
+          <div class="w-acts" hidden>
             <button type="button" class="w-more" aria-haspopup="dialog">MORE</button>
           </div>
           <div class="w-extra" hidden>
@@ -878,7 +878,7 @@ html.dlg-open{overflow:hidden}
         <div class="w-shot"><img src="img/works/osumitsuki.jpg?v=2" width="1400" height="788" alt="御墨付のタイトル画面" decoding="async"></div>
         <div class="w-detail">
           <dl class="w-facts"><div><dt>人数</dt><dd>11人</dd></div><div><dt>期間</dt><dd>3か月</dd></div><div><dt>担当</dt><dd>サブリーダー、プレイヤー制御、サウンド設計・実装</dd></div><div><dt>環境</dt><dd>Unity 6</dd></div></dl>
-          <div class="w-acts">
+          <div class="w-acts" hidden>
             <button type="button" class="w-more" aria-haspopup="dialog">MORE</button>
           </div>
           <div class="w-extra" hidden>
@@ -904,7 +904,7 @@ html.dlg-open{overflow:hidden}
         <div class="w-shot"><img src="img/works/ribbond.jpg?v=2" width="1400" height="788" alt="RibBond のタイトル画面" decoding="async"></div>
         <div class="w-detail">
           <dl class="w-facts"><div><dt>人数</dt><dd>10人</dd></div><div><dt>期間</dt><dd>4か月</dd></div><div><dt>担当</dt><dd>リードプログラマー、リーダー、全体設計、ロード制御、サウンド制御、シーン・ステージ管理</dd></div><div><dt>環境</dt><dd>DirectX 11</dd></div></dl>
-          <div class="w-acts">
+          <div class="w-acts" hidden>
             <button type="button" class="w-more" aria-haspopup="dialog">MORE</button>
           </div>
           <div class="w-extra" hidden>
@@ -930,7 +930,7 @@ html.dlg-open{overflow:hidden}
         <div class="w-shot"><img src="img/works/soundmarker.jpg?v=2" width="1400" height="789" alt="SoundMarker の画面（アニメーションのタイムラインに音を置く）" decoding="async"></div>
         <div class="w-detail">
           <dl class="w-facts"><div><dt>人数</dt><dd>個人</dd></div><div><dt>期間</dt><dd>2週間</dd></div><div><dt>担当</dt><dd>すべて</dd></div><div><dt>環境</dt><dd>DirectX 11／C++17</dd></div></dl>
-          <div class="w-acts">
+          <div class="w-acts" hidden>
             <button type="button" class="w-more" aria-haspopup="dialog">MORE</button>
           </div>
           <div class="w-extra" hidden>
@@ -956,7 +956,7 @@ html.dlg-open{overflow:hidden}
         <div class="w-shot">画像 準備中</div>
         <div class="w-detail">
           <dl class="w-facts"><div><dt>人数</dt><dd>—</dd></div><div><dt>期間</dt><dd>1か月</dd></div><div><dt>担当</dt><dd>サウンド面で協力、<span class="todo">詳しくは準備中</span></dd></div><div><dt>環境</dt><dd>DirectX 11／C++17</dd></div></dl>
-          <div class="w-acts">
+          <div class="w-acts" hidden>
             <button type="button" class="w-more" aria-haspopup="dialog">MORE</button>
           </div>
           <div class="w-extra" hidden>
@@ -982,7 +982,7 @@ html.dlg-open{overflow:hidden}
         <div class="w-shot">画像 準備中</div>
         <div class="w-detail">
           <dl class="w-facts"><div><dt>人数</dt><dd>—</dd></div><div><dt>期間</dt><dd>1か月</dd></div><div><dt>担当</dt><dd>サウンド面で協力、<span class="todo">詳しくは準備中</span></dd></div><div><dt>環境</dt><dd>DirectX 12／C++17</dd></div></dl>
-          <div class="w-acts">
+          <div class="w-acts" hidden>
             <button type="button" class="w-more" aria-haspopup="dialog">MORE</button>
           </div>
           <div class="w-extra" hidden>
