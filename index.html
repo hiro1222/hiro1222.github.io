@@ -1141,7 +1141,7 @@ button{font:inherit}
   window.addEventListener('resize', function(){ if (window.innerWidth > 860 && drawer.classList.contains('open')) closeDrawer(false); });
 
   // ---- 01 の背景：扉でつないだ 2 部屋に広がる音の波面（壁の跳ね返りは鏡に映した音源で描く） ----
-  // 押した所から波面が広がる。扉が開いていれば、波面が口に届いた時に口から隣の部屋へ漏れる（口を新しい音源として描く、閉じていればごく弱く）。
+  // 押した所から波面が広がる（自動では鳴らさない）。扉が開いていれば、波面が口に届いた時に口から隣の部屋へ漏れる（口を新しい音源として描く、閉じていればごく弱く）。
   // 減り方は部屋ごと（広い部屋は長く、狭い部屋は短く）。音のボタンを ON にした人だけ「ポチャン」と部屋の響きが鳴る
   (function(){
     var sec = document.getElementById('top'), cv = document.getElementById('wave'), g = cv.getContext('2d');
@@ -1150,8 +1150,7 @@ button{font:inherit}
     var LM = 9, SM = 5, WALL_A = 5, DOOR_B0 = 2, DOOR_W = 1, OPEN = 80 * Math.PI / 180;
     var ROOMS = [[0, WALL_A], [WALL_A, LM]];             // 部屋ごとの長い向きの範囲
     var V = 343 / 100, TAU = [2.2, 1.0];                 // 音速の 1/100、減り方（秒、広い部屋・狭い部屋）
-    var SRC = [3.2, 2.9], PERIOD = 3.6;                  // いつも鳴っている音源（広い部屋の中）と間隔
-    var size = null, running = false, lastT = 0, nextAuto = 0, drops = [], pend = [];
+    var size = null, running = false, lastT = 0, drops = [], pend = [];   // 自動では鳴らさない（押した時だけ）
     var door = {th: OPEN, target: OPEN};
     function now(){ return performance.now() / 1000; }
 
@@ -1253,11 +1252,10 @@ button{font:inherit}
         g.restore();
       }
       if (!R.wide) return;
-      // 音源の点（いつもの音源と、押した所は少しの間）・部屋の札
+      // 押した所の点（少しの間）・部屋の札
       g.fillStyle = '#D9774C';
-      var sp = P(SRC[0], SRC[1]); g.beginPath(); g.arc(sp[0], sp[1], 3.5, 0, Math.PI * 2); g.fill();
       drops.forEach(function(d){
-        var age = t - d.t0; if (d.leak || d.auto || age < 0 || age > 0.8) return;
+        var age = t - d.t0; if (d.leak || age < 0 || age > 0.8) return;
         var q = P(d.a, d.b); g.globalAlpha = 1 - age / 0.8; g.beginPath(); g.arc(q[0], q[1], 3, 0, Math.PI * 2); g.fill(); g.globalAlpha = 1;
       });
       g.fillStyle = 'rgba(147,161,171,.75)'; g.font = '11px "IBM Plex Mono", Consolas, monospace'; g.textBaseline = 'top'; g.textAlign = 'left';
@@ -1292,17 +1290,13 @@ button{font:inherit}
         var dth = 2.6 * dt;
         door.th = Math.abs(door.target - door.th) <= dth ? door.target : door.th + (door.target > door.th ? dth : -dth);
       }
-      if (t >= nextAuto){
-        addDrop(SRC[0], SRC[1], 0, 1, t); drops[drops.length - 1].auto = true;
-        nextAuto = Math.max(nextAuto + PERIOD, t + 0.5);
-      }
       update(t); draw(t);
       requestAnimationFrame(loop);
     }
-    function start(){ if (reduce || running || !size) return; running = true; lastT = now(); if (!nextAuto) nextAuto = lastT + 0.2; requestAnimationFrame(loop); }
+    function start(){ if (reduce || running || !size) return; running = true; lastT = now(); requestAnimationFrame(loop); }
     function stop(){ running = false; }
-    // 動きを減らす設定の時は、止まった 1 枚（いつもの音源から 0.9 秒の波面）
-    function still(){ if (!size) return; var t = now(); if (!drops.length){ addDrop(SRC[0], SRC[1], 0, 1, t - 0.9); drops[0].auto = true; } draw(t); }
+    // 動きを減らす設定の時は、止まった 1 枚
+    function still(){ if (size) draw(now()); }
 
     // ---- 音（ボタンで ON にした人だけ）：水滴はピッチが上がる短い音、響きは部屋ごと（長い 1.3 秒・短い 0.55 秒）。
     //      鳴った部屋の響きに加えて、扉の開き具合で隣の部屋の響きも少し（閉じていればこもって小さく）
