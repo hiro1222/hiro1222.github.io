@@ -212,6 +212,20 @@ button{font:inherit}
 .pr-box p + p{margin-top:10px}
 .pr .pr-box p{max-width:46em}
 .about-box p{max-width:46em}
+/* 自己PR：強み｜考え方 の 2 枚（スマホは縦）。左に色の線、右上の角を斜めに落とす */
+.pr-cards{display:grid; grid-template-columns:minmax(0,1fr); gap:16px; margin-top:14px}
+.pr-card{min-width:0; background:rgba(255,255,255,.04); border:1px solid var(--night-line); border-left:3px solid var(--accent-hi); padding:20px 24px 22px; clip-path:polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%)}
+.pr-lab{font-size:12.5px; font-weight:700; letter-spacing:.16em; color:var(--accent-hi)}
+.pr-card h4{margin-top:6px; font-family:var(--f-display); font-weight:800; font-size:20px; line-height:1.5; letter-spacing:.03em; color:var(--night-ink); word-break:keep-all; overflow-wrap:anywhere}
+.pr-card h4 + p{margin-top:12px}
+.pr-card p:not(.pr-lab){color:#C9D3DA; line-height:1.95}
+.pr-card p + p:not(.pr-lab){margin-top:10px}
+.pr-card mark{background:linear-gradient(transparent 60%, rgba(125,184,209,.30) 60%); color:#EEF5F8; font-weight:700; padding:0 1px}
+@media (min-width:861px){
+  .pr-cards{grid-template-columns:repeat(2, minmax(0,1fr)); gap:20px}
+  .pr-card{padding:24px 28px 26px}
+  .pr-card h4{font-size:22px}
+}
 
 /* 03 作品：1 作品 = 全画面 1 枚。左に大きな画像、右に題・概要・表・こだわり 2 つ・MORE。色は作品ごとの --wa */
 .p-work{background:var(--black)}
@@ -468,7 +482,20 @@ button{font:inherit}
         <div class="pf-pr">
           <div class="block" id="pr-self">
             <h3 class="bh">自己PR</h3>
-            <div class="pr-box about-box"><p><span class="todo">準備中</span></p></div>
+            <div class="pr-cards">
+              <article class="pr-card">
+                <p class="pr-lab">強み</p>
+                <h4>空間が伝わる音を、<wbr>仕組みから作れる</h4>
+                <p>部屋の響き、壁越しのこもり、扉の開け閉めで変わる聞こえ方。こうした音の変化を計算する自作の音響エンジン IdReal を C++ で作り、Unreal Engine と Wwise に載せて鳴らしています。</p>
+                <p>チーム制作では、10 人の RibBond でリーダーとリードプログラマー、11 人の御墨付でサブリーダーを務め、設計からサウンドの実装まで受け持ちました。</p>
+              </article>
+              <article class="pr-card">
+                <p class="pr-lab">考え方</p>
+                <h4>形は物理から、<wbr>量はゲームから</h4>
+                <p>響きの減り方や壁越しのこもり方の「形」は、物理から借ります。でも、どれだけ響かせるか・どれだけこもらせるかの「量」は、正確さではなく、プレイヤーに伝わるかどうかを耳で聞いて決めます。</p>
+                <p>ゲームの中で、音が主役になる場面は多くありません。だからこそ、説明しなくても分かる自然な変化と、ゲームの邪魔をしない軽さを先に置く。<mark>ゲームに沿って、正しさと分かりやすさの配分を決めること</mark>を大事にしています。</p>
+              </article>
+            </div>
           </div>
         </div>
         <div class="pf-about">
