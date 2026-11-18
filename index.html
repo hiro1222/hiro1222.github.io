@@ -295,11 +295,11 @@ html.dlg-open{overflow:hidden}
 .w-wip::before{content:""; width:7px; height:7px; border-radius:50%; background:currentColor; animation:wip 1.8s ease-in-out infinite}
 @keyframes wip{50%{opacity:.2}}
 @media (prefers-reduced-motion: reduce){ .w-wip::before{animation:none} }
-/* 作品の概要の表（人数・期間・担当・環境）。概要のすぐ下、MORE の上 */
+/* 作品の表（概要・ゲームジャンル・制作規模・担当範囲・制作期間・制作環境）。題のすぐ下 */
 .w-facts{margin:22px 0 0; border-top:1px solid var(--night-line)}
-.w-facts div{display:grid; grid-template-columns:3.6em minmax(0,1fr); column-gap:14px; padding:7px 0; border-bottom:1px solid var(--night-line)}
+.w-facts div{display:grid; grid-template-columns:7em minmax(0,1fr); column-gap:14px; padding:7px 0; border-bottom:1px solid var(--night-line)}
 .w-facts div:last-child{border-bottom:0}
-.w-facts dt{font-size:13px; font-weight:700; color:var(--wa); letter-spacing:.04em}
+.w-facts dt{font-size:13px; font-weight:700; color:var(--wa); letter-spacing:.04em; white-space:nowrap}
 .w-facts dd{margin:0; font-size:14px; line-height:1.7; color:#D5DCE1}
 /* PC の作品（基本の指定より後ろに置く：同じ強さだと後ろが勝つ） */
 @media (min-width:1024px){
@@ -820,11 +820,10 @@ html.dlg-open{overflow:hidden}
         <div class="w-head">
           <p class="eyebrow"><span class="no">02</span>Works <span class="w-idx">01 / 07</span><span class="w-wip">制作中</span></p>
           <h2 id="w1-title">IdReal</h2>
-          <p class="w-lead">自作の音響エンジンと、それを扱うゲーム側の処理。空間の広さや壁などの近さが、見えていなくても伝わる体験を目指して制作。</p>
         </div>
         <div class="w-shot"><img src="img/works/idreal.jpg?v=4" width="1400" height="788" alt="IdReal のデバッグ表示（床に並んだプローブの点と、右上の耳から出る 16 本のレイで壁までの距離を測っている地図）" decoding="async"></div>
         <div class="w-detail">
-          <dl class="w-facts"><div><dt>人数</dt><dd>個人</dd></div><div><dt>期間</dt><dd>2026年7月〜制作中</dd></div><div><dt>担当</dt><dd>すべて</dd></div><div><dt>環境</dt><dd>C++（Visual Studio 2022）／Unreal Engine 5.6／Wwise 2025.1</dd></div></dl>
+          <dl class="w-facts"><div><dt>概要</dt><dd>自作の音響エンジンと、それを扱うゲーム側の処理。空間の広さや壁などの近さが、見えていなくても伝わる体験を目指して制作。</dd></div><div><dt>ゲームジャンル</dt><dd>—（音響エンジン）</dd></div><div><dt>制作規模</dt><dd>個人制作</dd></div><div><dt>担当範囲</dt><dd>すべて</dd></div><div><dt>制作期間</dt><dd>2026年7月〜制作中</dd></div><div><dt>制作環境</dt><dd>C++（Visual Studio 2022）／Unreal Engine 5.6／Wwise 2025.1</dd></div></dl>
           <div class="w-acts" hidden>
             <button type="button" class="w-more" aria-haspopup="dialog">MORE</button>
             <button type="button" class="w-doc" data-pdf="docs/idreal.pdf" data-title="IdReal 詳細資料" aria-haspopup="dialog" disabled title="準備中">詳細資料</button>
@@ -847,11 +846,10 @@ html.dlg-open{overflow:hidden}
         <div class="w-head">
           <p class="eyebrow"><span class="no">02</span>Works <span class="w-idx">02 / 07</span><span class="w-wip">制作中</span></p>
           <h2 id="w2-title">探索型ホラーゲーム</h2>
-          <p class="w-lead">自作の音響エンジン IdReal を使った探索型ホラー。暗い視界の中、足音や周りの音の聞こえ方を頼りに、どんな空間にいるのかを感じ取りながらキーアイテムを集めていく。</p>
         </div>
         <div class="w-shot"><img src="img/works/horror.jpg" width="1400" height="788" alt="探索型ホラーゲームの画面（懐中電灯で照らした暗い部屋、隅に人形、奥に扉）" decoding="async"></div>
         <div class="w-detail">
-          <dl class="w-facts"><div><dt>人数</dt><dd>個人</dd></div><div><dt>期間</dt><dd>2026年9月〜制作中</dd></div><div><dt>担当</dt><dd>すべて</dd></div><div><dt>環境</dt><dd>Unreal Engine 5.6／Wwise 2025.1／自作の音響エンジン IdReal</dd></div></dl>
+          <dl class="w-facts"><div><dt>概要</dt><dd>自作の音響エンジン IdReal を使った探索型ホラー。暗い視界の中、足音や周りの音の聞こえ方を頼りに、どんな空間にいるのかを感じ取りながらキーアイテムを集めていく。</dd></div><div><dt>ゲームジャンル</dt><dd>探索型ホラー</dd></div><div><dt>制作規模</dt><dd>個人制作</dd></div><div><dt>担当範囲</dt><dd>すべて</dd></div><div><dt>制作期間</dt><dd>2026年9月〜制作中</dd></div><div><dt>制作環境</dt><dd>Unreal Engine 5.6／Wwise 2025.1／自作の音響エンジン IdReal</dd></div></dl>
           <div class="w-acts" hidden>
             <button type="button" class="w-more" aria-haspopup="dialog">MORE</button>
           </div>
@@ -873,11 +871,10 @@ html.dlg-open{overflow:hidden}
         <div class="w-head">
           <p class="eyebrow"><span class="no">02</span>Works <span class="w-idx">03 / 07</span></p>
           <h2 id="w3-title">御墨付</h2>
-          <p class="w-lead"><span class="todo">準備中</span></p>
         </div>
         <div class="w-shot"><img src="img/works/osumitsuki.jpg?v=2" width="1400" height="788" alt="御墨付のタイトル画面" decoding="async"></div>
         <div class="w-detail">
-          <dl class="w-facts"><div><dt>人数</dt><dd>11人</dd></div><div><dt>期間</dt><dd>3か月</dd></div><div><dt>担当</dt><dd>サブリーダー、プレイヤー制御、サウンド設計・実装</dd></div><div><dt>環境</dt><dd>Unity 6</dd></div></dl>
+          <dl class="w-facts"><div><dt>概要</dt><dd><span class="todo">準備中</span></dd></div><div><dt>ゲームジャンル</dt><dd><span class="todo">準備中</span></dd></div><div><dt>制作規模</dt><dd>チーム制作・11人</dd></div><div><dt>担当範囲</dt><dd>サブリーダー、プレイヤー制御、サウンド設計・実装</dd></div><div><dt>制作期間</dt><dd>3か月</dd></div><div><dt>制作環境</dt><dd>Unity 6</dd></div></dl>
           <div class="w-acts" hidden>
             <button type="button" class="w-more" aria-haspopup="dialog">MORE</button>
           </div>
@@ -899,11 +896,10 @@ html.dlg-open{overflow:hidden}
         <div class="w-head">
           <p class="eyebrow"><span class="no">02</span>Works <span class="w-idx">04 / 07</span></p>
           <h2 id="w4-title">RibBond</h2>
-          <p class="w-lead"><span class="todo">準備中</span></p>
         </div>
         <div class="w-shot"><img src="img/works/ribbond.jpg?v=2" width="1400" height="788" alt="RibBond のタイトル画面" decoding="async"></div>
         <div class="w-detail">
-          <dl class="w-facts"><div><dt>人数</dt><dd>10人</dd></div><div><dt>期間</dt><dd>4か月</dd></div><div><dt>担当</dt><dd>リードプログラマー、リーダー、全体設計、ロード制御、サウンド制御、シーン・ステージ管理</dd></div><div><dt>環境</dt><dd>DirectX 11</dd></div></dl>
+          <dl class="w-facts"><div><dt>概要</dt><dd><span class="todo">準備中</span></dd></div><div><dt>ゲームジャンル</dt><dd><span class="todo">準備中</span></dd></div><div><dt>制作規模</dt><dd>チーム制作・10人</dd></div><div><dt>担当範囲</dt><dd>リードプログラマー、リーダー、全体設計、ロード制御、サウンド制御、シーン・ステージ管理</dd></div><div><dt>制作期間</dt><dd>4か月</dd></div><div><dt>制作環境</dt><dd>DirectX 11</dd></div></dl>
           <div class="w-acts" hidden>
             <button type="button" class="w-more" aria-haspopup="dialog">MORE</button>
           </div>
@@ -925,11 +921,10 @@ html.dlg-open{overflow:hidden}
         <div class="w-head">
           <p class="eyebrow"><span class="no">02</span>Works <span class="w-idx">05 / 07</span></p>
           <h2 id="w5-title">SoundMarker</h2>
-          <p class="w-lead"><span class="todo">準備中</span></p>
         </div>
         <div class="w-shot"><img src="img/works/soundmarker.jpg?v=2" width="1400" height="789" alt="SoundMarker の画面（アニメーションのタイムラインに音を置く）" decoding="async"></div>
         <div class="w-detail">
-          <dl class="w-facts"><div><dt>人数</dt><dd>個人</dd></div><div><dt>期間</dt><dd>2週間</dd></div><div><dt>担当</dt><dd>すべて</dd></div><div><dt>環境</dt><dd>DirectX 11／C++17</dd></div></dl>
+          <dl class="w-facts"><div><dt>概要</dt><dd><span class="todo">準備中</span></dd></div><div><dt>ゲームジャンル</dt><dd><span class="todo">準備中</span></dd></div><div><dt>制作規模</dt><dd>個人制作</dd></div><div><dt>担当範囲</dt><dd>すべて</dd></div><div><dt>制作期間</dt><dd>2週間</dd></div><div><dt>制作環境</dt><dd>DirectX 11／C++17</dd></div></dl>
           <div class="w-acts" hidden>
             <button type="button" class="w-more" aria-haspopup="dialog">MORE</button>
           </div>
@@ -951,11 +946,10 @@ html.dlg-open{overflow:hidden}
         <div class="w-head">
           <p class="eyebrow"><span class="no">02</span>Works <span class="w-idx">06 / 07</span><span class="w-wip">制作中</span></p>
           <h2 id="w6-title">友人作品A</h2>
-          <p class="w-lead"><span class="todo">準備中</span></p>
         </div>
         <div class="w-shot">画像 準備中</div>
         <div class="w-detail">
-          <dl class="w-facts"><div><dt>人数</dt><dd>—</dd></div><div><dt>期間</dt><dd>1か月</dd></div><div><dt>担当</dt><dd>サウンド面で協力、<span class="todo">詳しくは準備中</span></dd></div><div><dt>環境</dt><dd>DirectX 11／C++17</dd></div></dl>
+          <dl class="w-facts"><div><dt>概要</dt><dd><span class="todo">準備中</span></dd></div><div><dt>ゲームジャンル</dt><dd><span class="todo">準備中</span></dd></div><div><dt>制作規模</dt><dd>—</dd></div><div><dt>担当範囲</dt><dd>サウンド面で協力、<span class="todo">詳しくは準備中</span></dd></div><div><dt>制作期間</dt><dd>1か月</dd></div><div><dt>制作環境</dt><dd>DirectX 11／C++17</dd></div></dl>
           <div class="w-acts" hidden>
             <button type="button" class="w-more" aria-haspopup="dialog">MORE</button>
           </div>
@@ -977,11 +971,10 @@ html.dlg-open{overflow:hidden}
         <div class="w-head">
           <p class="eyebrow"><span class="no">02</span>Works <span class="w-idx">07 / 07</span><span class="w-wip">制作中</span></p>
           <h2 id="w7-title">友人作品B</h2>
-          <p class="w-lead"><span class="todo">準備中</span></p>
         </div>
         <div class="w-shot">画像 準備中</div>
         <div class="w-detail">
-          <dl class="w-facts"><div><dt>人数</dt><dd>—</dd></div><div><dt>期間</dt><dd>1か月</dd></div><div><dt>担当</dt><dd>サウンド面で協力、<span class="todo">詳しくは準備中</span></dd></div><div><dt>環境</dt><dd>DirectX 12／C++17</dd></div></dl>
+          <dl class="w-facts"><div><dt>概要</dt><dd><span class="todo">準備中</span></dd></div><div><dt>ゲームジャンル</dt><dd><span class="todo">準備中</span></dd></div><div><dt>制作規模</dt><dd>—</dd></div><div><dt>担当範囲</dt><dd>サウンド面で協力、<span class="todo">詳しくは準備中</span></dd></div><div><dt>制作期間</dt><dd>1か月</dd></div><div><dt>制作環境</dt><dd>DirectX 12／C++17</dd></div></dl>
           <div class="w-acts" hidden>
             <button type="button" class="w-more" aria-haspopup="dialog">MORE</button>
           </div>
