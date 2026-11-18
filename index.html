@@ -131,10 +131,6 @@ button{font:inherit}
 .hero-name .jp{font-family:var(--f-display); font-weight:800; font-size:clamp(22px, 2.3vw, 30px); letter-spacing:.14em; line-height:1.4}
 .hero-name .en{font-family:var(--f-label); font-size:13px; letter-spacing:.24em; text-transform:uppercase; color:var(--night-muted)}
 .hero-name .role{margin-top:4px; font-size:14px; color:#C9D3DA}
-/* 一目で分かる言葉：名前の下に札を並べる */
-.hero-tags{list-style:none; margin:16px 0 0; padding:0; display:flex; flex-wrap:wrap; gap:8px}
-@media (min-width:861px){ .hero-tags{width:max-content; max-width:calc(100vw - 48px)} }  /* PC は右が空いているので 1 行に（文章の幅より広くてよい） */
-.hero-tags li{padding:4px 13px; border:1px solid rgba(125,184,209,.38); border-radius:999px; background:rgba(125,184,209,.07); font-size:13px; line-height:1.6; color:#D5E3EA; letter-spacing:.03em; white-space:nowrap}
 .hero .lead{margin-top:18px; max-width:29em; font-size:14.5px; color:#AEBAC3}
 .cue{
   position:absolute; left:50%; bottom:calc(18px + env(safe-area-inset-bottom, 0px)); transform:translateX(-50%);
@@ -427,14 +423,6 @@ button{font:inherit}
           <p class="nm"><span class="jp">竹内 寛登</span><span class="en">Hiroto Takeuchi</span></p>
           <p class="role">サウンドプログラマー志望 ／ 2028年3月卒業予定</p>
         </div>
-        <!-- 一目で分かる言葉（3〜4 個） -->
-        <ul class="hero-tags">
-          <li>音響エンジンを C++ で自作</li>
-          <li>Unreal Engine × Wwise</li>
-          <li>チーム制作でリーダー</li>
-          <li>学内コンペ 技術力賞</li>
-        </ul>
-        <p class="lead">歩いた先の響き、扉の向こうから漏れる音。プレイヤーの動きに音が空間の手応えで応えると、ゲームはもっと臨場感を持ちます。その仕組みとして、残響・遮蔽・定位を受け持つ音響エンジンを C++ で一から書き、Unreal Engine と Wwise に載せて鳴らしています。</p>
       </div>
     </div>
     <a class="cue" href="#profile" data-go="profile">SCROLL</a>
