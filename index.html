@@ -213,7 +213,13 @@ button{font:inherit}
 .pr .pr-box p{max-width:46em}
 .about-box p{max-width:46em}
 .pr-catch{font-family:var(--f-display); font-weight:800; font-size:20px; line-height:1.5; letter-spacing:.03em; color:var(--night-ink); word-break:keep-all; overflow-wrap:anywhere}  /* 箱の頭の一言（自己PR のカードの見出しと同じ扱い） */
-@media (min-width:861px){ .pr-catch{font-size:22px} }
+/* PC の What I：右が空きすぎないよう、左に一言・右に本文の 2 列（間に細い線） */
+@media (min-width:861px){
+  .pr-catch{font-size:22px}
+  .about-box{display:grid; grid-template-columns:minmax(0,.75fr) minmax(0,1.5fr); column-gap:32px; align-items:center; padding:26px 30px}
+  .about-box .pr-catch{font-size:24px}
+  .about-box .pr-catch + p{margin-top:0; max-width:none; padding-left:32px; border-left:1px solid var(--night-line)}
+}
 /* 自己PR：強み｜考え方 の 2 枚（スマホは縦）。左に色の線、右上の角を斜めに落とす */
 .pr-cards{display:grid; grid-template-columns:minmax(0,1fr); gap:16px; margin-top:14px}
 .pr-card{min-width:0; background:rgba(255,255,255,.04); border:1px solid var(--night-line); border-left:3px solid var(--accent-hi); padding:20px 24px 22px; clip-path:polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%)}
