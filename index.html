@@ -212,6 +212,8 @@ button{font:inherit}
 .pr-box p + p{margin-top:10px}
 .pr .pr-box p{max-width:46em}
 .about-box p{max-width:46em}
+.pr-catch{font-family:var(--f-display); font-weight:800; font-size:20px; line-height:1.5; letter-spacing:.03em; color:var(--night-ink); word-break:keep-all; overflow-wrap:anywhere}  /* 箱の頭の一言（自己PR のカードの見出しと同じ扱い） */
+@media (min-width:861px){ .pr-catch{font-size:22px} }
 /* 自己PR：強み｜考え方 の 2 枚（スマホは縦）。左に色の線、右上の角を斜めに落とす */
 .pr-cards{display:grid; grid-template-columns:minmax(0,1fr); gap:16px; margin-top:14px}
 .pr-card{min-width:0; background:rgba(255,255,255,.04); border:1px solid var(--night-line); border-left:3px solid var(--accent-hi); padding:20px 24px 22px; clip-path:polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%)}
@@ -501,7 +503,10 @@ button{font:inherit}
         <div class="pf-about">
           <div class="block">
             <h3 class="bh">What I Want to Create<span class="bh-sub">どんなものが作りたい？</span></h3>
-            <div class="pr-box about-box"><p><span class="todo">準備中</span></p></div>
+            <div class="pr-box about-box">
+              <p class="pr-catch">ゲームの体験を支える、<wbr>音の環境</p>
+              <p>ゲームで作りたい体験をサポートする、音の環境を作りたいと考えています。体験を向上させる音の鳴らし方の決まりや調整、デザイナーさんの作品をどうすればよりよく見せられるか。音の観点から、ゲーム全体のクオリティをサポートできるものを作っていきたいです。</p>
+            </div>
           </div>
         </div>
         <div class="pf-skill">
