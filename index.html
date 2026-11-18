@@ -119,11 +119,11 @@ button{font:inherit}
 
 /* 01 ホーム */
 .p-top{background:var(--night); color:var(--night-ink)}
-@media (min-width:861px){ .p-top{padding-bottom:96px} }  /* 下の SCROLL と説明文が重ならないように */
+@media (min-width:861px){ .p-top{padding-bottom:84px} }  /* 下の SCROLL と説明文が重ならないように */
 .p-top .bg{background:radial-gradient(ellipse 55% 60% at 78% 52%, rgba(125,184,209,.07), transparent 70%)}
 .hero{max-width:36em}
 .hero .kicker{font-family:var(--f-label); font-size:13px; letter-spacing:.22em; text-transform:uppercase; color:var(--accent-hi)}
-.hero h1{font-family:var(--f-display); font-weight:800; font-size:clamp(38px, 5.4vw, 68px); line-height:1.22; letter-spacing:.03em; margin-top:16px}
+.hero h1{font-family:var(--f-display); font-weight:800; font-size:clamp(38px, min(5.4vw, 8.2vh), 68px); line-height:1.22; letter-spacing:.03em; margin-top:16px}
 .hero h1 .ln{display:block; white-space:nowrap}
 /* 名前・肩書き */
 .hero-name{margin-top:26px; padding-left:14px; border-left:2px solid var(--accent-hi)}
@@ -132,9 +132,10 @@ button{font:inherit}
 .hero-name .en{font-family:var(--f-label); font-size:13px; letter-spacing:.24em; text-transform:uppercase; color:var(--night-muted)}
 .hero-name .role{margin-top:4px; font-size:14px; color:#C9D3DA}
 /* 一目で分かる言葉：名前の下に札を並べる */
-.hero-tags{list-style:none; margin:18px 0 0; padding:0; display:flex; flex-wrap:wrap; gap:8px}
+.hero-tags{list-style:none; margin:16px 0 0; padding:0; display:flex; flex-wrap:wrap; gap:8px}
+@media (min-width:861px){ .hero-tags{width:max-content; max-width:calc(100vw - 48px)} }  /* PC は右が空いているので 1 行に（文章の幅より広くてよい） */
 .hero-tags li{padding:4px 13px; border:1px solid rgba(125,184,209,.38); border-radius:999px; background:rgba(125,184,209,.07); font-size:13px; line-height:1.6; color:#D5E3EA; letter-spacing:.03em; white-space:nowrap}
-.hero .lead{margin-top:22px; max-width:29em; font-size:14.5px; color:#AEBAC3}
+.hero .lead{margin-top:18px; max-width:29em; font-size:14.5px; color:#AEBAC3}
 .cue{
   position:absolute; left:50%; bottom:calc(18px + env(safe-area-inset-bottom, 0px)); transform:translateX(-50%);
   display:flex; flex-direction:column; align-items:center; gap:8px; text-decoration:none;
