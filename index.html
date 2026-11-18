@@ -235,7 +235,7 @@ button{font:inherit}
   .pr-card h4{font-size:22px}
 }
 
-/* 03 作品：1 作品 = 全画面 1 枚。左に大きな画像、右に題・概要・表・こだわり 2 つ・MORE。色は作品ごとの --wa */
+/* 03 作品：1 作品 = 全画面 1 枚。左に大きな画像、右に題・概要・表・MORE（こだわりは MORE の窓）。色は作品ごとの --wa */
 .p-work{background:var(--black)}
 .p-work .bg{background:
   radial-gradient(ellipse 60% 60% at 28% 50%, color-mix(in srgb, var(--wa) 15%, transparent), transparent 70%),
@@ -261,14 +261,41 @@ button{font:inherit}
 .w-ic{grid-row:1 / 3; width:34px; height:34px; border:1.5px solid var(--wa); border-radius:6px; display:grid; place-items:center; font-family:var(--f-mono); font-size:12px; color:var(--wa)}
 .w-pts h4{font-size:14.5px; font-weight:700; line-height:1.45; word-break:keep-all}
 .w-pts p{font-size:13px; color:var(--night-muted); line-height:1.7; margin-top:2px}
-.w-more{display:block; width:fit-content; margin:28px auto 0; padding:9px 36px; border:1px solid var(--wa); border-radius:3px; color:var(--wa); font-family:var(--f-label); font-size:13px; letter-spacing:.22em; text-decoration:none}
-.w-more[aria-disabled="true"]{opacity:.45; cursor:default}
+/* MORE と 詳細資料（右の列の真ん中に並べる） */
+.w-acts{display:flex; justify-content:center; align-items:center; flex-wrap:wrap; gap:12px; margin-top:28px}
+.w-more{display:inline-block; margin:0; padding:9px 36px; border:1px solid var(--wa); border-radius:3px; background:none; color:var(--wa); font-family:var(--f-label); font-size:13px; letter-spacing:.22em; text-decoration:none; cursor:pointer; transition:background .2s ease, color .2s ease}
+.w-more:hover{background:var(--wa); color:#0D1620}
+.w-doc{display:inline-block; margin:0; padding:9px 24px; border:1px solid var(--wa); border-radius:3px; background:var(--wa); color:#0D1620; font-family:var(--f-body); font-weight:700; font-size:13.5px; letter-spacing:.14em; cursor:pointer; transition:filter .2s ease}
+.w-doc:hover{filter:brightness(1.12)}
+.w-doc:disabled{opacity:.4; cursor:default; filter:none}
+.w-more:focus-visible, .w-doc:focus-visible{outline:2px solid var(--wa); outline-offset:3px}
+/* 作品の MORE・詳細資料の窓（<dialog>）。開いている間は後ろのページを止める */
+html{scrollbar-gutter:stable}
+html.dlg-open{overflow:hidden}
+.dlg{width:min(880px, calc(100% - 32px)); max-width:none; max-height:calc(100vh - 48px); max-height:calc(100dvh - 48px); margin:auto; padding:0; border:1px solid var(--night-line); border-top:3px solid var(--wa, var(--accent-hi)); border-radius:6px; background:#0F171F; color:var(--night-ink); overflow:auto; overscroll-behavior:contain; box-shadow:0 30px 80px rgba(0,0,0,.6)}
+.dlg::backdrop{background:rgba(6,10,14,.74)}
+.dlg[open]{animation:dlg-in .22s ease-out}
+@keyframes dlg-in{from{opacity:0; transform:translateY(14px)}}
+@media (prefers-reduced-motion: reduce){ .dlg[open]{animation:none} }
+.dlg-bar{position:sticky; top:0; z-index:1; display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 12px 10px 24px; background:#0F171F; border-bottom:1px solid var(--night-line)}
+.dlg-eb{min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-family:var(--f-label); font-size:13px; letter-spacing:.16em; color:var(--wa, var(--accent-hi))}
+.dlg-bar-r{display:flex; align-items:center; gap:8px; flex:none}
+.dlg-x, .dlg-open{display:inline-flex; align-items:center; gap:6px; padding:7px 12px; border:1px solid var(--night-line); border-radius:3px; background:none; color:var(--night-ink); font:inherit; font-size:13px; line-height:1.4; text-decoration:none; cursor:pointer}
+.dlg-x:hover, .dlg-open:hover{border-color:var(--wa, var(--accent-hi)); color:var(--wa, var(--accent-hi))}
+.dlg-body{padding:26px 28px 34px}
+.dlg-body h3{font-family:var(--f-display); font-weight:800; font-size:clamp(26px, 4vw, 38px); line-height:1.3; letter-spacing:.03em}
+.dlg-lead{margin-top:10px; color:#C9D3DA; line-height:1.8}
+.dlg-h{margin-top:28px; padding-bottom:8px; border-bottom:1px solid var(--night-line); font-family:var(--f-display); font-weight:800; font-size:19px; letter-spacing:.06em}
+/* 詳細資料：PDF をそのまま窓いっぱいに */
+.dlg-pdf{width:min(1200px, calc(100% - 32px)); height:calc(100vh - 48px); height:calc(100dvh - 48px); overflow:hidden}
+.dlg-pdf[open]{display:flex; flex-direction:column}
+.dlg-pdf iframe{flex:1; min-height:0; width:100%; border:0; background:#525659}
 /* 制作中の印（題の上の行、作品の番号の横。点がゆっくり明滅） */
 .w-wip{display:inline-flex; align-items:center; gap:7px; margin-left:4px; padding:1px 12px 1px 10px; border:1px solid var(--wa); border-radius:999px; color:var(--wa); font-family:var(--f-body); font-weight:700; font-size:12.5px; letter-spacing:.12em; line-height:1.6; white-space:nowrap}
 .w-wip::before{content:""; width:7px; height:7px; border-radius:50%; background:currentColor; animation:wip 1.8s ease-in-out infinite}
 @keyframes wip{50%{opacity:.2}}
 @media (prefers-reduced-motion: reduce){ .w-wip::before{animation:none} }
-/* 作品の概要の表（人数・期間・担当・環境）。概要のすぐ下、こだわり 2 つの上 */
+/* 作品の概要の表（人数・期間・担当・環境）。概要のすぐ下、MORE の上 */
 .w-facts{margin:22px 0 0; border-top:1px solid var(--night-line)}
 .w-facts div{display:grid; grid-template-columns:3.6em minmax(0,1fr); column-gap:14px; padding:7px 0; border-bottom:1px solid var(--night-line)}
 .w-facts div:last-child{border-bottom:0}
@@ -297,7 +324,9 @@ button{font:inherit}
   .w-facts dt{font-size:14px}
   .w-facts dd{font-size:15.5px}
   .w-wip{font-size:13.5px}
-  .w-more{display:block; width:fit-content; margin:clamp(32px, 6vh, 68px) auto 0; padding:15px 68px; font-size:16px; letter-spacing:.26em}  /* 右へ寄せて（右の列の真ん中）・離して・大きく */
+  .w-acts{margin-top:clamp(32px, 6vh, 68px); gap:16px}  /* 右の列の真ん中・離して・大きく */
+  .w-more{padding:15px 68px; font-size:16px; letter-spacing:.26em}
+  .w-doc{padding:15px 40px; font-size:16px}
 }
 @media (max-width:480px){ .w-pts{grid-template-columns:minmax(0,1fr); gap:16px} }
 
@@ -783,7 +812,7 @@ button{font:inherit}
     </div>
   </section>
 
-  <!-- 03 作品：1 作品 = 全画面 1 枚（左に画像、右に題・概要・表・こだわり 2 つ）。画像は .w-shot の中に img を入れる -->
+  <!-- 03 作品：1 作品 = 全画面 1 枚（左に画像、右に題・概要・表・MORE）。こだわりは .w-extra（MORE の窓に出る）。画像は .w-shot の中に img を入れる -->
   <section class="panel dark p-work" id="works" aria-labelledby="w1-title" style="--wa:#7DB8D1">
     <div class="bg"></div>
     <div class="wrap">
@@ -796,11 +825,17 @@ button{font:inherit}
         <div class="w-shot" style="aspect-ratio:1400/691"><img src="img/works/idreal.jpg?v=2" width="1400" height="691" alt="IdReal のデバッグ表示（今いるエリアの響きの値と、耳から出る 16 本のレイを描いた部屋の地図）" decoding="async"></div>
         <div class="w-detail">
           <dl class="w-facts"><div><dt>人数</dt><dd>個人</dd></div><div><dt>期間</dt><dd>2026年7月〜制作中</dd></div><div><dt>担当</dt><dd>すべて</dd></div><div><dt>環境</dt><dd>C++（Visual Studio 2022）／Unreal Engine 5.6／Wwise 2025.1</dd></div></dl>
-          <ul class="w-pts">
-              <li><span class="w-ic" aria-hidden="true">01</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
-              <li><span class="w-ic" aria-hidden="true">02</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
-          </ul>
-          <span class="w-more" aria-disabled="true">MORE</span>
+          <div class="w-acts">
+            <button type="button" class="w-more" aria-haspopup="dialog">MORE</button>
+            <button type="button" class="w-doc" data-pdf="docs/idreal.pdf" data-title="IdReal 詳細資料" aria-haspopup="dialog" disabled title="準備中">詳細資料</button>
+          </div>
+          <div class="w-extra" hidden>
+            <p class="dlg-h">こだわり</p>
+            <ul class="w-pts">
+                <li><span class="w-ic" aria-hidden="true">01</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
+                <li><span class="w-ic" aria-hidden="true">02</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
@@ -817,11 +852,16 @@ button{font:inherit}
         <div class="w-shot"><img src="img/works/horror.jpg" width="1400" height="788" alt="探索型ホラーゲームの画面（懐中電灯で照らした暗い部屋、隅に人形、奥に扉）" decoding="async"></div>
         <div class="w-detail">
           <dl class="w-facts"><div><dt>人数</dt><dd>個人</dd></div><div><dt>期間</dt><dd>2026年9月〜制作中</dd></div><div><dt>担当</dt><dd>すべて</dd></div><div><dt>環境</dt><dd>Unreal Engine 5.6／Wwise 2025.1／自作の音響エンジン IdReal</dd></div></dl>
-          <ul class="w-pts">
-              <li><span class="w-ic" aria-hidden="true">01</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
-              <li><span class="w-ic" aria-hidden="true">02</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
-          </ul>
-          <span class="w-more" aria-disabled="true">MORE</span>
+          <div class="w-acts">
+            <button type="button" class="w-more" aria-haspopup="dialog">MORE</button>
+          </div>
+          <div class="w-extra" hidden>
+            <p class="dlg-h">こだわり</p>
+            <ul class="w-pts">
+                <li><span class="w-ic" aria-hidden="true">01</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
+                <li><span class="w-ic" aria-hidden="true">02</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
@@ -838,11 +878,16 @@ button{font:inherit}
         <div class="w-shot"><img src="img/works/osumitsuki.jpg?v=2" width="1400" height="788" alt="御墨付のタイトル画面" decoding="async"></div>
         <div class="w-detail">
           <dl class="w-facts"><div><dt>人数</dt><dd>11人</dd></div><div><dt>期間</dt><dd>3か月</dd></div><div><dt>担当</dt><dd>サブリーダー、プレイヤー制御、サウンド設計・実装</dd></div><div><dt>環境</dt><dd>Unity 6</dd></div></dl>
-          <ul class="w-pts">
-              <li><span class="w-ic" aria-hidden="true">01</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
-              <li><span class="w-ic" aria-hidden="true">02</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
-          </ul>
-          <span class="w-more" aria-disabled="true">MORE</span>
+          <div class="w-acts">
+            <button type="button" class="w-more" aria-haspopup="dialog">MORE</button>
+          </div>
+          <div class="w-extra" hidden>
+            <p class="dlg-h">こだわり</p>
+            <ul class="w-pts">
+                <li><span class="w-ic" aria-hidden="true">01</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
+                <li><span class="w-ic" aria-hidden="true">02</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
@@ -859,11 +904,16 @@ button{font:inherit}
         <div class="w-shot"><img src="img/works/ribbond.jpg?v=2" width="1400" height="788" alt="RibBond のタイトル画面" decoding="async"></div>
         <div class="w-detail">
           <dl class="w-facts"><div><dt>人数</dt><dd>10人</dd></div><div><dt>期間</dt><dd>4か月</dd></div><div><dt>担当</dt><dd>リードプログラマー、リーダー、全体設計、ロード制御、サウンド制御、シーン・ステージ管理</dd></div><div><dt>環境</dt><dd>DirectX 11</dd></div></dl>
-          <ul class="w-pts">
-              <li><span class="w-ic" aria-hidden="true">01</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
-              <li><span class="w-ic" aria-hidden="true">02</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
-          </ul>
-          <span class="w-more" aria-disabled="true">MORE</span>
+          <div class="w-acts">
+            <button type="button" class="w-more" aria-haspopup="dialog">MORE</button>
+          </div>
+          <div class="w-extra" hidden>
+            <p class="dlg-h">こだわり</p>
+            <ul class="w-pts">
+                <li><span class="w-ic" aria-hidden="true">01</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
+                <li><span class="w-ic" aria-hidden="true">02</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
@@ -880,11 +930,16 @@ button{font:inherit}
         <div class="w-shot"><img src="img/works/soundmarker.jpg?v=2" width="1400" height="789" alt="SoundMarker の画面（アニメーションのタイムラインに音を置く）" decoding="async"></div>
         <div class="w-detail">
           <dl class="w-facts"><div><dt>人数</dt><dd>個人</dd></div><div><dt>期間</dt><dd>2週間</dd></div><div><dt>担当</dt><dd>すべて</dd></div><div><dt>環境</dt><dd>DirectX 11／C++17</dd></div></dl>
-          <ul class="w-pts">
-              <li><span class="w-ic" aria-hidden="true">01</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
-              <li><span class="w-ic" aria-hidden="true">02</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
-          </ul>
-          <span class="w-more" aria-disabled="true">MORE</span>
+          <div class="w-acts">
+            <button type="button" class="w-more" aria-haspopup="dialog">MORE</button>
+          </div>
+          <div class="w-extra" hidden>
+            <p class="dlg-h">こだわり</p>
+            <ul class="w-pts">
+                <li><span class="w-ic" aria-hidden="true">01</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
+                <li><span class="w-ic" aria-hidden="true">02</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
@@ -901,11 +956,16 @@ button{font:inherit}
         <div class="w-shot">画像 準備中</div>
         <div class="w-detail">
           <dl class="w-facts"><div><dt>人数</dt><dd>—</dd></div><div><dt>期間</dt><dd>1か月</dd></div><div><dt>担当</dt><dd>サウンド面で協力、<span class="todo">詳しくは準備中</span></dd></div><div><dt>環境</dt><dd>DirectX 11／C++17</dd></div></dl>
-          <ul class="w-pts">
-              <li><span class="w-ic" aria-hidden="true">01</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
-              <li><span class="w-ic" aria-hidden="true">02</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
-          </ul>
-          <span class="w-more" aria-disabled="true">MORE</span>
+          <div class="w-acts">
+            <button type="button" class="w-more" aria-haspopup="dialog">MORE</button>
+          </div>
+          <div class="w-extra" hidden>
+            <p class="dlg-h">こだわり</p>
+            <ul class="w-pts">
+                <li><span class="w-ic" aria-hidden="true">01</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
+                <li><span class="w-ic" aria-hidden="true">02</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
@@ -922,11 +982,16 @@ button{font:inherit}
         <div class="w-shot">画像 準備中</div>
         <div class="w-detail">
           <dl class="w-facts"><div><dt>人数</dt><dd>—</dd></div><div><dt>期間</dt><dd>1か月</dd></div><div><dt>担当</dt><dd>サウンド面で協力、<span class="todo">詳しくは準備中</span></dd></div><div><dt>環境</dt><dd>DirectX 12／C++17</dd></div></dl>
-          <ul class="w-pts">
-              <li><span class="w-ic" aria-hidden="true">01</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
-              <li><span class="w-ic" aria-hidden="true">02</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
-          </ul>
-          <span class="w-more" aria-disabled="true">MORE</span>
+          <div class="w-acts">
+            <button type="button" class="w-more" aria-haspopup="dialog">MORE</button>
+          </div>
+          <div class="w-extra" hidden>
+            <p class="dlg-h">こだわり</p>
+            <ul class="w-pts">
+                <li><span class="w-ic" aria-hidden="true">01</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
+                <li><span class="w-ic" aria-hidden="true">02</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
@@ -949,6 +1014,17 @@ button{font:inherit}
     </div>
   </section>
 </main>
+
+<!-- 作品の MORE の窓（中身は各作品の .w-extra を写す。こだわりなどはそこに書く） -->
+<dialog class="dlg" id="w-dlg" aria-labelledby="w-dlg-title">
+  <div class="dlg-bar"><p class="dlg-eb"></p><div class="dlg-bar-r"><button type="button" class="dlg-x" data-close>閉じる<span aria-hidden="true">×</span></button></div></div>
+  <div class="dlg-body"><h3 id="w-dlg-title"></h3><p class="dlg-lead"></p><div class="dlg-more"></div></div>
+</dialog>
+<!-- 詳細資料（PDF）の窓。PC はページの中に表示、スマホは新しいタブで開く -->
+<dialog class="dlg dlg-pdf" id="pdf-dlg" aria-label="詳細資料">
+  <div class="dlg-bar"><p class="dlg-eb"></p><div class="dlg-bar-r"><a class="dlg-open" id="pdf-open" href="#" target="_blank" rel="noopener">新しいタブで開く</a><button type="button" class="dlg-x" data-close>閉じる<span aria-hidden="true">×</span></button></div></div>
+  <iframe id="pdf-frame" title="詳細資料（PDF）"></iframe>
+</dialog>
 
 <script>
 (function(){
@@ -1061,7 +1137,8 @@ button{font:inherit}
   window.addEventListener('wheel', function(e){
     // 拡大縮小・横のスクロール・サイドバーの中・動きを減らす設定 はブラウザに任せる
     if (reduce || e.ctrlKey || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
-    if (e.target.closest && e.target.closest('#drawer')) return;
+    if (e.target.closest && e.target.closest('#drawer, dialog')) return;
+    if (document.documentElement.classList.contains('dlg-open')) return;
     var dy = e.deltaY * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? window.innerHeight : 1);
     e.preventDefault();
     if (!wheelTimer) wheelFrom = sp.on ? sp.x : window.scrollY;
@@ -1134,6 +1211,49 @@ button{font:inherit}
   scrim.addEventListener('click', function(){ closeDrawer(); });
   document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && drawer.classList.contains('open')) closeDrawer(); });
   window.addEventListener('resize', function(){ if (window.innerWidth > 860 && drawer.classList.contains('open')) closeDrawer(false); });
+
+  // ---- 作品の MORE（こだわりなどを窓で）・詳細資料（PDF） ----
+  var wdlg = document.getElementById('w-dlg'), pdlg = document.getElementById('pdf-dlg'), pframe = document.getElementById('pdf-frame');
+  function openDlg(d, sec){
+    if (!d.showModal) return;
+    var wa = getComputedStyle(sec).getPropertyValue('--wa').trim();
+    if (wa) d.style.setProperty('--wa', wa);
+    stopAll();
+    document.documentElement.classList.add('dlg-open');
+    d.showModal();
+    d.scrollTop = 0;
+  }
+  [wdlg, pdlg].forEach(function(d){
+    d.addEventListener('close', function(){
+      document.documentElement.classList.remove('dlg-open');
+      if (d === pdlg) pframe.removeAttribute('src');
+    });
+    // 外側（暗い所）か「閉じる」で閉じる
+    d.addEventListener('click', function(e){ if (e.target === d || e.target.closest('[data-close]')) d.close(); });
+  });
+  document.querySelectorAll('.p-work .w-more').forEach(function(b){
+    var sec = b.closest('.p-work');
+    b.addEventListener('click', function(){
+      var ex = sec.querySelector('.w-extra'), idx = sec.querySelector('.w-idx'), lead = sec.querySelector('.w-lead');
+      wdlg.querySelector('.dlg-eb').textContent = 'Works ' + (idx ? idx.textContent : '');
+      wdlg.querySelector('h3').textContent = sec.querySelector('h2').textContent;
+      wdlg.querySelector('.dlg-lead').textContent = lead ? lead.textContent : '';
+      wdlg.querySelector('.dlg-more').innerHTML = ex ? ex.innerHTML : '';
+      openDlg(wdlg, sec);
+    });
+  });
+  var phoneQ = window.matchMedia ? window.matchMedia('(max-width: 860px), (pointer: coarse)') : null;
+  document.querySelectorAll('.w-doc[data-pdf]').forEach(function(b){
+    var url = b.getAttribute('data-pdf'), sec = b.closest('.p-work');
+    b.addEventListener('click', function(){
+      // スマホ・ページの中で PDF を出せないブラウザは、新しいタブで開く（端末の PDF 表示の方が読みやすい）
+      if (navigator.pdfViewerEnabled === false || (phoneQ && phoneQ.matches)){ window.open(url, '_blank', 'noopener'); return; }
+      pdlg.querySelector('.dlg-eb').textContent = b.getAttribute('data-title') || '詳細資料';
+      document.getElementById('pdf-open').href = url;
+      pframe.src = url;
+      openDlg(pdlg, sec);
+    });
+  });
 
   // ---- 好きなゲーム体験：タイルを押すと右（スマホは下）に解説。帯はループする ----
   // タイルは同じ比率で大きさ 3 つ、並べ方は 3 種類。どの作品をどの大きさにするかは開くたびにランダム。
