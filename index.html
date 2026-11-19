@@ -531,8 +531,9 @@ html.dlg-open{overflow:hidden}
           <p class="role">サウンドプログラマー志望 ／ 2028年3月卒業予定</p>
         </div>
       </div>
-      <!-- ミニマップ：十字キーで歩くと、いる部屋の響きで足音が鳴る（中身は下の script） -->
-      <div class="smap" id="smap" role="group" aria-label="ミニマップ：十字キーで歩くと、部屋ごとに足音の響きが変わります">
+      <!-- ミニマップ：十字キーで歩くと、いる部屋の響きで足音が鳴る（中身は下の script）。
+           data-sound="idreal" で、Idreal で前もって計算した足音（audio/idreal-steps/）に切り替わる。synth は合成の足音と響き -->
+      <div class="smap" id="smap" data-sound="synth" role="group" aria-label="ミニマップ：十字キーで歩くと、部屋ごとに足音の響きが変わります">
         <div class="sm-top">
           <p class="sm-lab">SOUND MAP</p>
           <button type="button" class="sm-mute" aria-pressed="false" aria-label="音を消す"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 6h3l4-3v10l-4-3H2z" fill="currentColor"/><path class="w" d="M11 5.5a3.5 3.5 0 0 1 0 5M12.8 3.8a6 6 0 0 1 0 8.4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><span class="t">ON</span></button>
@@ -540,7 +541,7 @@ html.dlg-open{overflow:hidden}
         <div class="sm-body">
           <div class="sm-screen" tabindex="0" aria-label="地図（矢印キーで歩く・Z で手をたたく・X を押しながら走る）">
             <canvas width="160" height="160" role="img" aria-label="上から見た地図。白いコンクリートの建物で、大広間・小部屋・廊下と外の広場があり、人が 1 人いる"></canvas>
-            <p class="sm-room" aria-live="polite"><span class="sm-rn">大広間</span><span class="sm-rt">響き 2.6 秒</span></p>
+            <p class="sm-room" aria-live="polite"><span class="sm-rn">大広間</span><span class="sm-rt">響き 2.4 秒</span></p>
           </div>
           <div class="sm-pad">
             <div class="sm-dpad" aria-hidden="true"><span class="sm-up"></span><span class="sm-right"></span><span class="sm-down"></span><span class="sm-left"></span><span class="sm-mid"></span></div>
@@ -1514,11 +1515,11 @@ html.dlg-open{overflow:hidden}
   // 部屋ごとの響き。rt＝響きの長さ（秒）、pre＝響きが始まるまで、wet＝響きの量、lp＝響きの高い音の上限、
   // taps＝壁からの最初の跳ね返り [秒, 左, 右]、flutter＝向かい合う壁の往復 [間隔, 回数, 大きさ, 減り]、box＝部屋の範囲（マス）
   var ROOMS = {
-    H: {name: '大広間', rt: 2.6, pre: .012, wet: 1.0, lp: 5200, hf: 7000, surf: 'concrete', box: [1, 1, 10, 10],
+    H: {name: '大広間', rt: 2.4, pre: .012, wet: 1.0, lp: 5200, hf: 7000, surf: 'concrete', box: [1, 1, 10, 10],
         taps: [[.018, .30, .12], [.029, .10, .30], [.043, .22, .08], [.061, .08, .20]]},
-    S: {name: '小部屋', rt: .32, pre: .002, wet: .55, lp: 3800, hf: 5000, surf: 'concrete', box: [12, 1, 16, 3],
+    S: {name: '小部屋', rt: .5, pre: .002, wet: .55, lp: 3800, hf: 5000, surf: 'concrete', box: [12, 1, 16, 3],
         taps: [[.0028, .30, .16], [.0046, .14, .30], [.0072, .20, .18]]},
-    C: {name: '廊下', rt: 1.1, pre: .004, wet: .8, lp: 6000, hf: 7500, surf: 'concrete', box: [13, 5, 14, 12],
+    C: {name: '廊下', rt: 1.2, pre: .004, wet: .8, lp: 6000, hf: 7500, surf: 'concrete', box: [13, 5, 14, 12],
         flutter: [.0115, 14, .38, .82]},
     O: {name: '外', rt: 0, surf: 'concrete', box: null}
   };
@@ -1612,10 +1613,60 @@ html.dlg-open{overflow:hidden}
       rig = makeRig(ac);
     }
     if (ac.state === 'suspended') ac.resume();
+    if (idrOn()) idrInit();
     return rig;
   }
+
+  // ---------- Idreal で焼いた足音（data-sound="idreal" の時） ----------
+  // マスごとに「そこに立って足もとで足音を鳴らした時の、素の音＋響き」を Idreal で前もって計算した mp3
+  // （C:\dev\Idreal\Projects\tools\portfolio_bake の bake_footmap → encode_footmap）。外は素の足音（dry）
+  var IDR_BASE = 'audio/idreal-steps/', idr = {map: null, loading: false, byTile: {}, buf: {}, lastId: ''};
+  function idrOn(){ return root.getAttribute('data-sound') === 'idreal'; }
+  function idrLoad(id){
+    if (idr.buf[id] || !ac) return;
+    idr.buf[id] = 'loading';
+    fetch(IDR_BASE + id + '.mp3').then(function(r){ if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); })
+      .then(function(a){ return new Promise(function(ok, ng){ ac.decodeAudioData(a, ok, ng); }); })
+      .then(function(b){ idr.buf[id] = b; }, function(){ delete idr.buf[id]; });
+  }
+  function idrInit(){
+    if (idr.map || idr.loading) return;
+    idr.loading = true;
+    fetch(IDR_BASE + 'map.json').then(function(r){ return r.json(); }).then(function(m){
+      idr.map = m;
+      m.points.forEach(function(q){ idr.byTile[q.tx + ',' + q.ty] = q.id; });
+      idrLoad('dry'); idrNear();
+    }, function(){ idr.loading = false; });
+  }
+  // 今いる部屋のマス（戸口に立っている時は、部屋の中のいちばん近いマス）
+  function idrId(tx, ty){
+    var R = ROOMS[room];
+    if (!R.box) return 'dry';
+    tx = Math.max(R.box[0], Math.min(R.box[2], tx)); ty = Math.max(R.box[1], Math.min(R.box[3], ty));
+    return idr.byTile[tx + ',' + ty] || 'dry';
+  }
+  // まわり 2 マスを先に取っておく
+  function idrNear(){
+    var tx = Math.floor(me.x), ty = Math.floor(me.y), dx, dy;
+    for (dy = -2; dy <= 2; dy++) for (dx = -2; dx <= 2; dx++) idrLoad(idrId(tx + dx, ty + dy));
+  }
+  function idrStep(foot){
+    var id = idrId(Math.floor(me.x), Math.floor(me.y)), b = idr.buf[id];
+    idrNear();
+    if (!b || typeof b === 'string'){ id = 'dry'; b = idr.buf.dry; }  // まだ届いていない時は素の足音
+    if (!b || typeof b === 'string') return;
+    var c = rig.ctx, src = c.createBufferSource(), gn = c.createGain(), out = gn;
+    src.buffer = b;
+    if (src.detune) src.detune.value = (Math.random() - .5) * 60;
+    gn.gain.value = .85 + Math.random() * .2;
+    src.connect(gn);
+    if (c.createStereoPanner){ var pn = c.createStereoPanner(); pn.pan.value = foot ? .08 : -.08; gn.connect(pn); out = pn; }
+    out.connect(rig.out);
+    src.start(c.currentTime + .005);
+    idr.lastId = id;
+  }
   // 確かめ用：部屋 key で足音か手拍子を 1 回、音を出さずに作る（SoundMap.render('H').then(...)）
-  window.SoundMap = {rooms: ROOMS, render: function(key, what){
+  window.SoundMap = {rooms: ROOMS, idreal: idr, render: function(key, what){
     var OC = window.OfflineAudioContext || window.webkitOfflineAudioContext, c = new OC(2, 48000 * 3.5, 48000), r = makeRig(c);
     if (what === 'clap') clapSound(r, key, .05); else stepSound(r, key, ROOMS[key].surf, .05, 0);
     return c.startRendering();
@@ -1699,7 +1750,10 @@ html.dlg-open{overflow:hidden}
   function step(){
     me.foot ^= 1;
     var here = at(Math.floor(me.x), Math.floor(me.y)), surf = (ROOMS[here] || ROOMS[room]).surf;
-    if (rig && !muted) stepSound(rig, room, surf, rig.ctx.currentTime + .005, me.foot);
+    if (rig && !muted){
+      if (idrOn()){ idrInit(); if (idr.map) idrStep(me.foot); }
+      else stepSound(rig, room, surf, rig.ctx.currentTime + .005, me.foot);
+    }
     ring(.6, 1);
   }
   function clap(){
