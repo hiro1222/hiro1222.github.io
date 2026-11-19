@@ -132,6 +132,63 @@ button{font:inherit}
 .hero-name .en{font-family:var(--f-label); font-size:13px; letter-spacing:.24em; text-transform:uppercase; color:var(--night-muted)}
 .hero-name .role{margin-top:4px; font-size:14px; color:#C9D3DA}
 .hero .lead{margin-top:18px; max-width:29em; font-size:14.5px; color:#AEBAC3}
+/* 01 ホーム右：ミニマップ（十字キーで歩くと、部屋ごとに足音の響きが変わる）。PC は地図の下に十字キー、スマホは地図の右 */
+.top-grid{display:grid; grid-template-columns:minmax(0,1fr); row-gap:28px; align-items:center}
+.smap{--map:clamp(150px, calc(100vw - 190px), 250px); justify-self:start; width:fit-content; max-width:100%; padding:12px 12px 14px; border:1px solid var(--night-line); border-radius:14px; background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02)); box-shadow:0 18px 50px rgba(0,0,0,.35); -webkit-user-select:none; user-select:none; -webkit-touch-callout:none}
+.sm-top{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:10px; padding:0 2px}
+.sm-lab{font-family:var(--f-label); font-size:12px; letter-spacing:.22em; color:var(--accent-hi)}
+.sm-mute{display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border:1px solid var(--night-line); border-radius:999px; background:none; color:var(--night-muted); font-family:var(--f-label); font-size:11px; letter-spacing:.12em; line-height:1.4; cursor:pointer}
+.sm-mute svg{width:14px; height:14px}
+.sm-mute:hover{color:var(--night-ink); border-color:var(--night-muted)}
+.sm-mute[aria-pressed="true"] .w{display:none}
+.sm-body{display:grid; grid-template-columns:auto auto; column-gap:14px; align-items:center}
+.sm-screen{width:calc(var(--map) + 12px); padding:6px; background:#070B0F; border:1px solid #1E2A33; border-radius:6px; outline:none}
+.sm-screen:focus-visible{outline:2px solid var(--accent-hi); outline-offset:2px}
+.sm-screen canvas{display:block; width:100%; aspect-ratio:1 / 1; height:auto; image-rendering:pixelated; image-rendering:crisp-edges; border-radius:2px; cursor:pointer}
+.sm-room{display:flex; justify-content:space-between; gap:8px; margin-top:6px; padding:0 2px; font-family:var(--f-mono); font-size:11.5px; line-height:1.5; color:#C9D3DA}
+.sm-room .sm-rt{color:var(--accent-hi)}
+.sm-room.flash .sm-rn{animation:sm-flash .7s ease-out}
+@keyframes sm-flash{from{color:#FFFFFF; text-shadow:0 0 8px rgba(125,184,209,.9)}}
+.sm-pad{display:flex; flex-direction:column; align-items:center; gap:14px}
+/* 十字キー（押した所から真ん中への向きで決める。指を滑らせてもよい） */
+.sm-dpad{position:relative; width:96px; height:96px; touch-action:none; cursor:pointer; filter:drop-shadow(0 2px 0 #05080B)}
+.sm-dpad span{position:absolute; background:#22303A}
+.sm-up, .sm-down{left:32px; width:32px; height:33px}
+.sm-left, .sm-right{top:32px; width:33px; height:32px}
+.sm-up{top:0; border-radius:5px 5px 0 0}
+.sm-down{bottom:0; border-radius:0 0 5px 5px}
+.sm-left{left:0; border-radius:5px 0 0 5px}
+.sm-right{right:0; border-radius:0 5px 5px 0}
+.sm-mid{left:32px; top:32px; width:32px; height:32px}
+.sm-dpad span:not(.sm-mid)::after{content:""; position:absolute; left:50%; top:50%; width:0; height:0; border:5px solid transparent; transform:translate(-50%, -50%)}
+.sm-up::after{border-bottom-color:#5E7381!important; margin-top:-3px}
+.sm-down::after{border-top-color:#5E7381!important; margin-top:3px}
+.sm-left::after{border-right-color:#5E7381!important; margin-left:-3px}
+.sm-right::after{border-left-color:#5E7381!important; margin-left:3px}
+.sm-dpad[data-on="up"] .sm-up, .sm-dpad[data-on="down"] .sm-down, .sm-dpad[data-on="left"] .sm-left, .sm-dpad[data-on="right"] .sm-right{background:#30434F}
+.sm-dpad[data-on="up"] .sm-up::after{border-bottom-color:var(--accent-hi)!important}
+.sm-dpad[data-on="down"] .sm-down::after{border-top-color:var(--accent-hi)!important}
+.sm-dpad[data-on="left"] .sm-left::after{border-right-color:var(--accent-hi)!important}
+.sm-dpad[data-on="right"] .sm-right::after{border-left-color:var(--accent-hi)!important}
+/* 丸ボタン（A＝手をたたく、B＝押しながら走る） */
+.sm-ab{display:flex; gap:12px; align-items:flex-start}
+.sm-btn{display:flex; flex-direction:column; align-items:center; gap:4px; font-size:11px; line-height:1.3; color:var(--night-muted)}
+.sm-btn:last-child{margin-top:-12px}
+.sm-ab button{width:42px; height:42px; padding:0; border:0; border-radius:50%; font-family:var(--f-label); font-size:15px; letter-spacing:0; cursor:pointer; touch-action:none; box-shadow:0 3px 0 #05080B; transition:transform .06s ease, box-shadow .06s ease, filter .06s ease}
+.sm-a{background:var(--accent-hi); color:#0D1620}
+.sm-b{background:#2B3A45; color:var(--night-ink)}
+.sm-ab button.on{transform:translateY(2px); box-shadow:0 1px 0 #05080B; filter:brightness(1.18)}
+.sm-hint{margin-top:10px; max-width:calc(var(--map) + 124px); padding:0 2px; font-size:11.5px; line-height:1.65; color:var(--night-muted)}
+.sm-kb{display:none}
+@media (min-width:861px){
+  .top-grid{grid-template-columns:minmax(0,1fr) auto; column-gap:40px}
+  .hero h1{font-size:clamp(28px, min(8.2vh, calc((100vw - 470px) / 10.4)), 68px)}  /* 右にミニマップが入る分だけ小さく */
+  .smap{--map:clamp(210px, calc(100vh - 470px), 300px); justify-self:end; padding:14px 16px 16px}
+  .sm-body{grid-template-columns:auto; row-gap:14px}
+  .sm-pad{flex-direction:row; justify-content:space-between; width:100%; padding:0 8px}
+  .sm-hint{max-width:calc(var(--map) + 12px); font-size:12px}
+}
+@media (min-width:861px) and (pointer:fine){ .sm-kb{display:block} }
 .cue{
   position:absolute; left:50%; bottom:calc(18px + env(safe-area-inset-bottom, 0px)); transform:translateX(-50%);
   display:flex; flex-direction:column; align-items:center; gap:8px; text-decoration:none;
@@ -460,10 +517,10 @@ html.dlg-open{overflow:hidden}
 </aside>
 
 <main>
-  <!-- 01 ホーム：部屋の中を音が広がる -->
+  <!-- 01 ホーム：左に見出しと名前、右にミニマップ（歩くと部屋ごとに足音の響きが変わる） -->
   <section class="panel p-top" id="top" aria-label="ホーム">
     <div class="bg"></div>
-    <div class="wrap">
+    <div class="wrap top-grid">
       <div class="hero">
         <p class="kicker">Sound Programmer Portfolio</p>
         <h1><span class="ln">ゲームに沿った</span><span class="ln">サウンドアプローチを</span><span class="ln">考える。</span></h1>
@@ -471,6 +528,27 @@ html.dlg-open{overflow:hidden}
           <p class="nm"><span class="jp">竹内 寛登</span><span class="en">Hiroto Takeuchi</span></p>
           <p class="role">サウンドプログラマー志望 ／ 2028年3月卒業予定</p>
         </div>
+      </div>
+      <!-- ミニマップ：十字キーで歩くと、いる部屋の響きで足音が鳴る（中身は下の script） -->
+      <div class="smap" id="smap" role="group" aria-label="ミニマップ：十字キーで歩くと、部屋ごとに足音の響きが変わります">
+        <div class="sm-top">
+          <p class="sm-lab">SOUND MAP</p>
+          <button type="button" class="sm-mute" aria-pressed="false" aria-label="音を消す"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 6h3l4-3v10l-4-3H2z" fill="currentColor"/><path class="w" d="M11 5.5a3.5 3.5 0 0 1 0 5M12.8 3.8a6 6 0 0 1 0 8.4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><span class="t">ON</span></button>
+        </div>
+        <div class="sm-body">
+          <div class="sm-screen" tabindex="0" aria-label="地図（矢印キーで歩く・Z で手をたたく・X を押しながら走る）">
+            <canvas width="160" height="160" role="img" aria-label="上から見た地図。大広間・小部屋・廊下・外があり、人が 1 人いる"></canvas>
+            <p class="sm-room" aria-live="polite"><span class="sm-rn">大広間</span><span class="sm-rt">響き 2.6 秒</span></p>
+          </div>
+          <div class="sm-pad">
+            <div class="sm-dpad" aria-hidden="true"><span class="sm-up"></span><span class="sm-right"></span><span class="sm-down"></span><span class="sm-left"></span><span class="sm-mid"></span></div>
+            <div class="sm-ab">
+              <div class="sm-btn"><button type="button" class="sm-b" aria-label="B：押しながら走る">B</button><span>走る</span></div>
+              <div class="sm-btn"><button type="button" class="sm-a" aria-label="A：手をたたく">A</button><span>たたく</span></div>
+            </div>
+          </div>
+        </div>
+        <p class="sm-hint">歩くと、いる部屋の響きで足音が鳴ります（音が出ます）<span class="sm-kb">キーボード：地図をクリックして 矢印キー・Z・X</span></p>
       </div>
     </div>
     <a class="cue" href="#profile" data-go="profile">SCROLL</a>
@@ -1414,6 +1492,316 @@ html.dlg-open{overflow:hidden}
       try{ navigator.clipboard.writeText(text).then(done, fallback); }catch(e){ fallback(); }
     });
   });
+})();
+</script>
+<script>
+/* 01 ホーム：ミニマップ。十字キーで歩くと、いる部屋の響きで足音が鳴る（音は Web Audio でその場で作る） */
+(function(){
+  'use strict';
+  var root = document.getElementById('smap');
+  if (!root) return;
+  var cv = root.querySelector('canvas'), g = cv.getContext('2d');
+  var hud = root.querySelector('.sm-room'), hudName = root.querySelector('.sm-rn'), hudRt = root.querySelector('.sm-rt');
+  var pad = root.querySelector('.sm-dpad'), btnA = root.querySelector('.sm-a'), btnB = root.querySelector('.sm-b'), muteBtn = root.querySelector('.sm-mute');
+  var reduce = false;
+  try{ reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){}
+
+  // 地図（20×20 マス、1 マス 8 px）。# 壁・T 木・D 戸口・H 大広間・S 小部屋・C 廊下・O 外
+  var MAP = ["##################OO", "#HHHHHHHHHH#SSSSS#OO", "#HHHHHHHHHHDSSSSS#OT", "#HHHHHHHHHHDSSSSS#OO", "#HHHHHHHHHH##DD###OO", "#HHHHHHHHHH##CC#OOOO", "#HHHHHHHHHH##CC#OTOO", "#HHHHHHHHHH##CC#OOOO", "#HHHHHHHHHH##CC#OOTO", "#HHHHHHHHHH##CC#OOOO", "#HHHHHHHHHH##CC#OOOO", "#####DD######CC#OOOO", "OOOOOOOOOOOO#CC#OOOO", "OOOOOOOOOOOO#DD#OOOO", "OOOOOOOOOOOOOOOOOOOO", "OOTOOOOOOOOOOOOOOOTO", "OOOOOOOOOOOOOOOOOOOO", "OOOOOOOTOOOOOOOOOOOO", "OOOOOOOOOOOOOOTOOOOO", "OOOOOOOOOOOOOOOOOOOO"];
+  var TS = 8, MW = 20, MH = 20;
+  // 部屋ごとの響き。rt＝響きの長さ（秒）、pre＝響きが始まるまで、wet＝響きの量、lp＝響きの高い音の上限、
+  // taps＝壁からの最初の跳ね返り [秒, 左, 右]、flutter＝向かい合う壁の往復 [間隔, 回数, 大きさ, 減り]、box＝部屋の範囲（マス）
+  var ROOMS = {
+    H: {name: '大広間', rt: 2.6, pre: .012, wet: 1.0, lp: 5200, hf: 7000, surf: 'stone', box: [1, 1, 10, 10],
+        taps: [[.018, .30, .12], [.029, .10, .30], [.043, .22, .08], [.061, .08, .20]]},
+    S: {name: '小部屋', rt: .32, pre: .002, wet: .55, lp: 3800, hf: 5000, surf: 'wood', box: [12, 1, 16, 3],
+        taps: [[.0028, .30, .16], [.0046, .14, .30], [.0072, .20, .18]]},
+    C: {name: '廊下', rt: 1.1, pre: .004, wet: .8, lp: 6000, hf: 7500, surf: 'tile', box: [13, 5, 14, 12],
+        flutter: [.0115, 14, .38, .82]},
+    O: {name: '外', rt: 0, surf: 'grass', box: null}
+  };
+
+  // ---------- 音 ----------
+  var AC = window.AudioContext || window.webkitAudioContext;
+  var muted = false, ac = null, rig = null;
+  try{ muted = localStorage.getItem('smap-mute') === '1'; }catch(e){}
+
+  // 響きの形（雑音を指数で減らす。高い音ほど早く消える）＋最初の跳ね返り
+  function makeIR(ctx, R){
+    var sr = ctx.sampleRate, pre = Math.round(R.pre * sr), len = pre + Math.ceil(R.rt * 1.15 * sr);
+    var b = ctx.createBuffer(2, len, sr), ch, i, k = 0, lp, e, v, t, d, sc;
+    for (ch = 0; ch < 2; ch++){
+      d = b.getChannelData(ch); lp = 0; e = 0;
+      for (i = pre; i < len; i++){
+        t = (i - pre) / sr;
+        if (((i - pre) & 63) === 0) k = 1 - Math.exp(-2 * Math.PI * (R.hf * Math.exp(-2.5 * t / R.rt) + 600) / sr);
+        lp += (Math.random() * 2 - 1 - lp) * k;
+        v = lp * Math.exp(-6.91 * t / R.rt) * Math.min(1, t / .006 + .3);
+        d[i] = v; e += v * v;
+      }
+      sc = 1 / Math.sqrt(e || 1);
+      for (i = pre; i < len; i++) d[i] *= sc;
+      (R.taps || []).forEach(function(p){ var j = Math.round(p[0] * sr); if (j < len) d[j] += p[ch + 1]; });
+      if (R.flutter){
+        var f = R.flutter, a = f[2], m, j2;
+        for (m = 1; m <= f[1]; m++){ j2 = Math.round(f[0] * m * sr) + (ch ? 7 : 0); if (j2 < len) d[j2] += (m % 2 === ch ? a : a * .6); a *= f[3]; }
+      }
+    }
+    return b;
+  }
+  // 出口：そのまま＋部屋ごとの響き（足音は鳴った時にいた部屋の響きへ送る。部屋を出ても響きは残る）
+  function makeRig(ctx){
+    var r = {ctx: ctx, send: {}}, comp = ctx.createDynamicsCompressor(), n = ctx.sampleRate, nb = ctx.createBuffer(1, n, n), d = nb.getChannelData(0), i;
+    comp.threshold.value = -12; comp.knee.value = 8; comp.ratio.value = 6; comp.attack.value = .003; comp.release.value = .2;
+    r.out = ctx.createGain(); r.out.gain.value = .9; r.out.connect(comp); comp.connect(ctx.destination);
+    r.dry = ctx.createGain(); r.dry.gain.value = .9; r.dry.connect(r.out);
+    for (i = 0; i < n; i++) d[i] = Math.random() * 2 - 1;
+    r.noise = nb;
+    Object.keys(ROOMS).forEach(function(key){
+      var R = ROOMS[key];
+      if (!R.rt) return;
+      var s = ctx.createGain(), c = ctx.createConvolver(), f = ctx.createBiquadFilter();
+      s.gain.value = R.wet; c.normalize = false; c.buffer = makeIR(ctx, R);
+      f.type = 'lowpass'; f.frequency.value = R.lp; f.Q.value = .5;
+      s.connect(c); c.connect(f); f.connect(r.out);
+      r.send[key] = s;
+    });
+    return r;
+  }
+  // 雑音を短く鳴らす
+  function burst(r, bus, at, type, f, q, a, dec){
+    var c = r.ctx, s = c.createBufferSource(), fl = c.createBiquadFilter(), gn = c.createGain();
+    s.buffer = r.noise; fl.type = type; fl.frequency.value = f; fl.Q.value = q;
+    gn.gain.setValueAtTime(0, at); gn.gain.linearRampToValueAtTime(a, at + .002); gn.gain.exponentialRampToValueAtTime(.0005, at + dec);
+    s.connect(fl); fl.connect(gn); gn.connect(bus);
+    s.start(at, Math.random() * .8, dec + .02);
+  }
+  // 低い「どん」
+  function thump(r, bus, at, f, a, dec){
+    var c = r.ctx, o = c.createOscillator(), gn = c.createGain();
+    o.frequency.setValueAtTime(f * 1.6, at); o.frequency.exponentialRampToValueAtTime(f, at + .03);
+    gn.gain.setValueAtTime(0, at); gn.gain.linearRampToValueAtTime(a, at + .003); gn.gain.exponentialRampToValueAtTime(.0005, at + dec);
+    o.connect(gn); gn.connect(bus); o.start(at); o.stop(at + dec + .02);
+  }
+  function voice(r, room, pan){
+    var c = r.ctx, bus = c.createGain(), out = bus;
+    if (c.createStereoPanner){ var p = c.createStereoPanner(); p.pan.value = pan; bus.connect(p); out = p; }
+    out.connect(r.dry);
+    if (r.send[room]) out.connect(r.send[room]);
+    return bus;
+  }
+  // 足音（床の材質で少し変える）
+  function stepSound(r, room, surf, at, foot){
+    var bus = voice(r, room, foot ? .12 : -.12), v = .85 + Math.random() * .3, j = 1 + (Math.random() - .5) * .12, i;
+    if (surf === 'stone'){ burst(r, bus, at, 'bandpass', 2400 * j, .9, .55 * v, .03); burst(r, bus, at, 'lowpass', 500 * j, .7, .45 * v, .06); thump(r, bus, at, 70, .35 * v, .05); }
+    else if (surf === 'tile'){ burst(r, bus, at, 'bandpass', 3200 * j, 1.1, .5 * v, .022); burst(r, bus, at, 'lowpass', 650 * j, .7, .35 * v, .05); thump(r, bus, at, 80, .3 * v, .045); }
+    else if (surf === 'wood'){ burst(r, bus, at, 'bandpass', 520 * j, 3, .9 * v, .07); burst(r, bus, at + .004, 'bandpass', 1800 * j, 1.2, .3 * v, .015); thump(r, bus, at, 110 * j, .45 * v, .07); }
+    else { for (i = 0; i < 3; i++) burst(r, bus, at + i * .018 + Math.random() * .01, 'bandpass', 2800 * j + i * 400, .6, .22 * v, .045); burst(r, bus, at, 'lowpass', 300, .7, .25 * v, .05); thump(r, bus, at, 60, .18 * v, .05); }
+  }
+  // 手をたたく（響きが一番分かりやすい音）
+  function clapSound(r, room, at){
+    var bus = voice(r, room, 0), i;
+    for (i = 0; i < 3; i++) burst(r, bus, at + i * .009, 'bandpass', 1300 + Math.random() * 300, 1.4, .9, .012);
+    burst(r, bus, at + .027, 'bandpass', 1200, 1.1, 1.0, .09);
+  }
+  // 音は押した時に初めて作る（ブラウザは押す前に音を出させない）
+  function ensureAudio(){
+    if (muted || !AC) return null;
+    if (!ac){
+      try{ if (navigator.audioSession) navigator.audioSession.type = 'playback'; }catch(e){}
+      try{ ac = new AC({latencyHint: 'interactive'}); }catch(e){ try{ ac = new AC(); }catch(e2){ return null; } }
+      rig = makeRig(ac);
+    }
+    if (ac.state === 'suspended') ac.resume();
+    return rig;
+  }
+  // 確かめ用：部屋 key で足音か手拍子を 1 回、音を出さずに作る（SoundMap.render('H').then(...)）
+  window.SoundMap = {rooms: ROOMS, render: function(key, what){
+    var OC = window.OfflineAudioContext || window.webkitOfflineAudioContext, c = new OC(2, 48000 * 3.5, 48000), r = makeRig(c);
+    if (what === 'clap') clapSound(r, key, .05); else stepSound(r, key, ROOMS[key].surf, .05, 0);
+    return c.startRendering();
+  }};
+
+  // ---------- 地図を描く（動かない所は 1 回だけ） ----------
+  var seed = 7;
+  function rnd(){ seed = (seed * 16807) % 2147483647; return seed / 2147483647; }
+  function at(x, y){ return (x < 0 || y < 0 || x >= MW || y >= MH) ? '#' : MAP[y][x]; }
+  function floorOf(x, y){
+    var c = at(x, y);
+    if (c !== 'D') return c;
+    var n = [at(x - 1, y), at(x + 1, y), at(x, y - 1), at(x, y + 1)].filter(function(q){ return ROOMS[q]; });
+    return n[0] || 'O';
+  }
+  var bg = document.createElement('canvas');
+  bg.width = bg.height = MW * TS;
+  (function(){
+    var b = bg.getContext('2d'), x, y, c, px, py, i;
+    function R(x0, y0, w, h, col){ b.fillStyle = col; b.fillRect(x0, y0, w, h); }
+    for (y = 0; y < MH; y++) for (x = 0; x < MW; x++){
+      c = at(x, y); px = x * TS; py = y * TS;
+      var f = (c === 'T') ? 'O' : floorOf(x, y);
+      if (c === '#'){
+        R(px, py, TS, TS, '#141C23');
+        if (at(x, y + 1) !== '#'){ R(px, py + 5, TS, 3, '#2C3943'); R(px, py + 5, TS, 1, '#3B4A56'); }
+        continue;
+      }
+      if (f === 'H'){ R(px, py, TS, TS, '#2B343C'); if (x % 2 === 0) R(px, py, 1, TS, '#232B32'); if (y % 2 === 0) R(px, py, TS, 1, '#232B32'); if (rnd() < .3) R(px + 2 + (rnd() * 4 | 0), py + 2 + (rnd() * 4 | 0), 1, 1, '#333D46'); }
+      else if (f === 'S'){ R(px, py, TS, TS, '#5A4430'); for (i = 0; i < TS; i += 3) R(px, py + i, TS, 1, '#4A3727'); R(px + ((x * 3 + y * 5) % 8), py + 1, 1, 2, '#4A3727'); }
+      else if (f === 'C'){ R(px, py, TS, TS, '#323F48'); R(px, py, 4, 4, '#2D3942'); R(px + 4, py + 4, 4, 4, '#2D3942'); }
+      else { R(px, py, TS, TS, '#213628'); for (i = 0; i < 3; i++) R(px + (rnd() * 7 | 0), py + (rnd() * 7 | 0), 1, 1, rnd() < .5 ? '#2C4834' : '#1A2C20'); }
+      if (c === 'D'){ R(px, py, TS, TS, 'rgba(201,211,218,.10)'); }
+    }
+    // 木は最後に（少しはみ出してよい）
+    for (y = 0; y < MH; y++) for (x = 0; x < MW; x++) if (at(x, y) === 'T'){
+      px = x * TS; py = y * TS;
+      R(px + 1, py + 6, 7, 2, 'rgba(0,0,0,.35)');
+      R(px + 1, py + 1, 6, 6, '#1E4A2E'); R(px, py + 2, 8, 4, '#1E4A2E'); R(px + 2, py, 4, 8, '#1E4A2E');
+      R(px + 2, py + 1, 2, 2, '#2D6343'); R(px + 1, py + 2, 1, 2, '#2D6343');
+      R(px + 3, py + 6, 3, 1, '#153522');
+    }
+  })();
+
+  // ---------- 人 ----------
+  var SPR = {"down0":["..kkkkkk..",".kppppppk.",".khhhhhhk.","pkhhhhhhkp","pksssssskp","pksesseskp",".kssssssk.","..kkkkkk..",".kooooook.","ksooooooks",".kOOOOOOk.","..knnnnk..","..knkknk..","..bb..bb.."],"up0":["..kkkkkk..",".kppppppk.",".khhhhhhk.","pkhhhhhhkp","pkhhhhhhkp","pkhhhhhhkp",".khhhhhhk.","..kkkkkk..",".kooooook.","ksooooooks",".kOOOOOOk.","..knnnnk..","..knkknk..","..bb..bb.."],"right0":["..kkkkkk..",".kppppppk.",".khhhhhhk.",".khpphssk.",".khpphssk.",".khpphsek.","..khhssk..","..kkkkkk..","..kooook..","..koosok..","..kOOOOk..","..knnnnk..","..knnnnk..","...bbbbb.."],"left0":["..kkkkkk..",".kppppppk.",".khhhhhhk.",".ksshpphk.",".ksshpphk.",".keshpphk.","..ksshhk..","..kkkkkk..","..kooook..","..kosook..","..kOOOOk..","..knnnnk..","..knnnnk..","..bbbbb..."],"down1":["..kkkkkk..",".kppppppk.",".khhhhhhk.","pkhhhhhhkp","pksssssskp","pksesseskp",".kssssssk.","..kkkkkk..",".kooooook.","ksooooooks",".kOOOOOOk.","..knnnnk..","..knkkbb..","..bb......"],"up1":["..kkkkkk..",".kppppppk.",".khhhhhhk.","pkhhhhhhkp","pkhhhhhhkp","pkhhhhhhkp",".khhhhhhk.","..kkkkkk..",".kooooook.","ksooooooks",".kOOOOOOk.","..knnnnk..","..knkkbb..","..bb......"],"right1":["..kkkkkk..",".kppppppk.",".khhhhhhk.",".khpphssk.",".khpphssk.",".khpphsek.","..khhssk..","..kkkkkk..","..kooook..","..koosok..","..kOOOOk..","..knnnnk..","..kn..nk..",".bb....bb."],"left1":["..kkkkkk..",".kppppppk.",".khhhhhhk.",".ksshpphk.",".ksshpphk.",".keshpphk.","..ksshhk..","..kkkkkk..","..kooook..","..kosook..","..kOOOOk..","..knnnnk..","..kn..nk..",".bb....bb."],"down2":["..kkkkkk..",".kppppppk.",".khhhhhhk.","pkhhhhhhkp","pksssssskp","pksesseskp",".kssssssk.","..kkkkkk..",".kooooook.","ksooooooks",".kOOOOOOk.","..knnnnk..","..bbkknk..","......bb.."],"up2":["..kkkkkk..",".kppppppk.",".khhhhhhk.","pkhhhhhhkp","pkhhhhhhkp","pkhhhhhhkp",".khhhhhhk.","..kkkkkk..",".kooooook.","ksooooooks",".kOOOOOOk.","..knnnnk..","..bbkknk..","......bb.."],"right2":["..kkkkkk..",".kppppppk.",".khhhhhhk.",".khpphssk.",".khpphssk.",".khpphsek.","..khhssk..","..kkkkkk..","..kooook..","..koosok..","..kOOOOk..","..knnnnk..","..knnnnk..","...bbbbb.."],"left2":["..kkkkkk..",".kppppppk.",".khhhhhhk.",".ksshpphk.",".ksshpphk.",".keshpphk.","..ksshhk..","..kkkkkk..","..kooook..","..kosook..","..kOOOOk..","..knnnnk..","..knnnnk..","..bbbbb..."]};
+  var PAL = {"k": "#0B1116", "h": "#3A3F4B", "s": "#F1C9A5", "e": "#0B1116", "p": "#7DB8D1", "o": "#D9774C", "O": "#A9552F", "n": "#2C3E57", "b": "#161B21"};
+  var me = {x: 5.5, y: 8.6, face: 'down', frame: 0, ft: 0, moving: false, foot: 0};
+  var room = 'H', held = [], run = false, stepT = .05, rings = [], clapT = 0, last = 0, rafOn = false;
+  var DIRS = {up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0]};
+  function solid(x, y){ var c = at(x, y); return c === '#' || c === 'T'; }
+  function hits(x, y){
+    var hw = .3, hh = .2;
+    return solid(Math.floor(x - hw), Math.floor(y - hh)) || solid(Math.floor(x + hw), Math.floor(y - hh)) ||
+           solid(Math.floor(x - hw), Math.floor(y + hh)) || solid(Math.floor(x + hw), Math.floor(y + hh));
+  }
+  function move(dt){
+    var key = held[held.length - 1], d = DIRS[key];
+    if (!d){ me.moving = false; return; }
+    me.face = key;
+    var sp = (run ? 4.6 : 2.7) * dt, nx = me.x + d[0] * sp, ny = me.y + d[1] * sp, s, c0;
+    if (!hits(nx, ny)){ me.x = nx; me.y = ny; me.moving = true; }
+    else {
+      // 戸口の角に引っかかったら、通れる方へ少しずらす
+      me.moving = false;
+      if (d[0] === 0){ c0 = Math.floor(me.x); if (!solid(c0, Math.floor(me.y + d[1] * .6))){ s = c0 + .5 - me.x; s = Math.sign(s) * Math.min(Math.abs(s), sp); if (s && !hits(me.x + s, me.y)){ me.x += s; me.moving = true; } } }
+      else { c0 = Math.floor(me.y); if (!solid(Math.floor(me.x + d[0] * .6), c0)){ s = c0 + .5 - me.y; s = Math.sign(s) * Math.min(Math.abs(s), sp); if (s && !hits(me.x, me.y + s)){ me.y += s; me.moving = true; } } }
+    }
+    var here = at(Math.floor(me.x), Math.floor(me.y));
+    if (ROOMS[here] && here !== room){ room = here; showRoom(true); }
+    if (me.moving){
+      me.ft += dt;
+      var fi = run ? .09 : .14;
+      if (me.ft >= fi){ me.ft -= fi; me.frame = me.frame === 1 ? 2 : 1; }
+      stepT -= dt;
+      if (stepT <= 0){ stepT += run ? .26 : .40; step(); }
+    }
+  }
+  function step(){
+    me.foot ^= 1;
+    var here = at(Math.floor(me.x), Math.floor(me.y)), surf = (ROOMS[here] || ROOMS[room]).surf;
+    if (rig && !muted) stepSound(rig, room, surf, rig.ctx.currentTime + .005, me.foot);
+    ring(.6, 1);
+  }
+  function clap(){
+    if (rig && !muted) clapSound(rig, room, rig.ctx.currentTime + .005);
+    ring(.9, 2); clapT = .25;
+    btnA.classList.add('on'); setTimeout(function(){ btnA.classList.remove('on'); }, 120);
+    kick();
+  }
+  function ring(a, w){ if (!reduce){ rings.push({x: me.x * TS, y: me.y * TS + 1, t: 0, a: a, w: w, room: room}); if (rings.length > 24) rings.shift(); } }
+
+  function draw(){
+    g.drawImage(bg, 0, 0);
+    // 響き：輪は音の広がり、部屋のうっすらした光は響きの残り（長い部屋ほど長く残る）
+    rings = rings.filter(function(r){
+      var R = ROOMS[r.room], life = R.rt || .3, al = r.a * Math.exp(-6.91 * r.t / life);
+      if (al < .02) return false;
+      g.save();
+      if (R.box){
+        var bx = R.box[0] * TS, by = R.box[1] * TS, bw = (R.box[2] - R.box[0] + 1) * TS, bh = (R.box[3] - R.box[1] + 1) * TS;
+        g.beginPath(); g.rect(bx, by, bw, bh); g.clip();
+        g.fillStyle = 'rgba(125,184,209,' + (al * .16).toFixed(3) + ')'; g.fillRect(bx, by, bw, bh);
+      }
+      g.strokeStyle = 'rgba(125,184,209,' + Math.min(1, al * 1.2).toFixed(3) + ')'; g.lineWidth = r.w;
+      g.beginPath(); g.arc(r.x, r.y, 2 + r.t * (R.box ? 75 : 40), 0, 6.2832); g.stroke();
+      g.restore();
+      return true;
+    });
+    // 人（足の真ん中が me の位置）
+    var spr = SPR[me.face + (me.moving ? me.frame : 0)], X = Math.round(me.x * TS) - 5, Y = Math.round(me.y * TS) - 12 - (me.moving && me.frame === 1 ? 1 : 0), x, y, c, row;
+    g.fillStyle = 'rgba(0,0,0,.35)'; g.fillRect(Math.round(me.x * TS) - 4, Math.round(me.y * TS) + 1, 8, 2);
+    for (y = 0; y < spr.length; y++){ row = spr[y]; for (x = 0; x < row.length; x++){ c = row[x]; if (c !== '.'){ g.fillStyle = PAL[c]; g.fillRect(X + x, Y + y, 1, 1); } } }
+    if (clapT > 0){ g.fillStyle = '#E3E9EE'; g.fillRect(X - 2, Y + 1, 1, 1); g.fillRect(X + 11, Y + 1, 1, 1); g.fillRect(X - 1, Y - 1, 1, 1); g.fillRect(X + 10, Y - 1, 1, 1); }
+  }
+  function tick(now){
+    var dt = Math.min(.05, Math.max(0, (now - last) / 1000));
+    last = now;
+    move(dt);
+    rings.forEach(function(r){ r.t += dt; });
+    clapT -= dt;
+    draw();
+    if (held.length || rings.length || clapT > 0) requestAnimationFrame(tick);
+    else { rafOn = false; me.moving = false; me.frame = 0; draw(); }
+  }
+  function kick(){ if (!rafOn){ rafOn = true; last = performance.now(); requestAnimationFrame(tick); } }
+  function showRoom(flash){
+    var R = ROOMS[room];
+    hudName.textContent = R.name;
+    hudRt.textContent = R.rt ? '響き ' + R.rt.toFixed(1) + ' 秒' : '響きなし';
+    if (flash){ hud.classList.remove('flash'); void hud.offsetWidth; hud.classList.add('flash'); }
+  }
+
+  // ---------- 操作 ----------
+  function press(d){ var i = held.indexOf(d); if (i >= 0) held.splice(i, 1); held.push(d); if (held.length === 1) stepT = .05; kick(); }
+  function release(d){ var i = held.indexOf(d); if (i >= 0) held.splice(i, 1); }
+  function releaseAll(){ held.length = 0; setPad(null); padId = null; run = false; btnB.classList.remove('on'); }
+  // 十字キー：押した所から真ん中への向きで決める（指を滑らせても向きが変わる）
+  var padDir = null, padId = null;
+  function padAt(e){
+    var r = pad.getBoundingClientRect(), dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2);
+    if (dx * dx + dy * dy < 49) return padDir;
+    return Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'right' : 'left') : (dy > 0 ? 'down' : 'up');
+  }
+  function setPad(d){ if (d === padDir) return; if (padDir) release(padDir); padDir = d; if (d) press(d); pad.setAttribute('data-on', d || ''); }
+  pad.addEventListener('pointerdown', function(e){
+    e.preventDefault(); ensureAudio(); padId = e.pointerId;
+    try{ pad.setPointerCapture(e.pointerId); }catch(err){}
+    setPad(padAt(e));
+  });
+  pad.addEventListener('pointermove', function(e){ if (e.pointerId === padId) setPad(padAt(e)); });
+  ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(function(t){ pad.addEventListener(t, function(e){ if (e.pointerId === padId){ padId = null; setPad(null); } }); });
+  btnA.addEventListener('pointerdown', function(e){ e.preventDefault(); ensureAudio(); clap(); });
+  btnB.addEventListener('pointerdown', function(e){ e.preventDefault(); ensureAudio(); run = true; btnB.classList.add('on'); try{ btnB.setPointerCapture(e.pointerId); }catch(err){} });
+  ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(function(t){ btnB.addEventListener(t, function(){ run = false; btnB.classList.remove('on'); }); });
+  root.addEventListener('contextmenu', function(e){ if (e.target.closest('.sm-pad')) e.preventDefault(); });
+  // キーボード：地図（かボタン）を選んでいる時だけ。矢印・WASD で歩く、Z・Space で手をたたく、X・Shift で走る
+  var KEYS = {ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right', w: 'up', s: 'down', a: 'left', d: 'right'};
+  root.addEventListener('keydown', function(e){
+    if (e.ctrlKey || e.metaKey || e.altKey || e.target === muteBtn) return;
+    var k = e.key.length === 1 ? e.key.toLowerCase() : e.key, d = KEYS[k];
+    if (d){ e.preventDefault(); if (!e.repeat){ ensureAudio(); press(d); } }
+    else if (k === 'z' || k === ' ' || k === 'Enter'){ e.preventDefault(); if (!e.repeat){ ensureAudio(); clap(); } }
+    else if (k === 'x' || k === 'Shift'){ if (!e.repeat){ ensureAudio(); run = true; btnB.classList.add('on'); } }
+  });
+  root.addEventListener('keyup', function(e){
+    var k = e.key.length === 1 ? e.key.toLowerCase() : e.key, d = KEYS[k];
+    if (d) release(d);
+    if (k === 'x' || k === 'Shift'){ run = false; btnB.classList.remove('on'); }
+  });
+  root.addEventListener('focusout', function(e){ if (!root.contains(e.relatedTarget)) releaseAll(); });
+  window.addEventListener('blur', releaseAll);
+  document.addEventListener('visibilitychange', function(){ if (document.hidden) releaseAll(); });
+  // 音を消す（この端末で覚えておく）
+  function setMute(m){
+    muted = m;
+    muteBtn.setAttribute('aria-pressed', m ? 'true' : 'false');
+    muteBtn.querySelector('.t').textContent = m ? 'OFF' : 'ON';
+    if (rig) rig.out.gain.setTargetAtTime(m ? 0 : .9, rig.ctx.currentTime, .02);
+    try{ localStorage.setItem('smap-mute', m ? '1' : '0'); }catch(e){}
+  }
+  muteBtn.addEventListener('click', function(){ setMute(!muted); if (!muted) ensureAudio(); });
+  setMute(muted);
+  showRoom(false);
+  draw();
 })();
 </script>
 </body>
