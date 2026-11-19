@@ -1645,10 +1645,14 @@ html.dlg-open{overflow:hidden}
     tx = Math.max(R.box[0], Math.min(R.box[2], tx)); ty = Math.max(R.box[1], Math.min(R.box[3], ty));
     return idr.byTile[tx + ',' + ty] || 'dry';
   }
-  // まわり 2 マスを先に取っておく
+  // まわり 2 マスを先に取っておく（戸口の向こうの部屋のマスも。入った最初の 1 歩に間に合うように）
   function idrNear(){
-    var tx = Math.floor(me.x), ty = Math.floor(me.y), dx, dy;
-    for (dy = -2; dy <= 2; dy++) for (dx = -2; dx <= 2; dx++) idrLoad(idrId(tx + dx, ty + dy));
+    var tx = Math.floor(me.x), ty = Math.floor(me.y), dx, dy, id;
+    for (dy = -2; dy <= 2; dy++) for (dx = -2; dx <= 2; dx++){
+      idrLoad(idrId(tx + dx, ty + dy));
+      id = idr.byTile[(tx + dx) + ',' + (ty + dy)];
+      if (id) idrLoad(id);
+    }
   }
   function idrStep(foot){
     var id = idrId(Math.floor(me.x), Math.floor(me.y)), b = idr.buf[id];
