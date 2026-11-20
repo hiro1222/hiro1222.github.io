@@ -240,7 +240,7 @@ button{font:inherit}
   .pr-card h4{font-size:22px}
 }
 
-/* 03 作品：1 作品 = 全画面 1 枚。左に大きな画像、右に題・概要・表・MORE（こだわりは MORE の窓）。色は作品ごとの --wa */
+/* 03 作品：1 作品 = 全画面 1 枚。左に大きな画像、右に題・表。色は作品ごとの --wa */
 .p-work{background:var(--black)}
 .p-work .bg{background:
   radial-gradient(ellipse 60% 60% at 28% 50%, color-mix(in srgb, var(--wa) 15%, transparent), transparent 70%),
@@ -496,7 +496,7 @@ button{font:inherit}
               <article class="pr-card">
                 <p class="pr-lab">強み</p>
                 <h4>知らないことは、<wbr>まず調べてみる</h4>
-                <p>昔から細かな物事への好奇心が強く、「少しでも知ってみたい」「知らないことをなくしたい」と考えてきました。自分が興味を持つ分野はもちろん、それ以外でも少しでも気になったこと、興味のある物事に関わっていそうなことは、まず調べてみるところから始めます。</p>
+                <p>昔から細かな物事への好奇心が強く、「少しでも知ってみたい」「知らないことをなくしたい」と考えてきました。自分が興味を持つ分野はもちろん、それ以外でも少しでも気になったこと、興味のある物事に関わっていそうなことは、まず調べる事から始めるようにしています。</p>
                 <p>就職作品でも、授業ではサウンドを学ぶ機会がほとんどなかったため、必要なことはすべて自力で調べました。授業で学んだグラフィックスの分野も「ここはサウンドに応用できるのではないか？」と考え、<mark>まず知ってみる</mark>ことを信条にしています。</p>
               </article>
               <article class="pr-card">
@@ -586,206 +586,12 @@ button{font:inherit}
   </section>
 
   <!-- 02 の続き：プログラマーとして意識していること（暗い背景）。中身が入るまで hidden で隠している（2026-11-18 本人「一旦なくしておこう」） -->
-  <section class="panel dark p-pr" id="pr" data-nav="profile" aria-label="プログラマーとして意識していること" hidden>
-    <div class="bg">
-      <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-        <g stroke="#7DB8D1" stroke-opacity=".09" stroke-width="1" fill="none">
-          <path d="M80 120H1560M80 332H1560M80 544H1560M80 756H1560"/>
-        </g>
-        <g fill="#7DB8D1" fill-opacity=".22" font-family="IBM Plex Mono, Consolas, monospace" font-size="15">
-          <text x="1500" y="112">0 dB</text><text x="1490" y="324">−20</text><text x="1490" y="536">−40</text><text x="1490" y="748">−60</text>
-        </g>
-        <g stroke="#7DB8D1" stroke-width="1.5" fill="none" stroke-linecap="round">
-          <path d="M80 120L329 756" stroke-opacity=".20"/>
-          <path d="M80 120L689 756" stroke-opacity=".15"/>
-          <path d="M80 120L1298 756" stroke-opacity=".11"/>
-        </g>
-        <g fill="#7DB8D1" fill-opacity=".26" font-family="IBM Plex Mono, Consolas, monospace" font-size="14">
-          <text x="300" y="790">RT60 0.45 s</text><text x="660" y="790">RT60 1.10 s</text><text x="1268" y="790">RT60 2.20 s</text>
-        </g>
-      </svg>
-    </div>
-    <div class="wrap">
-      <div class="pr">
-        <div class="block" id="pr-mind">
-          <h3 class="bh">プログラマーとして<wbr>意識していること</h3>
-          <div class="pr-box"><p><span class="todo">準備中</span></p></div>
-        </div>
-      </div>
-    </div>
-  </section>
 
   <!-- 02 の続き：好きなゲーム体験。左にスクショのモザイク（横に流す、ループする。並べ方 3 種類・大きさは開くたびにランダム）、押すと右（スマホは下）に解説。
        1 本 = li 1 つ。場所は JS が決める（style の grid-area は JS が無い時の並び、6 段）、色は --fc。
        画像は .fav-tile の中に img（自分で撮ったスクショ）、解説は .fav-info の中（押すと右の欄へ写す） -->
-  <section class="panel dark p-fav" id="fav" data-nav="profile" aria-labelledby="h-fav" hidden>
-    <div class="bg"></div>
-    <div class="wrap">
-      <div class="fav-head">
-        <p class="eyebrow"><span class="no">01</span>Favorite Games</p>
-        <h2 id="h-fav">好きなゲーム体験</h2>
-      </div>
-      <div class="fav-grid">
-        <div class="fav-left">
-          <div class="fav-strip" id="fav-strip">
-            <ul class="fav-tiles">
-              <li style="grid-area:1/1/span 4/span 4; --fc:#5E8FB0">
-                <button type="button" class="fav-tile" aria-controls="fav-detail" aria-pressed="false" aria-label="好きなゲーム体験 01（準備中）"><span class="fav-tag">01</span><span class="fav-ph" aria-hidden="true">SCREENSHOT</span></button>
-                <div class="fav-info" hidden>
-                  <h3 class="fav-title"><span class="todo">ゲーム名（準備中）</span></h3>
-                  <p class="fav-scene"><span class="todo">場面（準備中）</span></p>
-                  <ul class="fav-tags"><li><span class="todo">音の札（準備中）</span></li></ul>
-                  <dl class="fav-dl">
-                    <div><dt>どんな体験</dt><dd><span class="todo">準備中</span></dd></div>
-                    <div><dt>どこが好きか</dt><dd><span class="todo">準備中</span></dd></div>
-                    <div><dt>自分の作品へ</dt><dd><span class="todo">準備中</span></dd></div>
-                  </dl>
-                  <p class="fav-credit">© <span class="todo">準備中</span></p>
-                </div>
-              </li>
-              <li style="grid-area:5/1/span 2/span 2; --fc:#B07A5E">
-                <button type="button" class="fav-tile" aria-controls="fav-detail" aria-pressed="false" aria-label="好きなゲーム体験 02（準備中）"><span class="fav-tag">02</span><span class="fav-ph" aria-hidden="true">SCREENSHOT</span></button>
-                <div class="fav-info" hidden>
-                  <h3 class="fav-title"><span class="todo">ゲーム名（準備中）</span></h3>
-                  <p class="fav-scene"><span class="todo">場面（準備中）</span></p>
-                  <ul class="fav-tags"><li><span class="todo">音の札（準備中）</span></li></ul>
-                  <dl class="fav-dl">
-                    <div><dt>どんな体験</dt><dd><span class="todo">準備中</span></dd></div>
-                    <div><dt>どこが好きか</dt><dd><span class="todo">準備中</span></dd></div>
-                    <div><dt>自分の作品へ</dt><dd><span class="todo">準備中</span></dd></div>
-                  </dl>
-                  <p class="fav-credit">© <span class="todo">準備中</span></p>
-                </div>
-              </li>
-              <li style="grid-area:5/3/span 2/span 2; --fc:#8A7BB8">
-                <button type="button" class="fav-tile" aria-controls="fav-detail" aria-pressed="false" aria-label="好きなゲーム体験 03（準備中）"><span class="fav-tag">03</span><span class="fav-ph" aria-hidden="true">SCREENSHOT</span></button>
-                <div class="fav-info" hidden>
-                  <h3 class="fav-title"><span class="todo">ゲーム名（準備中）</span></h3>
-                  <p class="fav-scene"><span class="todo">場面（準備中）</span></p>
-                  <ul class="fav-tags"><li><span class="todo">音の札（準備中）</span></li></ul>
-                  <dl class="fav-dl">
-                    <div><dt>どんな体験</dt><dd><span class="todo">準備中</span></dd></div>
-                    <div><dt>どこが好きか</dt><dd><span class="todo">準備中</span></dd></div>
-                    <div><dt>自分の作品へ</dt><dd><span class="todo">準備中</span></dd></div>
-                  </dl>
-                  <p class="fav-credit">© <span class="todo">準備中</span></p>
-                </div>
-              </li>
-              <li style="grid-area:1/5/span 3/span 3; --fc:#6FA287">
-                <button type="button" class="fav-tile" aria-controls="fav-detail" aria-pressed="false" aria-label="好きなゲーム体験 04（準備中）"><span class="fav-tag">04</span><span class="fav-ph" aria-hidden="true">SCREENSHOT</span></button>
-                <div class="fav-info" hidden>
-                  <h3 class="fav-title"><span class="todo">ゲーム名（準備中）</span></h3>
-                  <p class="fav-scene"><span class="todo">場面（準備中）</span></p>
-                  <ul class="fav-tags"><li><span class="todo">音の札（準備中）</span></li></ul>
-                  <dl class="fav-dl">
-                    <div><dt>どんな体験</dt><dd><span class="todo">準備中</span></dd></div>
-                    <div><dt>どこが好きか</dt><dd><span class="todo">準備中</span></dd></div>
-                    <div><dt>自分の作品へ</dt><dd><span class="todo">準備中</span></dd></div>
-                  </dl>
-                  <p class="fav-credit">© <span class="todo">準備中</span></p>
-                </div>
-              </li>
-              <li style="grid-area:4/5/span 3/span 3; --fc:#B8A05E">
-                <button type="button" class="fav-tile" aria-controls="fav-detail" aria-pressed="false" aria-label="好きなゲーム体験 05（準備中）"><span class="fav-tag">05</span><span class="fav-ph" aria-hidden="true">SCREENSHOT</span></button>
-                <div class="fav-info" hidden>
-                  <h3 class="fav-title"><span class="todo">ゲーム名（準備中）</span></h3>
-                  <p class="fav-scene"><span class="todo">場面（準備中）</span></p>
-                  <ul class="fav-tags"><li><span class="todo">音の札（準備中）</span></li></ul>
-                  <dl class="fav-dl">
-                    <div><dt>どんな体験</dt><dd><span class="todo">準備中</span></dd></div>
-                    <div><dt>どこが好きか</dt><dd><span class="todo">準備中</span></dd></div>
-                    <div><dt>自分の作品へ</dt><dd><span class="todo">準備中</span></dd></div>
-                  </dl>
-                  <p class="fav-credit">© <span class="todo">準備中</span></p>
-                </div>
-              </li>
-              <li style="grid-area:1/8/span 2/span 2; --fc:#B06A84">
-                <button type="button" class="fav-tile" aria-controls="fav-detail" aria-pressed="false" aria-label="好きなゲーム体験 06（準備中）"><span class="fav-tag">06</span><span class="fav-ph" aria-hidden="true">SCREENSHOT</span></button>
-                <div class="fav-info" hidden>
-                  <h3 class="fav-title"><span class="todo">ゲーム名（準備中）</span></h3>
-                  <p class="fav-scene"><span class="todo">場面（準備中）</span></p>
-                  <ul class="fav-tags"><li><span class="todo">音の札（準備中）</span></li></ul>
-                  <dl class="fav-dl">
-                    <div><dt>どんな体験</dt><dd><span class="todo">準備中</span></dd></div>
-                    <div><dt>どこが好きか</dt><dd><span class="todo">準備中</span></dd></div>
-                    <div><dt>自分の作品へ</dt><dd><span class="todo">準備中</span></dd></div>
-                  </dl>
-                  <p class="fav-credit">© <span class="todo">準備中</span></p>
-                </div>
-              </li>
-              <li style="grid-area:3/8/span 2/span 2; --fc:#5EA6A2">
-                <button type="button" class="fav-tile" aria-controls="fav-detail" aria-pressed="false" aria-label="好きなゲーム体験 07（準備中）"><span class="fav-tag">07</span><span class="fav-ph" aria-hidden="true">SCREENSHOT</span></button>
-                <div class="fav-info" hidden>
-                  <h3 class="fav-title"><span class="todo">ゲーム名（準備中）</span></h3>
-                  <p class="fav-scene"><span class="todo">場面（準備中）</span></p>
-                  <ul class="fav-tags"><li><span class="todo">音の札（準備中）</span></li></ul>
-                  <dl class="fav-dl">
-                    <div><dt>どんな体験</dt><dd><span class="todo">準備中</span></dd></div>
-                    <div><dt>どこが好きか</dt><dd><span class="todo">準備中</span></dd></div>
-                    <div><dt>自分の作品へ</dt><dd><span class="todo">準備中</span></dd></div>
-                  </dl>
-                  <p class="fav-credit">© <span class="todo">準備中</span></p>
-                </div>
-              </li>
-              <li style="grid-area:5/8/span 2/span 2; --fc:#9A8F7E">
-                <button type="button" class="fav-tile" aria-controls="fav-detail" aria-pressed="false" aria-label="好きなゲーム体験 08（準備中）"><span class="fav-tag">08</span><span class="fav-ph" aria-hidden="true">SCREENSHOT</span></button>
-                <div class="fav-info" hidden>
-                  <h3 class="fav-title"><span class="todo">ゲーム名（準備中）</span></h3>
-                  <p class="fav-scene"><span class="todo">場面（準備中）</span></p>
-                  <ul class="fav-tags"><li><span class="todo">音の札（準備中）</span></li></ul>
-                  <dl class="fav-dl">
-                    <div><dt>どんな体験</dt><dd><span class="todo">準備中</span></dd></div>
-                    <div><dt>どこが好きか</dt><dd><span class="todo">準備中</span></dd></div>
-                    <div><dt>自分の作品へ</dt><dd><span class="todo">準備中</span></dd></div>
-                  </dl>
-                  <p class="fav-credit">© <span class="todo">準備中</span></p>
-                </div>
-              </li>
-              <li style="grid-area:1/10/span 3/span 3; --fc:#7F96C8">
-                <button type="button" class="fav-tile" aria-controls="fav-detail" aria-pressed="false" aria-label="好きなゲーム体験 09（準備中）"><span class="fav-tag">09</span><span class="fav-ph" aria-hidden="true">SCREENSHOT</span></button>
-                <div class="fav-info" hidden>
-                  <h3 class="fav-title"><span class="todo">ゲーム名（準備中）</span></h3>
-                  <p class="fav-scene"><span class="todo">場面（準備中）</span></p>
-                  <ul class="fav-tags"><li><span class="todo">音の札（準備中）</span></li></ul>
-                  <dl class="fav-dl">
-                    <div><dt>どんな体験</dt><dd><span class="todo">準備中</span></dd></div>
-                    <div><dt>どこが好きか</dt><dd><span class="todo">準備中</span></dd></div>
-                    <div><dt>自分の作品へ</dt><dd><span class="todo">準備中</span></dd></div>
-                  </dl>
-                  <p class="fav-credit">© <span class="todo">準備中</span></p>
-                </div>
-              </li>
-              <li style="grid-area:4/10/span 3/span 3; --fc:#C08A5A">
-                <button type="button" class="fav-tile" aria-controls="fav-detail" aria-pressed="false" aria-label="好きなゲーム体験 10（準備中）"><span class="fav-tag">10</span><span class="fav-ph" aria-hidden="true">SCREENSHOT</span></button>
-                <div class="fav-info" hidden>
-                  <h3 class="fav-title"><span class="todo">ゲーム名（準備中）</span></h3>
-                  <p class="fav-scene"><span class="todo">場面（準備中）</span></p>
-                  <ul class="fav-tags"><li><span class="todo">音の札（準備中）</span></li></ul>
-                  <dl class="fav-dl">
-                    <div><dt>どんな体験</dt><dd><span class="todo">準備中</span></dd></div>
-                    <div><dt>どこが好きか</dt><dd><span class="todo">準備中</span></dd></div>
-                    <div><dt>自分の作品へ</dt><dd><span class="todo">準備中</span></dd></div>
-                  </dl>
-                  <p class="fav-credit">© <span class="todo">準備中</span></p>
-                </div>
-              </li>
-            </ul>
-          </div>
-          <div class="fav-ctrl">
-            <button type="button" class="fav-arrow" data-dir="-1" aria-label="左へ"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-            <button type="button" class="fav-arrow" data-dir="1" aria-label="右へ"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-            <p class="fav-hint"><span class="pc">横スクロール・ドラッグで動きます。押すと右に解説</span><span class="sp">横にスワイプで動きます。押すと下に解説</span></p>
-          </div>
-        </div>
-        <div class="fav-detail" id="fav-detail">
-          <p class="fav-no">01 / 10</p>
-          <div class="fav-body" aria-live="polite"></div>
-        </div>
-      </div>
-    </div>
-  </section>
 
-  <!-- 03 作品：1 作品 = 全画面 1 枚（左に画像、右に題・概要・表・MORE）。こだわりは .w-extra（MORE の窓に出る）。画像は .w-shot の中に img を入れる -->
+  <!-- 03 作品：1 作品 = 全画面 1 枚（左に画像、右に題・表）。画像は .w-shot の中に img を入れる -->
   <section class="panel dark p-work" id="works" aria-labelledby="w1-title" style="--wa:#7DB8D1">
     <div class="bg"></div>
     <div class="wrap">
@@ -857,36 +663,6 @@ button{font:inherit}
         <div class="w-shot"><img src="img/works/soundmarker.jpg?v=2" width="1400" height="789" alt="SoundMarker の画面（アニメーションのタイムラインに音を置く）" decoding="async"></div>
         <div class="w-detail">
           <dl class="w-facts"><div><dt>概要</dt><dd>サウンドデザイナーさんとのチーム制作で経験した、実装して検証するまでの時間や、実装後の手戻りを減らすために、サウンドデザイナーさんと話し合って制作した検証ツール。</dd></div><div><dt>ゲームジャンル</dt><dd>—（アニメーション・サウンド検証ツール）</dd></div><div><dt>制作規模</dt><dd>個人制作</dd></div><div><dt>担当範囲</dt><dd>すべて</dd></div><div><dt>制作期間</dt><dd>2週間</dd></div><div><dt>制作環境</dt><dd>DirectX 11／C++17</dd></div></dl>
-        </div>
-      </div>
-    </div>
-  </section>
-  <section class="panel dark p-work" id="work-6" hidden data-nav="works" aria-labelledby="w6-title" style="--wa:#E08AA8">
-    <div class="bg"></div>
-    <div class="wrap">
-      <div class="w-grid">
-        <div class="w-head">
-          <p class="eyebrow"><span class="no">02</span>Works <span class="w-idx">06 / 07</span><span class="w-wip">制作中</span></p>
-          <h2 id="w6-title">友人作品A</h2>
-        </div>
-        <div class="w-shot">画像 準備中</div>
-        <div class="w-detail">
-          <dl class="w-facts"><div><dt>概要</dt><dd><span class="todo">準備中</span></dd></div><div><dt>ゲームジャンル</dt><dd><span class="todo">準備中</span></dd></div><div><dt>制作規模</dt><dd>—</dd></div><div><dt>担当範囲</dt><dd>サウンド面で協力、<span class="todo">詳しくは準備中</span></dd></div><div><dt>制作期間</dt><dd>1か月</dd></div><div><dt>制作環境</dt><dd>DirectX 11／C++17</dd></div></dl>
-        </div>
-      </div>
-    </div>
-  </section>
-  <section class="panel dark p-work" id="work-7" hidden data-nav="works" aria-labelledby="w7-title" style="--wa:#6CC4C0">
-    <div class="bg"></div>
-    <div class="wrap">
-      <div class="w-grid">
-        <div class="w-head">
-          <p class="eyebrow"><span class="no">02</span>Works <span class="w-idx">07 / 07</span><span class="w-wip">制作中</span></p>
-          <h2 id="w7-title">友人作品B</h2>
-        </div>
-        <div class="w-shot">画像 準備中</div>
-        <div class="w-detail">
-          <dl class="w-facts"><div><dt>概要</dt><dd><span class="todo">準備中</span></dd></div><div><dt>ゲームジャンル</dt><dd><span class="todo">準備中</span></dd></div><div><dt>制作規模</dt><dd>—</dd></div><div><dt>担当範囲</dt><dd>サウンド面で協力、<span class="todo">詳しくは準備中</span></dd></div><div><dt>制作期間</dt><dd>1か月</dd></div><div><dt>制作環境</dt><dd>DirectX 12／C++17</dd></div></dl>
         </div>
       </div>
     </div>
