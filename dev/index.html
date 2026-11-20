@@ -600,6 +600,23 @@ html[data-works="jacket"] .w-slide.is-on .w-jdisc .w-disc-in{animation:w-spin 4.
 }
 @media (prefers-reduced-motion: reduce){ html[data-works="jacket"] .w-slide.is-on .w-jdisc .w-disc-in{animation:none} }
 /* /DEV-ONLY */
+/* DEV-ONLY: 作品の動画（確認用だけ） */
+/* 波形の帯の左の ▶（動画が無い作品は薄く「準備中」）。押すと画像の所に動画が出て音付きで流れ、波形が進み具合になる */
+.w-play{flex:none; display:flex; align-items:center; gap:8px; padding:0; border:0; background:none; color:var(--wa); font:inherit; cursor:pointer}
+.w-play:disabled{cursor:default; opacity:.5}
+.w-play-ic{position:relative; flex:none; width:34px; height:34px; border:1.5px solid currentColor; border-radius:50%}
+.w-play-ic::before{content:""; position:absolute; left:50%; top:50%; margin:-7px 0 0 -4px; border-left:12px solid currentColor; border-top:7px solid transparent; border-bottom:7px solid transparent}
+.w-play.is-playing .w-play-ic::before{margin:-7px 0 0 -6px; width:4px; height:14px; border:0; background:currentColor; box-shadow:7px 0 0 currentColor}
+.w-play:not(:disabled):hover .w-play-ic{background:color-mix(in srgb, currentColor 14%, transparent)}
+.w-play:focus-visible{outline:2px solid currentColor; outline-offset:3px; border-radius:6px}
+.w-play-t{display:flex; flex-direction:column; align-items:flex-start; line-height:1.15}
+.w-play-t small{font-family:var(--f-label); font-size:10px; letter-spacing:.2em}
+.w-play-t b{font-family:var(--f-mono); font-size:18px; font-weight:600; letter-spacing:.04em}
+html[data-works="jacket"] .w-stage .w-play{color:var(--wa-ink)}
+.w-shot{position:relative}
+.w-shot video{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; background:#000; cursor:pointer}
+.w-wave canvas{cursor:pointer}
+/* /DEV-ONLY */
 </style>
 </head>
 <body>
@@ -2089,6 +2106,9 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
     t.cv.addEventListener('pointerleave', off);
     t.cv.addEventListener('pointercancel', off);
     t.cv.addEventListener('pointerup', function(e){ if (e.pointerType !== 'mouse') off(); });
+    // 動画とつなぐ：進み具合（0〜1）を受け取って色を付ける／押した所（0〜1）を知らせる
+    t.cv.addEventListener('wprogress', function(e){ t.run++; t.play = e.detail; draw(t); });
+    t.cv.addEventListener('click', function(e){ var r = t.cv.getBoundingClientRect(); t.cv.dispatchEvent(new CustomEvent('wseek', {bubbles: true, detail: Math.max(0, Math.min(1, (e.clientX - r.left) / r.width))})); });
   });
   window.addEventListener('resize', function(){ tracks.forEach(draw); });
   tracks.forEach(draw);
@@ -2395,6 +2415,74 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
   });
   fit();
   update();
+})();
+</script>
+<!-- /DEV-ONLY -->
+<!-- DEV-ONLY: 作品の動画（確認用だけ） -->
+<script>
+// 波形の帯の左を ▶ にする。押すと画像の所に動画が出て音付きで流れ、波形が進み具合になる（波形を押すとその位置へ）。
+// 動画は dev/video/<名前>.mp4（下の表の名前）を置けば、その作品から押せるようになる。無い作品は ▶ が薄く「準備中」
+(function(){
+  var NAMES = {works: 'idreal', 'work-2': 'horror', 'work-3': 'osumitsuki', 'work-4': 'ribbond', 'work-5': 'soundmarker', 'work-6': 'friend-a', 'work-7': 'friend-b'};
+  var slides = [].slice.call(document.querySelectorAll('.w-slide')), spacers = [].slice.call(document.querySelectorAll('.w-spacer')), playing = null;
+  slides.forEach(function(sl, k){
+    var lab = sl.querySelector('.w-wave-lab'), shot = sl.querySelector('.w-shot'), cv = sl.querySelector('.w-wave canvas'), sp = spacers[k];
+    if (!lab || !shot || !sp) return;
+    var name = NAMES[sp.id], url = name ? 'video/' + name + '.mp4' : '', no = (lab.querySelector('b') || {}).textContent || '', title = (sl.querySelector('h2') || {}).textContent || '';
+    var btn = document.createElement('button'), video = null, raf = 0;
+    btn.type = 'button';
+    btn.className = 'w-play';
+    btn.disabled = true;
+    btn.setAttribute('aria-label', title + ' の動画（準備中）');
+    btn.innerHTML = '<i class="w-play-ic" aria-hidden="true"></i><span class="w-play-t"><small>準備中</small><b>' + no + '</b></span>';
+    lab.parentNode.replaceChild(btn, lab);
+    function progress(){
+      cancelAnimationFrame(raf);
+      if (!video) return;
+      if (cv && video.duration) cv.dispatchEvent(new CustomEvent('wprogress', {detail: video.currentTime / video.duration}));
+      if (!video.paused && !video.ended) raf = requestAnimationFrame(progress);
+    }
+    function state(){
+      var on = !!video && !video.paused && !video.ended;
+      btn.classList.toggle('is-playing', on);
+      btn.setAttribute('aria-label', title + (on ? ' の動画を止める' : ' の動画を再生'));
+    }
+    function ensure(){
+      if (video) return video;
+      video = document.createElement('video');
+      video.preload = 'auto';
+      video.playsInline = true;
+      video.setAttribute('playsinline', '');
+      video.src = url;
+      shot.appendChild(video);
+      video.addEventListener('play', function(){ if (playing && playing !== video) playing.pause(); playing = video; state(); progress(); });
+      video.addEventListener('pause', state);
+      video.addEventListener('ended', function(){ state(); progress(); });
+      video.addEventListener('click', toggle);
+      return video;
+    }
+    function toggle(){
+      if (btn.disabled) return;
+      var v = ensure();
+      if (v.paused || v.ended){ if (v.ended) v.currentTime = 0; var pr = v.play(); if (pr && pr['catch']) pr['catch'](function(){}); }
+      else v.pause();
+    }
+    btn.addEventListener('click', toggle);
+    if (cv) cv.addEventListener('wseek', function(e){
+      if (btn.disabled) return;
+      var v = ensure(), go = function(){ v.currentTime = e.detail * v.duration; if (v.paused){ var pr = v.play(); if (pr && pr['catch']) pr['catch'](function(){}); } progress(); };
+      if (v.readyState >= 1) go(); else v.addEventListener('loadedmetadata', go, {once: true});
+    });
+    // 作品が切り替わったら止める
+    new MutationObserver(function(){ if (video && !video.paused && !sl.classList.contains('on')) video.pause(); }).observe(sl, {attributes: true, attributeFilter: ['class']});
+    // 動画のファイルがあれば押せるように
+    function enable(u){ url = u; btn.disabled = false; btn.querySelector('small').textContent = 'PLAY'; state(); }
+    btn._enable = enable;  // 確かめ用（仮の動画で試す時）
+    if (url) fetch(url, {method: 'HEAD', cache: 'no-store'}).then(function(r){ if (r.ok) enable(url); }, function(){});
+  });
+  // 作品の舞台が画面から外れたら止める
+  var stage = document.querySelector('.w-stage');
+  if (stage && 'IntersectionObserver' in window) new IntersectionObserver(function(es){ es.forEach(function(e){ if (!e.isIntersecting && playing) playing.pause(); }); }).observe(stage);
 })();
 </script>
 <!-- /DEV-ONLY -->
