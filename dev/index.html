@@ -621,6 +621,11 @@ html[data-works="jacket"].has-tl .w-stage > .w-slide{padding-top:calc(env(safe-a
 }
 @media (prefers-reduced-motion: reduce){ .w-tl{scroll-behavior:auto} }
 /* /DEV-ONLY */
+/* DEV-ONLY: 作品の横スライド（確認用だけ） */
+/* 舞台の上の横の動きはブラウザに使わせない（JS が作品の切り替えに使う）。縦のスクロールと拡大はそのまま。札の列は横に流れる */
+.w-stage{touch-action:pan-y pinch-zoom}
+.w-tl{touch-action:pan-x pinch-zoom}
+/* /DEV-ONLY */
 /* DEV-ONLY: 作品の動画（確認用だけ） */
 /* 波形の帯の左の ▶（動画が無い作品は薄く「準備中」）。押すと画像の所に動画が出て音付きで流れ、波形が進み具合になる */
 .w-play{flex:none; display:flex; align-items:center; gap:8px; padding:0; border:0; background:none; color:var(--wa); font:inherit; cursor:pointer}
@@ -2515,6 +2520,63 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
     if (tl.scrollWidth > tl.clientWidth + 1) tl.scrollLeft = tlItems[i].offsetLeft - (tl.clientWidth - tlItems[i].offsetWidth) / 2;
   }
   if ('MutationObserver' in window) slides.forEach(function(sl){ new MutationObserver(tlMark).observe(sl, {attributes: true, attributeFilter: ['class']}); });
+  /* /DEV-ONLY */
+  /* DEV-ONLY: 作品の横スライド（確認用だけ） */
+  // 作品カードの上で横に動かすと作品が替わる（左へ＝次、右へ＝前）。スマホはスワイプ、PC はタッチパッドの横の動き（Shift＋ホイール）と ← → キー
+  // 一覧（札の列）の上では列が流れるだけ（本人「一覧と作品カードは別に」）。舞台が止まっている間だけ
+  function sideGo(dir){
+    var i = cur + dir;
+    if (cur < 0 || i < 0 || i >= slides.length || !pinned()) return false;
+    lastGo = performance.now(); locked = true;
+    go(i);
+    return true;
+  }
+  function offCard(t){ return !t || !t.closest || !!t.closest('.w-tl, dialog, #drawer'); }
+  var sx = 0, sy = 0, st = 0, sAxis = 'n';
+  stage.addEventListener('touchstart', function(e){
+    if (e.touches.length !== 1 || offCard(e.target)){ sAxis = 'n'; return; }
+    sx = e.touches[0].clientX; sy = e.touches[0].clientY; st = performance.now(); sAxis = '';
+  }, {passive: true});
+  stage.addEventListener('touchmove', function(e){
+    if (sAxis === 'n' || e.touches.length !== 1){ sAxis = 'n'; return; }
+    var dx = e.touches[0].clientX - sx, dy = e.touches[0].clientY - sy;
+    if (!sAxis && Math.abs(dx) + Math.abs(dy) > 10) sAxis = Math.abs(dx) > Math.abs(dy) * 1.2 ? 'x' : 'y';
+    if (sAxis === 'x' && e.cancelable) e.preventDefault();
+  }, {passive: false});
+  stage.addEventListener('touchend', function(e){
+    var ax = sAxis;
+    sAxis = 'n';
+    if (ax !== 'x' || !e.changedTouches.length) return;
+    var dx = e.changedTouches[0].clientX - sx, dt = performance.now() - st;
+    if (Math.abs(dx) > 60 || (Math.abs(dx) > 30 && dt < 250)) sideGo(dx < 0 ? 1 : -1);
+  }, {passive: true});
+  stage.addEventListener('touchcancel', function(){ sAxis = 'n'; }, {passive: true});
+  // タッチパッドの横の動き：1 回の動きで 1 作品（慣性の続きは飲み込む）。端の作品でも横の身ぶり（戻る・進む）にはさせない
+  var hLast = 0, hAbs = 0, hAcc = 0, hLock = false, hGo = 0;
+  window.addEventListener('wheel', function(e){
+    var ax = Math.abs(e.deltaX), ay = Math.abs(e.deltaY);
+    if (e.ctrlKey || ax <= ay || offCard(e.target) || !e.target.closest('.w-stage')) return;
+    if (html.classList.contains('dlg-open') || !pinned() || cur < 0) return;
+    e.preventDefault();
+    var now = performance.now(), ad = ax * (e.deltaMode === 1 ? 16 : 1);
+    var fresh = now - hLast > 250 || ad > hAbs * 1.4 + 4;
+    hLast = now; hAbs = ad;
+    if (now - hGo < 700 || (hLock && !fresh)){ hAcc = 0; return; }
+    hLock = false;
+    hAcc += ad;
+    if (hAcc < 30) return;
+    hAcc = 0;
+    if (sideGo(e.deltaX > 0 ? 1 : -1)){ hLock = true; hGo = now; }
+  }, {passive: false});
+  window.addEventListener('keydown', function(e){
+    if (e.ctrlKey || e.metaKey || e.altKey || (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight')) return;
+    var t = e.target;
+    if (t && t.closest && t.closest('input, textarea, select, [contenteditable], #smap, dialog')) return;
+    if (!pinned() || cur < 0) return;
+    e.preventDefault();
+    if (performance.now() - lastShow < 450) return;
+    sideGo(e.key === 'ArrowRight' ? 1 : -1);
+  }, true);
   /* /DEV-ONLY */
   fit();
   update();
