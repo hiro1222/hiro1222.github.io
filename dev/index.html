@@ -643,11 +643,13 @@ html[data-works="jacket"] .w-jdisc{display:none!important}
 .sm-btn:last-child{margin-top:0}
 .sm-tp{display:none}
 @media (max-width:860px){
-  .smap{--map:clamp(200px, calc(100vw - 80px), 290px)}
+  .smap{--map:clamp(190px, min(calc(100vw - 80px), calc(100svh - 570px)), 290px)}  /* 1 ページ目に収まる大きさまで */
   .sm-body{grid-template-columns:auto}
   .sm-pad{display:none}
   .sm-tp{display:inline}
+  .sm-pcn{display:none}
   .sm-hint{max-width:calc(var(--map) + 12px)}
+  .p-top .cue{display:none}  /* スマホは SCROLL を出さない（ミニマップの説明と重なるので） */
 }
 /* /DEV-ONLY */
 </style>
@@ -717,7 +719,7 @@ html[data-works="jacket"] .w-jdisc{display:none!important}
             </div>
           </div>
         </div>
-        <p class="sm-hint"><span class="sm-tp">地図をなぞった向き（上下左右）に歩きます（大きく引くと走る・タップで手をたたく）<br></span>足音はどこも同じ。変わるのは場所の響きだけ<span class="nw">（音が出ます）</span><span class="sm-kb">キーボード：地図をクリックして 矢印キー・Z・X</span></p>
+        <p class="sm-hint"><span class="sm-tp">地図をなぞって歩く・タップで手をたたく<span class="nw">（音が出ます）</span></span><span class="sm-pcn">足音はどこも同じ。変わるのは場所の響きだけ<span class="nw">（音が出ます）</span></span><span class="sm-kb">キーボード：地図をクリックして 矢印キー・Z・X</span></p>
       </div>
       <!-- /DEV-ONLY -->
     </div>
