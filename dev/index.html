@@ -2107,13 +2107,17 @@ html[data-works="film"] .w-flash{display:block; position:absolute; inset:0; z-in
   document.body.appendChild(veil);
   function docTop(el){ return el.getBoundingClientRect().top + window.scrollY; }
   function jump(y){ try{ window.scrollTo({top: y, left: 0, behavior: 'instant'}); }catch(e){ window.scrollTo(0, y); } }
+  // ページ本体のスクロールの動き（ばね・吸い付き）を止める。本体の stopAll は外から呼べないので、本体が止まる合図の Home キーを送る
+  function stopScroll(){ try{ window.dispatchEvent(new KeyboardEvent('keydown', {key: 'Home'})); }catch(e){} }
   function swap(from, to, dir){
     busy = true;
+    stopScroll();
     var qf = parts(from), qt = parts(to), outs = mode() === 'film' ? filmOut(qf, dir) : recordOut(qf, dir);
     qf.text.forEach(function(el){ outs.push(anim(el, [{opacity: 1, transform: 'none'}, {opacity: 0, transform: 'translateY(' + (-dir * 14) + 'px)'}], {duration: 220, easing: EI, fill: 'forwards'})); });
     anim(veil, [{opacity: 0}, {opacity: .55}], {duration: 280, delay: 140, fill: 'forwards'});
     setTimeout(function(){
       to._swapAt = performance.now();
+      stopScroll();
       jump(docTop(to));
       outs.forEach(function(a){ if (a) a.cancel(); });
       anim(veil, [{opacity: .55}, {opacity: 0}], {duration: 320, fill: 'forwards'});
