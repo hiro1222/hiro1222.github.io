@@ -150,7 +150,7 @@ button{font:inherit}
 .sm-body{display:grid; grid-template-columns:auto auto; column-gap:14px; align-items:center}
 .sm-screen{width:calc(var(--map) + 12px); padding:6px; background:#CFCDC8; border:1px solid #B9B7B1; border-radius:6px; outline:none}
 .sm-screen:focus-visible{outline:2px solid var(--accent-hi); outline-offset:2px}
-.sm-screen canvas{display:block; width:100%; aspect-ratio:1 / 1; height:auto; image-rendering:pixelated; image-rendering:crisp-edges; border-radius:2px; cursor:pointer}
+.sm-screen canvas{display:block; width:100%; aspect-ratio:1 / 1; height:auto; border-radius:2px; cursor:pointer}
 .sm-room{display:flex; justify-content:space-between; gap:8px; margin-top:6px; padding:0 2px; font-family:var(--f-mono); font-size:11.5px; line-height:1.5; color:#2B3238}
 .sm-room .sm-rt{color:var(--accent)}
 .sm-room.flash .sm-rn{animation:sm-flash .7s ease-out}
@@ -649,8 +649,8 @@ html[data-works="jacket"] .w-stage .w-play{color:var(--wa-ink)}
 .w-wave canvas{cursor:pointer}
 /* /DEV-ONLY */
 /* DEV-ONLY: ミニゲームの丸い操作（確認用だけ） */
-/* PC は地図の下に丸い棒（倒した向きに一番近い上下左右へ歩く、端まで倒すと走る）と A。スマホは横の操作を無くして地図を大きくし、
-   地図に触れた所に丸が出て、なぞった向き（上下左右）へ歩く（タップで手をたたく）。斜めには歩かない（人の向きが 4 つなので） */
+/* PC は地図の下に丸い棒（倒した向きへそのまま歩く、端まで倒すと走る）と A。スマホは横の操作を無くして地図を大きくし、
+   地図に触れた所に丸が出て、なぞった向きへ歩く（タップで手をたたく）。斜めも自由に歩ける。人は丸で、向いている方に三角の視界が出る */
 .sm-screen{position:relative}
 .sm-screen canvas{touch-action:none}
 .sm-float{position:absolute; left:0; top:0; z-index:2; width:84px; height:84px; margin:-42px 0 0 -42px; border-radius:50%; border:2px solid rgba(29,92,120,.6); background:rgba(29,92,120,.12); pointer-events:none; display:none}
@@ -728,7 +728,7 @@ html[data-works="jacket"] .w-stage .w-play{color:var(--wa-ink)}
         </div>
         <div class="sm-body">
           <div class="sm-screen" tabindex="0" aria-label="地図（矢印キーで歩く・Z で手をたたく・X を押しながら走る）">
-            <canvas width="160" height="160" role="img" aria-label="上から見た地図。白いコンクリートの建物で、大広間・小部屋・廊下と外の広場があり、人が 1 人いる"></canvas>
+            <canvas width="160" height="160" role="img" aria-label="上から見た地図。白いコンクリートの建物で、大広間・小部屋・廊下と外の広場があり、丸い人が 1 人いて、向いている方に三角の視界が出る"></canvas>
             <p class="sm-room" aria-live="polite"><span class="sm-rn">大広間</span><span class="sm-rt">響き 2.4 秒</span></p>
           </div>
           <div class="sm-pad">
@@ -1935,33 +1935,34 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
     }
   })();
 
-  // ---------- 人 ----------
-  var SPR = {"down0":["..kkkkkk..",".kppppppk.",".khhhhhhk.","pkhhhhhhkp","pksssssskp","pksesseskp",".kssssssk.","..kkkkkk..",".kooooook.","ksooooooks",".kOOOOOOk.","..knnnnk..","..knkknk..","..bb..bb.."],"up0":["..kkkkkk..",".kppppppk.",".khhhhhhk.","pkhhhhhhkp","pkhhhhhhkp","pkhhhhhhkp",".khhhhhhk.","..kkkkkk..",".kooooook.","ksooooooks",".kOOOOOOk.","..knnnnk..","..knkknk..","..bb..bb.."],"right0":["..kkkkkk..",".kppppppk.",".khhhhhhk.",".khpphssk.",".khpphssk.",".khpphsek.","..khhssk..","..kkkkkk..","..kooook..","..koosok..","..kOOOOk..","..knnnnk..","..knnnnk..","...bbbbb.."],"left0":["..kkkkkk..",".kppppppk.",".khhhhhhk.",".ksshpphk.",".ksshpphk.",".keshpphk.","..ksshhk..","..kkkkkk..","..kooook..","..kosook..","..kOOOOk..","..knnnnk..","..knnnnk..","..bbbbb..."],"down1":["..kkkkkk..",".kppppppk.",".khhhhhhk.","pkhhhhhhkp","pksssssskp","pksesseskp",".kssssssk.","..kkkkkk..",".kooooook.","ksooooooks",".kOOOOOOk.","..knnnnk..","..knkkbb..","..bb......"],"up1":["..kkkkkk..",".kppppppk.",".khhhhhhk.","pkhhhhhhkp","pkhhhhhhkp","pkhhhhhhkp",".khhhhhhk.","..kkkkkk..",".kooooook.","ksooooooks",".kOOOOOOk.","..knnnnk..","..knkkbb..","..bb......"],"right1":["..kkkkkk..",".kppppppk.",".khhhhhhk.",".khpphssk.",".khpphssk.",".khpphsek.","..khhssk..","..kkkkkk..","..kooook..","..koosok..","..kOOOOk..","..knnnnk..","..kn..nk..",".bb....bb."],"left1":["..kkkkkk..",".kppppppk.",".khhhhhhk.",".ksshpphk.",".ksshpphk.",".keshpphk.","..ksshhk..","..kkkkkk..","..kooook..","..kosook..","..kOOOOk..","..knnnnk..","..kn..nk..",".bb....bb."],"down2":["..kkkkkk..",".kppppppk.",".khhhhhhk.","pkhhhhhhkp","pksssssskp","pksesseskp",".kssssssk.","..kkkkkk..",".kooooook.","ksooooooks",".kOOOOOOk.","..knnnnk..","..bbkknk..","......bb.."],"up2":["..kkkkkk..",".kppppppk.",".khhhhhhk.","pkhhhhhhkp","pkhhhhhhkp","pkhhhhhhkp",".khhhhhhk.","..kkkkkk..",".kooooook.","ksooooooks",".kOOOOOOk.","..knnnnk..","..bbkknk..","......bb.."],"right2":["..kkkkkk..",".kppppppk.",".khhhhhhk.",".khpphssk.",".khpphssk.",".khpphsek.","..khhssk..","..kkkkkk..","..kooook..","..koosok..","..kOOOOk..","..knnnnk..","..knnnnk..","...bbbbb.."],"left2":["..kkkkkk..",".kppppppk.",".khhhhhhk.",".ksshpphk.",".ksshpphk.",".keshpphk.","..ksshhk..","..kkkkkk..","..kooook..","..kosook..","..kOOOOk..","..knnnnk..","..knnnnk..","..bbbbb..."]};
-  var PAL = {"k": "#0B1116", "h": "#3A3F4B", "s": "#F1C9A5", "e": "#0B1116", "p": "#7DB8D1", "o": "#D9774C", "O": "#A9552F", "n": "#2C3E57", "b": "#161B21"};
-  var me = {x: 5.5, y: 8.6, face: 'down', frame: 0, ft: 0, moving: false, foot: 0};
-  var room = 'H', held = [], stick = {x: 0, y: 0, on: false}, run = false, stepT = .05, rings = [], clapT = 0, last = 0, rafOn = false;
+  // ---------- 人（丸）と視界（三角） ----------
+  // 視界：向いている方へ幅 ±VIEW_A（ラジアン）・奥行き VIEW_L マスの三角。壁と柱で切れる（レイを VIEW_N + 1 本）
+  var VIEW_A = .62, VIEW_L = 4.6, VIEW_N = 64, BODY_R = .36;
+  var me = {x: 5.5, y: 8.6, ang: Math.PI / 2, ta: Math.PI / 2, moving: false, foot: 0};
+  var room = 'H', held = [], stick = {x: 0, y: 0, on: false}, run = false, stepT = .05, rings = [], clapT = 0, last = 0, rafOn = false, turning = false;
   var DIRS = {up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0]};
   function solid(x, y){ var c = at(x, y); return c === '#' || c === 'T'; }
   function hits(x, y){
-    var hw = .3, hh = .2;
-    return solid(Math.floor(x - hw), Math.floor(y - hh)) || solid(Math.floor(x + hw), Math.floor(y - hh)) ||
-           solid(Math.floor(x - hw), Math.floor(y + hh)) || solid(Math.floor(x + hw), Math.floor(y + hh));
+    var h = .32;
+    return solid(Math.floor(x - h), Math.floor(y - h)) || solid(Math.floor(x + h), Math.floor(y - h)) ||
+           solid(Math.floor(x - h), Math.floor(y + h)) || solid(Math.floor(x + h), Math.floor(y + h));
   }
-  // 今の向き（上下左右だけ。長さ 0〜1）：丸い棒・地図をなぞる指は一番近い上下左右へ、なければ最後に押したキー
+  // 今の向き（長さ 0〜1）：丸い棒・地図をなぞる指はその向きのまま、キーは押している矢印を足した向き（2 つで斜め）
   function vec(){
     if (stick.on){
-      var ax = Math.abs(stick.x), ay = Math.abs(stick.y), m = Math.max(ax, ay);
-      if (m < .3) return {x: 0, y: 0};
-      return ax > ay ? {x: stick.x > 0 ? m : -m, y: 0} : {x: 0, y: stick.y > 0 ? m : -m};
+      var m = Math.sqrt(stick.x * stick.x + stick.y * stick.y);
+      return m < .25 ? {x: 0, y: 0} : {x: stick.x, y: stick.y};
     }
-    var d = DIRS[held[held.length - 1]];
-    return d ? {x: d[0], y: d[1]} : {x: 0, y: 0};
+    var x = 0, y = 0, n;
+    held.forEach(function(d){ x += DIRS[d][0]; y += DIRS[d][1]; });
+    n = Math.sqrt(x * x + y * y);
+    return n ? {x: x / n, y: y / n} : {x: 0, y: 0};
   }
   function move(dt){
     var v = vec(), m = Math.sqrt(v.x * v.x + v.y * v.y);
     if (m < .15){ me.moving = false; return; }
     var dx = v.x / m, dy = v.y / m, fast = run || (stick.on && m > .85);
-    me.face = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'right' : 'left') : (dy > 0 ? 'down' : 'up');
+    me.ta = Math.atan2(dy, dx);
     var sp = (fast ? 4.6 : 2.7) * dt, nx = me.x + dx * sp, ny = me.y + dy * sp, s, c0;
     me.moving = false;
     if (!hits(nx, ny)){ me.x = nx; me.y = ny; me.moving = true; }
@@ -1976,12 +1977,50 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
     var here = at(Math.floor(me.x), Math.floor(me.y));
     if (ROOMS[here] && here !== room){ room = here; showRoom(true); }
     if (me.moving){
-      me.ft += dt;
-      var fi = fast ? .09 : .14;
-      if (me.ft >= fi){ me.ft -= fi; me.frame = me.frame === 1 ? 2 : 1; }
       stepT -= dt;
       if (stepT <= 0){ stepT += fast ? .26 : .40; step(); }
     }
+  }
+  // 向きは少し遅れて回る（三角がなめらかに振れるように）
+  function turn(dt){
+    var d = me.ta - me.ang;
+    d = Math.atan2(Math.sin(d), Math.cos(d));
+    if (reduce || Math.abs(d) < .005){ me.ang = me.ta; turning = false; return; }
+    me.ang += d * (1 - Math.exp(-dt * 16));
+    turning = true;
+  }
+  // 壁か柱に当たるまでの長さ（マス単位、max まで）。マスの境目を順にたどる
+  function ray(ox, oy, dx, dy, max){
+    var tx = Math.floor(ox), ty = Math.floor(oy), sx = dx > 0 ? 1 : -1, sy = dy > 0 ? 1 : -1;
+    var ddx = dx ? Math.abs(1 / dx) : 1e9, ddy = dy ? Math.abs(1 / dy) : 1e9;
+    var nx = dx ? (dx > 0 ? tx + 1 - ox : ox - tx) * ddx : 1e9, ny = dy ? (dy > 0 ? ty + 1 - oy : oy - ty) * ddy : 1e9, t;
+    for (;;){
+      if (nx < ny){ t = nx; nx += ddx; tx += sx; } else { t = ny; ny += ddy; ty += sy; }
+      if (t >= max) return max;
+      if (solid(tx, ty)) return t;
+    }
+  }
+  // 視界の三角：奥の辺はまっすぐ（レイの長さを 1/cos で伸ばす）。壁で切れた所はそこまで
+  function drawView(){
+    var X = me.x * TS, Y = me.y * TS, a0 = me.ang, i, th, c, t, pts = [];
+    for (i = 0; i <= VIEW_N; i++){
+      th = -VIEW_A + 2 * VIEW_A * i / VIEW_N; c = a0 + th;
+      t = ray(me.x, me.y, Math.cos(c), Math.sin(c), VIEW_L / Math.cos(th));
+      pts.push(X + Math.cos(c) * t * TS, Y + Math.sin(c) * t * TS);
+    }
+    var gr = g.createLinearGradient(X, Y, X + Math.cos(a0) * VIEW_L * TS, Y + Math.sin(a0) * VIEW_L * TS);
+    gr.addColorStop(0, 'rgba(217,119,76,.45)'); gr.addColorStop(1, 'rgba(217,119,76,.07)');
+    g.beginPath(); g.moveTo(X, Y);
+    for (i = 0; i < pts.length; i += 2) g.lineTo(pts[i], pts[i + 1]);
+    g.closePath();
+    g.fillStyle = gr; g.fill();
+    g.lineJoin = 'round'; g.lineWidth = .5; g.strokeStyle = 'rgba(169,85,47,.55)'; g.stroke();
+  }
+  // 描く細かさ：表示の大きさ×画面の密度に合わせる（地図の絵は 160 px の点のまま拡大、丸と三角はなめらかに）
+  var S = 1;
+  function fitRes(){
+    var w = cv.getBoundingClientRect().width, k = Math.max(2, Math.min(6, Math.ceil(w * (window.devicePixelRatio || 1) / (MW * TS))));
+    if (k !== S){ S = k; cv.width = cv.height = MW * TS * S; draw(); }
   }
   function step(){
     me.foot ^= 1;
@@ -1998,10 +2037,13 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
     btnA.classList.add('on'); setTimeout(function(){ btnA.classList.remove('on'); }, 120);
     kick();
   }
-  function ring(a, w){ if (!reduce){ rings.push({x: me.x * TS, y: me.y * TS + 1, t: 0, a: a, w: w, room: room}); if (rings.length > 24) rings.shift(); } }
+  function ring(a, w){ if (!reduce){ rings.push({x: me.x * TS, y: me.y * TS, t: 0, a: a, w: w, room: room}); if (rings.length > 24) rings.shift(); } }
 
   function draw(){
+    g.setTransform(S, 0, 0, S, 0, 0);
+    g.imageSmoothingEnabled = false;
     g.drawImage(bg, 0, 0);
+    drawView();
     // 響き：輪は音の広がり、部屋のうっすらした光は響きの残り（長い部屋ほど長く残る）
     rings = rings.filter(function(r){
       var R = ROOMS[r.room], life = R.rt || .3, al = r.a * Math.exp(-6.91 * r.t / life);
@@ -2017,21 +2059,23 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
       g.restore();
       return true;
     });
-    // 人（足の真ん中が me の位置）
-    var spr = SPR[me.face + (me.moving ? me.frame : 0)], X = Math.round(me.x * TS) - 5, Y = Math.round(me.y * TS) - 12 - (me.moving && me.frame === 1 ? 1 : 0), x, y, c, row;
-    g.fillStyle = 'rgba(0,0,0,.18)'; g.fillRect(Math.round(me.x * TS) - 4, Math.round(me.y * TS) + 1, 8, 2);
-    for (y = 0; y < spr.length; y++){ row = spr[y]; for (x = 0; x < row.length; x++){ c = row[x]; if (c !== '.'){ g.fillStyle = PAL[c]; g.fillRect(X + x, Y + y, 1, 1); } } }
-    if (clapT > 0){ g.fillStyle = '#1D5C78'; g.fillRect(X - 2, Y + 1, 1, 1); g.fillRect(X + 11, Y + 1, 1, 1); g.fillRect(X - 1, Y - 1, 1, 1); g.fillRect(X + 10, Y - 1, 1, 1); }
+    // 人（丸。真ん中が me の位置。手をたたいた時は少し明るく）
+    var X = me.x * TS, Y = me.y * TS, r = BODY_R * TS;
+    g.fillStyle = 'rgba(0,0,0,.18)'; g.beginPath(); g.arc(X + .7, Y + .9, r, 0, 6.2832); g.fill();
+    g.beginPath(); g.arc(X, Y, r, 0, 6.2832);
+    g.fillStyle = clapT > 0 ? '#F2A57F' : '#D9774C'; g.fill();
+    g.lineWidth = .8; g.strokeStyle = '#0B1116'; g.stroke();
   }
   function tick(now){
     var dt = Math.min(.05, Math.max(0, (now - last) / 1000));
     last = now;
     move(dt);
+    turn(dt);
     rings.forEach(function(r){ r.t += dt; });
     clapT -= dt;
     draw();
-    if (active() || rings.length || clapT > 0) requestAnimationFrame(tick);
-    else { rafOn = false; me.moving = false; me.frame = 0; draw(); }
+    if (active() || rings.length || clapT > 0 || turning) requestAnimationFrame(tick);
+    else { rafOn = false; me.moving = false; draw(); }
   }
   function kick(){ if (!rafOn){ rafOn = true; last = performance.now(); requestAnimationFrame(tick); } }
   function showRoom(flash){
@@ -2120,7 +2164,9 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
   muteBtn.addEventListener('click', function(){ setMute(!muted); if (!muted) ensureAudio(); });
   setMute(muted);
   showRoom(false);
+  fitRes();
   draw();
+  window.addEventListener('resize', fitRes);
 })();
 </script>
 <!-- /DEV-ONLY -->
