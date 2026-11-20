@@ -720,7 +720,7 @@ html[data-works="jacket"] .w-stage .w-play{color:var(--wa-ink)}
       </div>
       <!-- DEV-ONLY: ミニマップ（確認用だけ） -->
       <!-- ミニマップ：歩くと、いる部屋の響きで足音が鳴る（中身は下の script）。
-           data-sound="idreal"：Idreal で前もって計算した足音と手拍子（audio/idreal-steps/・audio/idreal-claps/）。"synth" にすると前の合成の足音と響き -->
+           data-sound="idreal"：Idreal で前もって計算した足音と手拍子（audio/idreal-steps/・audio/idreal-claps/ の 向き u・r・d・l）。"synth" にすると前の合成の足音と響き -->
       <div class="smap" id="smap" data-sound="idreal" role="group" aria-label="ミニマップ：歩くと、部屋ごとに足音の響きが変わります">
         <div class="sm-top">
           <p class="sm-lab">SOUND MAP</p>
@@ -1838,29 +1838,43 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
   // ---------- Idreal で焼いた音（data-sound="idreal" の時） ----------
   // マスごとに「そこに立って足もとで鳴らした時の、素の音＋響き」を Idreal で前もって計算した mp3。足音と手拍子の 2 組
   // （C:\dev\Idreal\Projects\tools\portfolio_bake の bake_footmap → encode_footmap。元の音は上の stepSound・clapSound と同じ作りの素の音）。外は素の音（dry）
-  // 2 組とも一番大きい山を -3 dBFS にそろえて焼いてあるので、手拍子は CLAP_VOL で合成の時と同じ大きさの比に戻す
-  var IDR = {step: 'audio/idreal-steps/', clap: 'audio/idreal-claps/'}, CLAP_VOL = .55;
-  var idr = {map: null, loading: false, byTile: {}, raw: {}, buf: {}, lastId: ''};
+  // 耳の向き 4 つ（u 地図の上・r 右・d 下・l 左）で焼いてあり、三角の向きに一番近い物を鳴らす（響きの左右が向きで変わる）
+  // 向き 4 つは同じ倍率で焼いた（足音 −6.0 dB・手拍子 −2.2 dB）。手拍子は CLAP_VOL で合成の時と同じ大きさの比に戻す
+  var IDR = {step: 'audio/idreal-steps/', clap: 'audio/idreal-claps/'}, CLAP_VOL = .55, FACES = ['u', 'r', 'd', 'l'], KEEP = 48;
+  var FACE_A = {r: 0, d: Math.PI / 2, l: Math.PI, u: -Math.PI / 2};
+  var idr = {map: null, loading: false, byTile: {}, raw: {}, buf: {}, used: {}, tick: 0, lastId: ''};
   function idrOn(){ return root.getAttribute('data-sound') === 'idreal'; }
-  // mp3 の中身を取る（音の器ができる前から取っておける）
-  function idrFetch(kind, id){
-    var key = kind + ':' + id;
-    if (!idr.raw[key]) idr.raw[key] = fetch(IDR[kind] + id + '.mp3').then(function(r){ if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); });
+  function adiff(a, b){ var d = a - b; return Math.abs(Math.atan2(Math.sin(d), Math.cos(d))); }
+  // 焼いた向きを、今向いている向きに近い順に
+  function faces(){ return FACES.slice().sort(function(a, b){ return adiff(me.ang, FACE_A[a]) - adiff(me.ang, FACE_A[b]); }); }
+  function keyOf(kind, face, id){ return kind + ':' + (id === 'dry' ? '' : face) + ':' + id; }
+  // mp3 の中身を取る（音の器ができる前から取っておける）。素の音は向きによらないので u のを使う
+  function idrFetch(kind, face, id){
+    var key = keyOf(kind, face, id);
+    if (!idr.raw[key]) idr.raw[key] = fetch(IDR[kind] + (id === 'dry' ? 'u' : face) + '/' + id + '.mp3').then(function(r){ if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); });
     return idr.raw[key];
   }
   // 音にする（できあがるまでは Promise が入っている）
-  function idrLoad(kind, id){
-    var key = kind + ':' + id;
+  function idrLoad(kind, face, id){
+    var key = keyOf(kind, face, id);
+    idr.used[key] = ++idr.tick;
     if (idr.buf[key] || !ac) return idr.buf[key];
-    idr.buf[key] = idrFetch(kind, id).then(function(a){ return new Promise(function(ok, ng){ ac.decodeAudioData(a.slice(0), ok, ng); }); })
-      .then(function(b){ idr.buf[key] = b; return b; }, function(){ delete idr.buf[key]; delete idr.raw[key]; return null; });
+    idr.buf[key] = idrFetch(kind, face, id).then(function(a){ return new Promise(function(ok, ng){ ac.decodeAudioData(a.slice(0), ok, ng); }); })
+      .then(function(b){ idr.buf[key] = b; trim(); return b; }, function(){ delete idr.buf[key]; delete idr.raw[key]; return null; });
     return idr.buf[key];
   }
   function ready(b){ return !!(b && b.getChannelData); }
+  // 音にした物は KEEP 個まで（しばらく使っていない物から捨てる。mp3 の中身は残すので、また要る時はすぐ戻せる）
+  function trim(){
+    var ks = Object.keys(idr.buf).filter(function(k){ return ready(idr.buf[k]); });
+    if (ks.length <= KEEP) return;
+    ks.sort(function(a, b){ return (idr.used[a] || 0) - (idr.used[b] || 0); });
+    ks.slice(0, ks.length - KEEP).forEach(function(k){ delete idr.buf[k]; });
+  }
   function idrInit(){
     if (idr.map || idr.loading) return;
     idr.loading = true;
-    fetch(IDR.step + 'map.json').then(function(r){ return r.json(); }).then(function(m){
+    fetch(IDR.step + 'u/map.json').then(function(r){ return r.json(); }).then(function(m){
       idr.map = m;
       m.points.forEach(function(q){ idr.byTile[q.tx + ',' + q.ty] = q.id; });
       idrNear();
@@ -1873,24 +1887,36 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
     tx = Math.max(R.box[0], Math.min(R.box[2], tx)); ty = Math.max(R.box[1], Math.min(R.box[3], ty));
     return idr.byTile[tx + ',' + ty] || 'dry';
   }
-  // まわりを先に取っておく（戸口の向こうの部屋のマスも。入った最初の 1 歩に間に合うように）。器ができる前は中身だけ、まわり 1 マス
+  // まわりを先に取っておく（戸口の向こうの部屋のマスも。入った最初の 1 歩に間に合うように）
+  // 中身：一番近い向きはまわり 2 マス、ほかの向きはまわり 1 マス。音にするのは一番近い向きのまわり 1 マスと、立っているマスの 2 番目に近い向き
+  // 器ができる前（ページを開いた時）は、一番近い向きのまわり 1 マスの中身だけ
   function idrNear(){
     if (!idr.map) return;
-    var tx = Math.floor(me.x), ty = Math.floor(me.y), r = ac ? 2 : 1, get = ac ? idrLoad : idrFetch, ids = ['dry'], dx, dy, id;
-    for (dy = -r; dy <= r; dy++) for (dx = -r; dx <= r; dx++){
-      ids.push(idrId(tx + dx, ty + dy));
-      id = idr.byTile[(tx + dx) + ',' + (ty + dy)];
-      if (id) ids.push(id);
+    var tx = Math.floor(me.x), ty = Math.floor(me.y), fs = faces(), here = idrId(tx, ty);
+    function around(rad, fn){
+      var ids = ['dry'], dx, dy, id;
+      for (dy = -rad; dy <= rad; dy++) for (dx = -rad; dx <= rad; dx++){
+        ids.push(idrId(tx + dx, ty + dy));
+        id = idr.byTile[(tx + dx) + ',' + (ty + dy)];
+        if (id) ids.push(id);
+      }
+      ids.forEach(fn);
     }
-    ids.forEach(function(q){ get('step', q); get('clap', q); });
+    function get(fn, f){ return function(q){ fn('step', f, q); fn('clap', f, q); }; }
+    if (!ac){ around(1, get(idrFetch, fs[0])); return; }
+    around(2, get(idrFetch, fs[0]));
+    around(1, get(idrFetch, fs[1])); around(1, get(idrFetch, fs[2])); around(1, get(idrFetch, fs[3]));
+    around(1, get(idrLoad, fs[0]));
+    get(idrLoad, fs[1])(here);
   }
-  // 鳴らす。まだ届いていない時、足音は素の音で代わりに、手拍子は少しだけ（0.3 秒まで）待つ
+  // 鳴らす。一番近い向きがまだ音になっていない時は、同じマスの次に近い向き。それも無ければ、足音は素の音、手拍子は少しだけ（0.3 秒まで）待つ
   function idrPlay(kind, pan, vol){
-    var id = idrId(Math.floor(me.x), Math.floor(me.y)), b = idrLoad(kind, id), dry = idrLoad(kind, 'dry'), t0 = performance.now();
+    var id = idrId(Math.floor(me.x), Math.floor(me.y)), fs = faces(), b = idrLoad(kind, fs[0], id), t0 = performance.now(), i, alt;
     idrNear();
-    if (ready(b)) return idrStart(b, pan, vol, id);
-    if (kind === 'step'){ if (ready(dry)) idrStart(dry, pan, vol, 'dry'); return; }
-    if (b && b.then) b.then(function(x){ if (ready(x) && performance.now() - t0 < 300) idrStart(x, pan, vol, id); });
+    if (ready(b)) return idrStart(b, pan, vol, fs[0] + ':' + id);
+    for (i = 1; i < fs.length; i++){ alt = idr.buf[keyOf(kind, fs[i], id)]; if (ready(alt)) return idrStart(alt, pan, vol, fs[i] + ':' + id); }
+    if (kind === 'step'){ alt = idrLoad(kind, '', 'dry'); if (ready(alt)) idrStart(alt, pan, vol, 'dry'); return; }
+    if (b && b.then) b.then(function(x){ if (ready(x) && performance.now() - t0 < 300) idrStart(x, pan, vol, fs[0] + ':' + id); });
   }
   function idrStart(b, pan, vol, id){
     var c = rig.ctx, src = c.createBufferSource(), gn = c.createGain(), out = gn;
