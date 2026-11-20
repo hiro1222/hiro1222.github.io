@@ -2169,6 +2169,49 @@ html[data-works="film"] .w-flash{display:block; position:absolute; inset:0; z-in
     }, {threshold: [0, .25, .5, .75, 1]});
     ends.forEach(function(x){ io.observe(x); });
   }
+  // ホイール 1 目盛り・キー 1 回で次の作品へ（舞台が止まっている間だけ。最初の作品の上・最後の作品の下は本体に任せる）。
+  // 舞台は止まっているので、見えない所で作品の場所の頭へ移るだけ。慣性の続きは止まるまで飲み込む
+  function stopScroll(){ try{ window.dispatchEvent(new KeyboardEvent('keydown', {key: 'Home'})); }catch(e){} }
+  function pinned(){ var r = pin.getBoundingClientRect(); return r.top <= 2 && r.bottom >= window.innerHeight - 2; }
+  function go(i){
+    stopScroll();
+    var y = secs[i].getBoundingClientRect().top + window.scrollY;
+    try{ window.scrollTo({top: y, left: 0, behavior: 'instant'}); }catch(e){ window.scrollTo(0, y); }
+    update();
+  }
+  var lastWheel = 0, acc = 0, locked = false;
+  window.addEventListener('wheel', function(e){
+    if (reduce || e.ctrlKey || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+    if (e.target.closest && e.target.closest('#drawer, dialog, .devbar')) return;
+    if (html.classList.contains('dlg-open')) return;
+    var now = performance.now();
+    if (locked){
+      if (now - lastWheel < 300 || now - lastShow < 650){ lastWheel = now; e.preventDefault(); e.stopImmediatePropagation(); return; }
+      locked = false; acc = 0;
+    }
+    if (!pinned() || cur < 0) return;
+    var dir = e.deltaY > 0 ? 1 : -1, i = cur + dir;
+    if (i < 0 || i >= slides.length) return;
+    e.preventDefault(); e.stopImmediatePropagation();
+    if (now - lastWheel > 300) acc = 0;
+    lastWheel = now;
+    acc += Math.abs(e.deltaY) * (e.deltaMode === 1 ? 16 : 1);
+    if (acc < 30) return;
+    acc = 0; locked = true;
+    go(i);
+  }, {capture: true, passive: false});
+  window.addEventListener('keydown', function(e){
+    if (reduce || e.ctrlKey || e.metaKey || e.altKey) return;
+    var t = e.target, dir = (e.key === 'ArrowDown' || e.key === 'PageDown' || (e.key === ' ' && !e.shiftKey)) ? 1 : (e.key === 'ArrowUp' || e.key === 'PageUp' || (e.key === ' ' && e.shiftKey)) ? -1 : 0;
+    if (!dir || !pinned() || cur < 0) return;
+    if (t && t.closest && t.closest('input, textarea, select, [contenteditable], #smap, dialog')) return;
+    if (e.key === ' ' && t && t.closest && t.closest('button, a')) return;
+    var i = cur + dir;
+    if (i < 0 || i >= slides.length) return;
+    e.preventDefault(); e.stopImmediatePropagation();
+    if (performance.now() - lastShow < 450) return;
+    go(i);
+  }, true);
   // 1 枚に収まらない時は、中身を縮める（ノート PC の低い画面・スマホ）
   function fit(){
     slides.forEach(function(sl){
@@ -2183,7 +2226,6 @@ html[data-works="film"] .w-flash{display:block; position:absolute; inset:0; z-in
   window.addEventListener('load', fit);
   // MORE：もとの仕組みはもとの節を見ているので、舞台の作品から窓を開く形に差し替える
   var wdlg = document.getElementById('w-dlg');
-  function stopScroll(){ try{ window.dispatchEvent(new KeyboardEvent('keydown', {key: 'Home'})); }catch(e){} }
   slides.forEach(function(sl){
     var b = sl.querySelector('.w-more');
     if (!b || !wdlg) return;
