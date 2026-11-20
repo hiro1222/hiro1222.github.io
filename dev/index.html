@@ -503,7 +503,7 @@ html.dlg-open{overflow:hidden}
 /* 作品は画面に止めた舞台（.w-stage）の上で入れ替わる。もとの節（.w-spacer）は空の場所取りで、スクロールの止まる位置と上のバーの印のために残す */
 /* 舞台の範囲＝作品の数×画面の高さ。舞台はその中だけ止まり、最後の作品の所で一緒に流れて連絡先が出る（場所取りは中に重ねて置く） */
 /* 高さ（--sh）は開いた時の画面の高さを JS が px で入れる。スマホのアドレスバーが出入りしても変えない（変えると中身の縮みが変わったり、位置がずれたりする） */
-.w-pin{position:relative; height:calc(var(--n, 5) * 100vh); height:calc(var(--n, 5) * var(--sh, 100svh))}
+.w-pin{position:relative; height:calc(var(--n, 5) * 100vh); height:calc(var(--n, 5) * var(--sh, 100svh)); background:var(--black)}
 .w-stage{position:sticky; top:0; z-index:1; height:100vh; height:var(--sh, 100svh); overflow:hidden; background:var(--black)}
 .w-pin > .w-spacer{position:absolute; left:0; right:0; top:calc(var(--k, 0) * 100vh); top:calc(var(--k, 0) * var(--sh, 100svh)); height:100vh; height:var(--sh, 100svh); min-height:0}
 .w-stage > .w-slide{position:absolute; inset:0; min-height:0; height:100%; visibility:hidden}
@@ -514,6 +514,9 @@ html.dlg-open{overflow:hidden}
 .w-stage .w-grid{flex:1 1 auto}
 .w-stage .w-detail{display:flex; flex-direction:column}
 .w-stage .w-acts{margin-top:auto; padding-top:24px}
+@media (min-width:861px) and (max-width:1100px){
+  .w-stage .w-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}  /* 狭い PC は文字の列を広くして、表が折れすぎないように */
+}
 @media (min-width:861px){
   .w-stage .w-grid{grid-template-rows:auto minmax(0,1fr)}
   .w-stage .w-head{align-self:start}
@@ -2070,10 +2073,16 @@ html[data-works="film"] .w-flash{display:block; position:absolute; inset:0; z-in
   pin.appendChild(stage);
   var slides0 = 0, H = 0, VW = 0;
   pin.style.setProperty('--n', secs.length);
-  // 舞台の高さ。アドレスバーの出し入れ（〜100 px）では変えない
+  // 舞台の高さ＝アドレスバーが出ている時の画面の高さ（100svh）と今の高さの小さい方。どの時でも MORE まで見えるように
+  // 低くなった時は必ず測り直す。高くなった時は、100svh が使える端末はそのまま、使えない端末はアドレスバーより大きい変化（120 px 以上）だけ
+  var svhOk = !!(window.CSS && CSS.supports && CSS.supports('height', '100svh')), probe = document.createElement('div');
+  probe.style.cssText = 'position:fixed; left:0; top:0; width:0; height:100vh; visibility:hidden; pointer-events:none';
+  if (svhOk) probe.style.height = '100svh';
+  document.body.appendChild(probe);
+  function viewH(){ return Math.round(Math.min(probe.getBoundingClientRect().height || window.innerHeight, window.innerHeight)); }
   function measure(force){
-    var h = window.innerHeight, w = window.innerWidth;
-    if (!force && w === VW && Math.abs(h - H) < 120) return false;
+    var h = viewH(), w = window.innerWidth;
+    if (!force && w === VW && (h === H || (!svhOk && h > H && h - H < 120))) return false;
     H = h; VW = w;
     pin.style.setProperty('--sh', h + 'px');
     return true;
@@ -2236,7 +2245,7 @@ html[data-works="film"] .w-flash{display:block; position:absolute; inset:0; z-in
     ws.forEach(function(w){ w.style.transform = ''; w.style.minHeight = ''; });
     ws.forEach(function(w){ maxH = Math.max(maxH, w.scrollHeight); });
     var cs = getComputedStyle(slides[0]), avail = slides[0].clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
-    var sc = maxH > avail && avail > 0 ? Math.max(.6, avail / maxH) : 1;
+    var sc = maxH > avail && avail > 0 ? avail / maxH : 1;
     ws.forEach(function(w){ w.style.minHeight = maxH + 'px'; if (sc < 1) w.style.transform = 'scale(' + sc.toFixed(3) + ')'; });
   }
   window.addEventListener('resize', function(){ if (measure(false)){ fit(); update(); } });
