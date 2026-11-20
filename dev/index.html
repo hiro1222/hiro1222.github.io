@@ -495,7 +495,7 @@ html.dlg-open{overflow:hidden}
   html{scroll-behavior:auto}
   .drawer,.scrim{transition:none}
 }
-/* DEV-ONLY: 作品のトラック風の波形（確認用だけ） */
+/* 作品のトラック風の波形 */
 /* 作品をアルバムの曲のように：画像の下に TRACK 番号と作品の色の波形（音は出さない） */
 .w-media{grid-area:shot; align-self:center; min-width:0}
 .w-wave{display:flex; align-items:center; gap:14px; margin-top:12px; padding:8px 14px 8px 12px; border:1px solid var(--night-line); border-radius:8px; background:rgba(8,12,16,.45); -webkit-user-select:none; user-select:none}
@@ -503,8 +503,7 @@ html.dlg-open{overflow:hidden}
 .w-wave-lab small{font-family:var(--f-label); font-size:10px; letter-spacing:.26em}
 .w-wave-lab b{font-family:var(--f-mono); font-size:20px; font-weight:600; letter-spacing:.04em}
 .w-wave canvas{flex:1; min-width:0; height:40px; display:block; cursor:crosshair; touch-action:pan-y}
-/* /DEV-ONLY */
-/* DEV-ONLY: 作品の切り替え（レコード／フィルム、確認用だけ） */
+/* 作品の切り替え（画面に止めた舞台の上で入れ替える。見た目はジャケット・レコード・フィルム） */
 /* 作品は画面に止めた舞台（.w-stage）の上で入れ替わる。もとの節（.w-spacer）は空の場所取りで、スクロールの止まる位置と上のバーの印のために残す */
 /* 舞台の範囲＝作品の数×画面の高さ。舞台はその中だけ止まり、最後の作品の所で一緒に流れて連絡先が出る（場所取りは中に重ねて置く） */
 /* 高さ（--sh）は開いた時の画面の高さを JS が px で入れる。スマホのアドレスバーが出入りしても変えない（変えると中身の縮みが変わったり、位置がずれたりする） */
@@ -563,8 +562,7 @@ html[data-works="film"] .w-flash{display:block; position:absolute; inset:0; z-in
   html[data-works="record"] .w-stage .w-disc{width:28%; margin-left:-14%}
 }
 @media (prefers-reduced-motion: reduce){ html[data-works="record"] .p-work.is-on .w-disc-in{animation:none} }
-/* /DEV-ONLY */
-/* DEV-ONLY: ジャケット風のカード（確認用だけ） */
+/* ジャケット風のカード */
 /* 作品 1 つ＝生成りの紙のジャケット 1 枚。次の作品のカードが右下からのぞき、切り替えると上のカードが左上へ抜けて下のカードが持ち上がる */
 html[data-works="jacket"] .w-stage{background:#121C25}
 html[data-works="jacket"] .w-stage > .w-slide{background:none; padding-top:calc(env(safe-area-inset-top, 0px) + var(--bar) + 20px); padding-bottom:56px}
@@ -604,7 +602,6 @@ html[data-works="jacket"] .w-slide.is-on .w-jdisc .w-disc-in{animation:w-spin 4.
   html[data-works="jacket"] .w-stage > .w-slide.peek{transform:translate(4px, 30px) rotate(1.2deg)}
 }
 @media (prefers-reduced-motion: reduce){ html[data-works="jacket"] .w-slide.is-on .w-jdisc .w-disc-in{animation:none} }
-/* /DEV-ONLY */
 /* DEV-ONLY: 作品の動画（確認用だけ） */
 /* 波形の帯の左の ▶（動画が無い作品は薄く「準備中」）。押すと画像の所に動画が出て音付きで流れ、波形が進み具合になる */
 .w-play{flex:none; display:flex; align-items:center; gap:8px; padding:0; border:0; background:none; color:var(--wa); font:inherit; cursor:pointer}
@@ -2095,7 +2092,6 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
 })();
 </script>
 <!-- /DEV-ONLY -->
-<!-- DEV-ONLY: 作品のトラック風の波形（確認用だけ） -->
 <script>
 // 作品の画像の下に、作品ごとに形の違う波形を描く。ページに入ると左から色が付き（再生の見立て）、乗せた所の近くが持ち上がる。音は出さない
 (function(){
@@ -2185,13 +2181,11 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
   tracks.forEach(draw);
 })();
 </script>
-<!-- /DEV-ONLY -->
-<!-- DEV-ONLY: 作品の切り替え（レコード／フィルム、確認用だけ） -->
 <script>
 // 作品を画面に止めた舞台の上で入れ替える。スクロールは今までどおり（ホイール・キー・指）で、作品の場所の半分を過ぎたら次の作品が「来る」。プロフィール・連絡先との行き来は普通のスクロール（切り替えの動きは作品どうしの間だけ）。
 // 動きは レコード（盤が戻ってジャケットが抜け、次のジャケットが入って盤が出る）／フィルム（コマが横へ送られる）／なし（重ねて切り替え）
 (function(){
-  var html = document.documentElement, reduce = false, KEY = 'dev-works';
+  var html = document.documentElement, reduce = false;
   try{ reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){}
   var secs = [].slice.call(document.querySelectorAll('.p-work')).filter(function(x){ return !x.hidden; });
   if (secs.length < 2) return;
@@ -2251,15 +2245,6 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
     if (!w) return;
     w.insertAdjacentHTML('beforeend', '<span class="w-jlab" aria-hidden="true">' + (idx ? idx.textContent.split('/')[0].trim() : '') + '\u3000' + (h2 ? h2.textContent : '') + '</span><div class="w-jdisc" aria-hidden="true"><div class="w-disc-in"></div></div>');
   });
-  // 確認用の帯に 切り替えのボタン
-  var bar = document.querySelector('.devbar');
-  if (bar){
-    bar.insertAdjacentHTML('beforeend', '<span>作品の切り替え:</span><button type="button" data-wk="record">レコード</button><button type="button" data-wk="film">フィルム</button><button type="button" data-wk="none">なし</button>');
-    var bs = bar.querySelectorAll('[data-wk]');
-    var mark = function(){ bs.forEach(function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-wk') === mode() ? 'true' : 'false'); }); };
-    bs.forEach(function(b){ b.addEventListener('click', function(){ html.setAttribute('data-works', b.getAttribute('data-wk')); try{ localStorage.setItem(KEY, b.getAttribute('data-wk')); }catch(e){} mark(); fit(); }); });
-    mark();
-  }
   var EO = 'cubic-bezier(.22,1,.36,1)', EI = 'cubic-bezier(.55,0,1,.45)';
   function parts(sl){
     return {media: sl.querySelector('.w-media'), shot: sl.querySelector('.w-shot'), disc: sl.querySelector('.w-disc'), holes: [].slice.call(sl.querySelectorAll('.w-holes')),
@@ -2410,7 +2395,7 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
   var lastWheel = 0, lastAbs = 0, acc = 0, locked = false, lastGo = 0, arrived = 0, wasPinned = false;
   window.addEventListener('wheel', function(e){
     if (reduce || e.ctrlKey || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
-    if (e.target.closest && e.target.closest('#drawer, dialog, .devbar')) return;
+    if (e.target.closest && e.target.closest('#drawer, dialog')) return;
     if (html.classList.contains('dlg-open')) return;
     var now = performance.now(), ad = Math.abs(e.deltaY) * (e.deltaMode === 1 ? 16 : 1);
     var fresh = now - lastWheel > 250 || ad > lastAbs * 1.4 + 4 || (ad >= 50 && now - lastGo > 750);
@@ -2488,7 +2473,6 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
   update();
 })();
 </script>
-<!-- /DEV-ONLY -->
 <!-- DEV-ONLY: 作品の動画（確認用だけ） -->
 <script>
 // 波形の帯の左を ▶ にする。押すと画像の所に動画が出て音付きで流れ、波形が進み具合になる（波形を押すとその位置へ）。

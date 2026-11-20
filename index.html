@@ -398,6 +398,113 @@ button{font:inherit}
   html{scroll-behavior:auto}
   .drawer,.scrim{transition:none}
 }
+/* 作品のトラック風の波形 */
+/* 作品をアルバムの曲のように：画像の下に TRACK 番号と作品の色の波形（音は出さない） */
+.w-media{grid-area:shot; align-self:center; min-width:0}
+.w-wave{display:flex; align-items:center; gap:14px; margin-top:12px; padding:8px 14px 8px 12px; border:1px solid var(--night-line); border-radius:8px; background:rgba(8,12,16,.45); -webkit-user-select:none; user-select:none}
+.w-wave-lab{flex:none; display:flex; flex-direction:column; align-items:flex-start; line-height:1.15; color:var(--wa)}
+.w-wave-lab small{font-family:var(--f-label); font-size:10px; letter-spacing:.26em}
+.w-wave-lab b{font-family:var(--f-mono); font-size:20px; font-weight:600; letter-spacing:.04em}
+.w-wave canvas{flex:1; min-width:0; height:40px; display:block; cursor:crosshair; touch-action:pan-y}
+/* 作品の切り替え（画面に止めた舞台の上で入れ替える。見た目はジャケット・レコード・フィルム） */
+/* 作品は画面に止めた舞台（.w-stage）の上で入れ替わる。もとの節（.w-spacer）は空の場所取りで、スクロールの止まる位置と上のバーの印のために残す */
+/* 舞台の範囲＝作品の数×画面の高さ。舞台はその中だけ止まり、最後の作品の所で一緒に流れて連絡先が出る（場所取りは中に重ねて置く） */
+/* 高さ（--sh）は開いた時の画面の高さを JS が px で入れる。スマホのアドレスバーが出入りしても変えない（変えると中身の縮みが変わったり、位置がずれたりする） */
+.w-pin{position:relative; height:calc(var(--n, 5) * 100vh); height:calc(var(--n, 5) * var(--sh, 100svh)); background:var(--black)}
+.w-stage{position:sticky; top:0; z-index:1; height:100vh; height:var(--sh, 100svh); overflow:hidden; background:var(--black)}
+.w-pin > .w-spacer{position:absolute; left:0; right:0; top:calc(var(--k, 0) * 100vh); top:calc(var(--k, 0) * var(--sh, 100svh)); height:100vh; height:var(--sh, 100svh); min-height:0}
+.w-stage > .w-slide{position:absolute; inset:0; min-height:0; height:100%; visibility:hidden}
+.w-stage > .w-slide.on{visibility:visible}
+.w-stage > .w-slide > .wrap{transform-origin:50% 50%; display:flex; flex-direction:column}
+/* 作品が変わっても、文字の大きさと題・画像・MORE の場所がずれないように：中身の高さは全作品で一番高い物にそろえ（JS）、縮みも全作品で同じ。
+   題は上、画像は真ん中、MORE は下にそろえる */
+.w-stage .w-grid{flex:1 1 auto}
+.w-stage .w-detail{display:flex; flex-direction:column}
+.w-stage .w-acts{margin-top:auto; padding-top:24px}
+/* 舞台の中は 861 px から 2 列（画像の横に文字）。作品の本体は 1024 px からなので、861〜1023 は並べ方ごと決める。1100 px までは文字の列を広く */
+@media (min-width:861px) and (max-width:1100px){
+  .w-stage .w-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr); column-gap:28px}
+}
+@media (min-width:861px){
+  /* 左の列に 番号・題 → 画像、右の列に 表 → MORE（本人「番号と題は作品画像の上に」） */
+  .w-stage .w-grid{grid-template-areas:"head detail" "shot detail"; grid-template-rows:auto minmax(0,1fr); row-gap:16px}
+  .w-stage .w-head{align-self:end}
+  .w-stage .w-media{align-self:start}
+  .w-stage .w-detail{align-self:stretch}
+  .w-stage .w-detail .w-facts{margin-top:6px}
+}
+@media (max-width:860px){
+  .w-stage .w-grid{grid-template-rows:auto auto minmax(0,1fr)}
+  .w-stage .w-acts{padding-top:14px}
+}
+.w-spacer{visibility:hidden}
+/* レコード＝画像をジャケットに見立て、上から作品の色のラベルの盤がのぞいて回る。フィルム＝画像の上下にフィルムの穴の帯。どちらも画像の大きさは今のまま */
+.w-media{position:relative}
+.w-film{position:relative; z-index:2}
+.w-disc, .w-holes, .w-flash{display:none}
+html[data-works="record"] .w-media{padding-top:19%}
+html[data-works="record"] .w-disc{display:block; position:absolute; z-index:1; top:0; left:50%; width:38%; aspect-ratio:1 / 1; margin-left:-19%}
+.w-disc-in{position:relative; width:100%; height:100%; border-radius:50%; background:radial-gradient(circle closest-side, #0D1620 0 3.5%, var(--wa) 4% 33%, #0A0A0B 33.6% 36%, transparent 36.4%), repeating-radial-gradient(circle closest-side, #141416 0 1.4px, #1D1D20 1.4px 2.8px); box-shadow:0 -4px 22px rgba(0,0,0,.5), inset 0 0 0 2px #050506}
+.w-disc-in::after{content:""; position:absolute; left:47%; top:37%; width:6%; height:6%; border-radius:50%; background:#F2F4F5; opacity:.85}
+.w-disc::after{content:""; position:absolute; inset:0; border-radius:50%; background:conic-gradient(from 200deg, transparent 0 8%, rgba(255,255,255,.08) 13%, transparent 19% 58%, rgba(255,255,255,.06) 63%, transparent 69%); pointer-events:none}
+html[data-works="record"] .p-work.is-on .w-disc-in{animation:w-spin 4.5s linear infinite}
+@keyframes w-spin{to{transform:rotate(1turn)}}
+html[data-works="film"] .w-film{padding:20px 0; background:#0B0B0C; border-radius:6px; overflow:hidden; box-shadow:0 10px 30px rgba(0,0,0,.4)}
+html[data-works="film"] .w-film .w-shot{border-radius:2px; border-color:#000}
+html[data-works="film"] .w-holes{display:block; position:absolute; left:0; right:0; height:8px; background:repeating-linear-gradient(90deg, transparent 0 7px, #D9D5CC 7px 16px, transparent 16px 22px); opacity:.72; border-radius:2px}
+html[data-works="film"] .w-holes.t{top:6px}
+html[data-works="film"] .w-holes.b{bottom:6px}
+html[data-works="film"] .w-flash{display:block; position:absolute; inset:0; z-index:3; background:#FFFFFF; opacity:0; pointer-events:none}
+/* スマホ：舞台の 1 枚に収まるように少し詰める（それでもはみ出す時は JS が縮める） */
+@media (max-width:860px){
+  .w-stage > .w-slide{padding-top:calc(env(safe-area-inset-top, 0px) + var(--bar) + 14px); padding-bottom:14px}
+  .w-stage .w-grid{gap:12px}
+  .w-stage .w-wave{margin-top:8px; padding:5px 10px}
+  .w-stage .w-wave canvas{height:28px}
+  html[data-works="record"] .w-stage .w-media{padding-top:14%}
+  html[data-works="record"] .w-stage .w-disc{width:28%; margin-left:-14%}
+}
+@media (prefers-reduced-motion: reduce){ html[data-works="record"] .p-work.is-on .w-disc-in{animation:none} }
+/* ジャケット風のカード */
+/* 作品 1 つ＝生成りの紙のジャケット 1 枚。次の作品のカードが右下からのぞき、切り替えると上のカードが左上へ抜けて下のカードが持ち上がる */
+html[data-works="jacket"] .w-stage{background:#121C25}
+html[data-works="jacket"] .w-stage > .w-slide{background:none; padding-top:calc(env(safe-area-inset-top, 0px) + var(--bar) + 20px); padding-bottom:56px}
+html[data-works="jacket"] .w-stage > .w-slide > .bg{display:none}
+html[data-works="jacket"] .w-stage > .w-slide{justify-content:center}  /* カードは縮める前に広げることがあるので、はみ出しても真ん中に */
+html[data-works="jacket"] .w-stage > .w-slide > .wrap{flex:none; position:relative; isolation:isolate; width:min(1080px, calc(100% - 96px)); max-width:none; margin:0 auto; padding:22px 28px 28px; color:#2B2620; --wa-ink:color-mix(in srgb, var(--wa) 58%, #1E1A16)}
+html[data-works="jacket"] .w-stage > .w-slide > .wrap::before{content:""; position:absolute; inset:0; z-index:-1; border-radius:10px; background:#ECE6DA; box-shadow:0 26px 60px rgba(0,0,0,.5), inset 0 0 0 1px rgba(255,255,255,.5)}
+html[data-works="jacket"] .w-stage > .w-slide.on{z-index:3}
+html[data-works="jacket"] .w-stage > .w-slide.peek{visibility:visible; z-index:1; transform:translate(24px, 38px) rotate(2deg); filter:brightness(.55)}
+html[data-works="jacket"] .w-stage .w-head .eyebrow, html[data-works="jacket"] .w-stage .w-facts dt, html[data-works="jacket"] .w-stage .w-wave-lab{color:var(--wa-ink)}
+html[data-works="jacket"] .w-stage .w-idx{color:#7A6E60}
+html[data-works="jacket"] .w-stage h2{color:#211D18; font-size:clamp(26px, 2.9vw, 44px); white-space:nowrap}  /* カードの中でも題は 1 行に */
+html[data-works="jacket"] .w-stage .w-wip{border-color:var(--wa-ink); color:var(--wa-ink)}
+html[data-works="jacket"] .w-stage .w-facts{border-top:1px solid rgba(43,38,32,.28)}
+html[data-works="jacket"] .w-stage .w-facts div{border-bottom:1px dotted rgba(43,38,32,.3)}
+html[data-works="jacket"] .w-stage .w-facts dd{color:#3A332B}
+html[data-works="jacket"] .w-stage .w-shot{border-color:rgba(43,38,32,.2)}
+html[data-works="jacket"] .w-stage .w-wave{background:rgba(43,38,32,.05); border-color:rgba(43,38,32,.16)}
+html[data-works="jacket"] .w-stage .w-more{border-color:var(--wa-ink); color:var(--wa-ink)}
+html[data-works="jacket"] .w-stage .w-more:hover{background:var(--wa-ink); color:#ECE6DA}
+/* 右下の札（番号と題）。下からのぞいている時はここが見える */
+.w-jlab{display:none}
+html[data-works="jacket"] .w-jlab{display:block; position:absolute; right:18px; bottom:9px; font-family:var(--f-mono); font-size:12px; letter-spacing:.08em; color:var(--wa-ink); white-space:nowrap}
+/* 盤：今のページ（カード）にくっついて、右から半分ほど出て回る（PC だけ）。次へ進むと盤は抜けていくカードと一緒に去り、
+   来たカードの盤はジャケットの中から横へすべり出る（下でのぞいているカードの盤はしまったまま）。出る長さはカードの横の余白まで */
+.w-jdisc{display:none}
+@media (min-width:861px){
+  html[data-works="jacket"] .w-jdisc{--jp:clamp(32px, calc(max((100vw - 1080px) / 2, 48px) - 16px), 110px); display:block; position:absolute; z-index:-2; top:24%; right:calc(-1 * var(--jp)); height:52%; aspect-ratio:1 / 1;
+    transform:translateX(calc(-1 * var(--jp))); opacity:0; transition:transform .45s cubic-bezier(.22,1,.36,1), opacity .15s linear}
+  html[data-works="jacket"] .w-stage > .w-slide.jsettled .w-jdisc{transform:none; opacity:1; transition:transform .55s cubic-bezier(.22,1,.36,1), opacity .2s linear}
+}
+@media (prefers-reduced-motion: reduce){ html[data-works="jacket"] .w-jdisc{transition:none!important} }
+html[data-works="jacket"] .w-slide.is-on .w-jdisc .w-disc-in{animation:w-spin 4.5s linear infinite}
+@media (max-width:860px){
+  html[data-works="jacket"] .w-stage > .w-slide{padding-bottom:46px}
+  html[data-works="jacket"] .w-stage > .w-slide > .wrap{width:calc(100% - 10px); padding:14px 12px 28px}
+  html[data-works="jacket"] .w-stage > .w-slide.peek{transform:translate(4px, 30px) rotate(1.2deg)}
+}
+@media (prefers-reduced-motion: reduce){ html[data-works="jacket"] .w-slide.is-on .w-jdisc .w-disc-in{animation:none} }
 </style>
 </head>
 <body>
@@ -1040,6 +1147,387 @@ button{font:inherit}
       try{ navigator.clipboard.writeText(text).then(done, fallback); }catch(e){ fallback(); }
     });
   });
+})();
+</script>
+<script>
+// 作品の画像の下に、作品ごとに形の違う波形を描く。ページに入ると左から色が付き（再生の見立て）、乗せた所の近くが持ち上がる。音は出さない
+(function(){
+  var reduce = false, tracks = [];
+  try{ reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){}
+  document.querySelectorAll('.p-work').forEach(function(sec){
+    var shot = sec.querySelector('.w-shot');
+    if (!shot) return;
+    // 画像と波形をひとまとめにして、画像のあった場所に置く
+    var media = document.createElement('div'), wave = document.createElement('div'), idx = sec.querySelector('.w-idx');
+    media.className = 'w-media';
+    shot.parentNode.insertBefore(media, shot);
+    media.appendChild(shot);
+    wave.className = 'w-wave';
+    wave.setAttribute('aria-hidden', 'true');
+    wave.innerHTML = '<span class="w-wave-lab"><small>TRACK</small><b>' + (idx ? idx.textContent.split('/')[0].trim() : '') + '</b></span><canvas></canvas>';
+    media.appendChild(wave);
+    // 形は作品の id から決まる（開くたびに同じ）。ときどき大きく立ち上がって、だんだん減る
+    var seed = 7, id = sec.id || 'w', i, env = .3, base = [];
+    for (i = 0; i < id.length; i++) seed = (seed * 31 + id.charCodeAt(i)) >>> 0;
+    function rnd(){ seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }
+    for (i = 0; i < 96; i++){
+      if (rnd() < .11) env = .6 + rnd() * .4;
+      env = Math.max(.18 + rnd() * .12, env * .9);
+      base.push(Math.min(1, env * (.62 + rnd() * .45)));
+    }
+    tracks.push({sec: sec, cv: wave.querySelector('canvas'), base: base, play: reduce ? 1 : 0, hover: -1, run: 0});
+  });
+  function draw(t){
+    var cv = t.cv, w = cv.clientWidth, h = cv.clientHeight, dpr = Math.min(2, window.devicePixelRatio || 1);
+    if (!w || !h) return;
+    if (cv.width !== Math.round(w * dpr) || cv.height !== Math.round(h * dpr)){ cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); }
+    var g = cv.getContext('2d'), col = getComputedStyle(t.sec).getPropertyValue('--wa').trim() || '#7DB8D1';
+    var bw = 3, gap = 2, n = Math.max(8, Math.floor((w + gap) / (bw + gap))), upto = t.hover >= 0 ? t.hover : t.play * w, k, f, a, v, x, d, bh;
+    g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    g.clearRect(0, 0, w, h);
+    g.fillStyle = col;
+    for (k = 0; k < n; k++){
+      f = k / (n - 1) * (t.base.length - 1); a = Math.floor(f);
+      v = t.base[a] + (t.base[Math.min(t.base.length - 1, a + 1)] - t.base[a]) * (f - a);
+      x = k * (bw + gap);
+      if (t.hover >= 0){ d = (x - t.hover) / 34; v = Math.min(1, v * (1 + .75 * Math.exp(-d * d))); }
+      bh = Math.max(2, v * (h - 2));
+      g.globalAlpha = x + bw <= upto ? 1 : .26;
+      g.fillRect(x, (h - bh) / 2, bw, bh);
+    }
+    g.globalAlpha = 1;
+    if (t.hover >= 0){ g.fillStyle = '#E3E9EE'; g.fillRect(Math.round(t.hover), 0, 1, h); }
+  }
+  // 入った時に左から右へ 2.6 秒で色を付ける（出たら戻す。次に入った時にもう一度）
+  function sweep(t){
+    if (reduce) return;
+    var t0 = performance.now(), my = ++t.run;
+    (function f(now){
+      if (t.run !== my) return;
+      var q = Math.min(1, Math.max(0, (now - t0) / 2600));
+      t.play = 1 - Math.pow(1 - q, 3);
+      draw(t);
+      if (q < 1) requestAnimationFrame(f);
+    })(t0);
+  }
+  if ('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        tracks.forEach(function(t){
+          if (t.sec !== e.target) return;
+          if (e.isIntersecting) sweep(t);
+          else if (!reduce){ t.run++; t.play = 0; draw(t); }
+        });
+      });
+    }, {threshold: .5});
+    tracks.forEach(function(t){ io.observe(t.sec); });
+  } else tracks.forEach(function(t){ t.play = 1; });
+  tracks.forEach(function(t){
+    function at(e){ var r = t.cv.getBoundingClientRect(); t.hover = Math.max(0, Math.min(r.width, e.clientX - r.left)); draw(t); }
+    function off(){ t.hover = -1; draw(t); }
+    t.cv.addEventListener('pointermove', at);
+    t.cv.addEventListener('pointerdown', at);
+    t.cv.addEventListener('pointerleave', off);
+    t.cv.addEventListener('pointercancel', off);
+    t.cv.addEventListener('pointerup', function(e){ if (e.pointerType !== 'mouse') off(); });
+    // 動画とつなぐ：進み具合（0〜1）を受け取って色を付ける／押した所（0〜1）を知らせる
+    t.cv.addEventListener('wprogress', function(e){ t.run++; t.play = e.detail; draw(t); });
+    t.cv.addEventListener('click', function(e){ var r = t.cv.getBoundingClientRect(); t.cv.dispatchEvent(new CustomEvent('wseek', {bubbles: true, detail: Math.max(0, Math.min(1, (e.clientX - r.left) / r.width))})); });
+  });
+  window.addEventListener('resize', function(){ tracks.forEach(draw); });
+  tracks.forEach(draw);
+})();
+</script>
+<script>
+// 作品を画面に止めた舞台の上で入れ替える。スクロールは今までどおり（ホイール・キー・指）で、作品の場所の半分を過ぎたら次の作品が「来る」。プロフィール・連絡先との行き来は普通のスクロール（切り替えの動きは作品どうしの間だけ）。
+// 動きは レコード（盤が戻ってジャケットが抜け、次のジャケットが入って盤が出る）／フィルム（コマが横へ送られる）／なし（重ねて切り替え）
+(function(){
+  var html = document.documentElement, reduce = false;
+  try{ reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){}
+  var secs = [].slice.call(document.querySelectorAll('.p-work')).filter(function(x){ return !x.hidden; });
+  if (secs.length < 2) return;
+  // 画像のまわりを組み立てる（盤・フィルムの穴・光る板）
+  document.querySelectorAll('.p-work').forEach(function(sec){
+    var shot = sec.querySelector('.w-shot');
+    if (!shot) return;
+    var media = shot.closest('.w-media'), film = document.createElement('div');
+    if (!media){ media = document.createElement('div'); media.className = 'w-media'; shot.parentNode.insertBefore(media, shot); media.appendChild(shot); }
+    film.className = 'w-film';
+    shot.parentNode.insertBefore(film, shot);
+    film.appendChild(shot);
+    film.insertAdjacentHTML('beforeend', '<i class="w-holes t"></i><i class="w-holes b"></i><i class="w-flash"></i>');
+    media.insertAdjacentHTML('afterbegin', '<div class="w-disc" aria-hidden="true"><div class="w-disc-in"></div></div>');
+  });
+  // 舞台を作って、作品の中身を 1 枚ずつ載せる（もとの節は空の場所取りに）
+  var pin = document.createElement('div'), stage = document.createElement('div');
+  pin.className = 'w-pin';
+  stage.className = 'w-stage';
+  secs[0].parentNode.insertBefore(pin, secs[0]);
+  pin.appendChild(stage);
+  var slides0 = 0, H = 0, VW = 0;
+  pin.style.setProperty('--n', secs.length);
+  // 舞台の高さ＝アドレスバーが出ている時の画面の高さ（100svh）と今の高さの小さい方。どの時でも MORE まで見えるように
+  // 低くなった時は必ず測り直す。高くなった時は、100svh が使える端末はそのまま、使えない端末はアドレスバーより大きい変化（120 px 以上）だけ
+  var svhOk = !!(window.CSS && CSS.supports && CSS.supports('height', '100svh')), probe = document.createElement('div');
+  probe.style.cssText = 'position:fixed; left:0; top:0; width:0; height:100vh; visibility:hidden; pointer-events:none';
+  if (svhOk) probe.style.height = '100svh';
+  document.body.appendChild(probe);
+  function viewH(){ return Math.round(Math.min(probe.getBoundingClientRect().height || window.innerHeight, window.innerHeight)); }
+  function measure(force){
+    var h = viewH(), w = window.innerWidth;
+    if (!force && w === VW && (h === H || (!svhOk && h > H && h - H < 120))) return false;
+    H = h; VW = w;
+    pin.style.setProperty('--sh', h + 'px');
+    return true;
+  }
+  measure(true);
+  var slides = secs.map(function(sec){
+    var sl = document.createElement('div');
+    pin.appendChild(sec);
+    sl.className = sec.className + ' w-slide';
+    sl.setAttribute('style', sec.getAttribute('style') || '');
+    sl.setAttribute('role', 'group');
+    sl.setAttribute('aria-labelledby', sec.getAttribute('aria-labelledby') || '');
+    while (sec.firstChild) sl.appendChild(sec.firstChild);
+    sec.classList.add('w-spacer');
+    sec.style.setProperty('--k', slides0++);
+    stage.appendChild(sl);
+    return sl;
+  });
+  function mode(){ return html.getAttribute('data-works') || 'record'; }
+  html.setAttribute('data-works', 'jacket');  // 切り替えはジャケットのカード（前のレコードは "record"、フィルムは "film"、重ねるだけは "none"）
+  // ジャケットの札（番号と題）と、右から出る盤
+  slides.forEach(function(sl){
+    var w = sl.querySelector('.wrap'), idx = sl.querySelector('.w-idx'), h2 = sl.querySelector('h2');
+    if (!w) return;
+    w.insertAdjacentHTML('beforeend', '<span class="w-jlab" aria-hidden="true">' + (idx ? idx.textContent.split('/')[0].trim() : '') + '\u3000' + (h2 ? h2.textContent : '') + '</span><div class="w-jdisc" aria-hidden="true"><div class="w-disc-in"></div></div>');
+  });
+  var EO = 'cubic-bezier(.22,1,.36,1)', EI = 'cubic-bezier(.55,0,1,.45)';
+  function parts(sl){
+    return {media: sl.querySelector('.w-media'), shot: sl.querySelector('.w-shot'), disc: sl.querySelector('.w-disc'), holes: [].slice.call(sl.querySelectorAll('.w-holes')),
+            flash: sl.querySelector('.w-flash'), text: [sl.querySelector('.w-head'), sl.querySelector('.w-detail')].filter(Boolean)};
+  }
+  function anim(el, kf, o){ return el && el.animate ? el.animate(kf, o) : null; }
+  function add(sl, a){ if (a) (sl._an = sl._an || []).push(a); }
+  function kill(sl){ (sl._an || []).forEach(function(a){ try{ a.cancel(); }catch(e){} }); sl._an = []; clearTimeout(sl._t); }
+  // 出ていく作品：レコードは盤が戻ってジャケットが横へ、フィルムはコマが横へ流れる。題と表は先に消える
+  function leave(sl, dir){
+    kill(sl);
+    var q = parts(sl), m = mode();
+    sl.style.zIndex = 1;
+    if (!reduce){
+      if (m === 'record'){
+        add(sl, anim(q.disc, [{transform: 'translateY(0)'}, {transform: 'translateY(50%)'}], {duration: 200, easing: EI, fill: 'forwards'}));
+        add(sl, anim(q.media, [{transform: 'none', opacity: 1}, {transform: 'translateX(' + (-dir * 35) + '%) rotate(' + (-dir * 3) + 'deg)', opacity: 0}], {duration: 260, delay: 140, easing: EI, fill: 'forwards'}));
+      } else if (m === 'film'){
+        add(sl, anim(q.shot, [{transform: 'none', filter: 'blur(0px)'}, {transform: 'translateX(' + (-dir * 106) + '%)', filter: 'blur(3px)'}], {duration: 280, easing: EI, fill: 'forwards'}));
+        q.holes.forEach(function(h){ add(sl, anim(h, [{backgroundPosition: '0px 0px'}, {backgroundPosition: (-dir * 220) + 'px 0px'}], {duration: 280, easing: EI, fill: 'forwards'})); });
+      }
+      q.text.forEach(function(el){ add(sl, anim(el, [{opacity: 1, transform: 'none'}, {opacity: 0, transform: 'translateY(' + (-dir * 14) + 'px)'}], {duration: 220, easing: EI, fill: 'forwards'})); });
+    }
+    sl._t = setTimeout(function(){ kill(sl); sl.classList.remove('on', 'is-on'); sl.style.zIndex = ''; }, reduce ? 0 : 700);
+  }
+  // 来る作品：上に重ねて背景ごと現れ、ジャケット（コマ）が入り、盤が出て回る。題と表は後から順に
+  function come(sl, dir){
+    kill(sl);
+    var q = parts(sl), m = mode(), d0 = 160;
+    sl.classList.add('on', 'is-on');
+    sl.style.zIndex = 2;
+    if (reduce) return;
+    add(sl, anim(sl, [{opacity: 0}, {opacity: 1}], {duration: 320, delay: d0, easing: 'ease', fill: 'backwards'}));
+    if (m === 'record'){
+      add(sl, anim(q.media, [{transform: 'translateX(' + (dir * 35) + '%) rotate(' + (dir * 3) + 'deg)', opacity: 0}, {transform: 'none', opacity: 1}], {duration: 460, delay: d0, easing: EO, fill: 'backwards'}));
+      add(sl, anim(q.disc, [{transform: 'translateY(50%)'}, {transform: 'translateY(-5%)', offset: .75}, {transform: 'translateY(0)'}], {duration: 560, delay: d0 + 300, easing: EO, fill: 'backwards'}));
+    } else if (m === 'film'){
+      add(sl, anim(q.shot, [{transform: 'translateX(' + (dir * 106) + '%)', filter: 'blur(3px)'}, {transform: 'translateX(' + (-dir * 1.5) + '%)', filter: 'blur(0px)', offset: .8}, {transform: 'none', filter: 'blur(0px)'}], {duration: 460, delay: d0, easing: EO, fill: 'backwards'}));
+      q.holes.forEach(function(h){ add(sl, anim(h, [{backgroundPosition: (dir * 220) + 'px 0px'}, {backgroundPosition: '0px 0px'}], {duration: 460, delay: d0, easing: EO, fill: 'backwards'})); });
+      add(sl, anim(q.flash, [{opacity: 0}, {opacity: .22, offset: .15}, {opacity: 0, offset: .35}, {opacity: .1, offset: .5}, {opacity: 0}], {duration: 380, delay: d0 + 120}));
+    }
+    q.text.forEach(function(el, i){ add(sl, anim(el, [{opacity: 0, transform: 'translateY(' + (dir * 18) + 'px)'}, {opacity: 1, transform: 'none'}], {duration: 420, delay: d0 + 260 + i * 90, easing: EO, fill: 'backwards'})); });
+    sl._t = setTimeout(function(){ sl.style.zIndex = ''; sl._an = []; }, 1300);
+  }
+  // 今の作品＝舞台の場所のうち、画面の上がどの作品の場所の半分を過ぎたか
+  var cur = -1, lastShow = 0, ticking = false;
+  function index(){ var r = pin.getBoundingClientRect(); return Math.max(0, Math.min(slides.length - 1, Math.round(-r.top / H))); }
+  function update(){
+    var i = index();
+    if (i === cur) return;
+    if (cur < 0){
+      slides[i].classList.add('on', 'is-on', 'jsettled');
+      if (mode() === 'jacket' && slides[i + 1]) slides[i + 1].classList.add('peek');
+      cur = i; return;
+    }
+    var dir = i > cur ? 1 : -1;
+    if (mode() === 'jacket') jacketSwap(cur, i, dir);
+    else { leave(slides[cur], dir); come(slides[i], dir); }
+    cur = i;
+    lastShow = performance.now();
+  }
+  // ジャケット：次へ＝上のカードが左上へ抜け、下からのぞいていたカードが持ち上がる。新しく次のカードが下に入る。
+  // 前へ＝前のカードが左上から戻ってきて重なり、今のカードは下へ回ってのぞく側になる
+  var OUT = 'translate(-55vw, -16vh) rotate(-16deg)', settleT = 0;
+  function peekPose(){ return window.matchMedia('(max-width: 860px)').matches ? 'translate(4px, 30px) rotate(1.2deg)' : 'translate(24px, 38px) rotate(2deg)'; }
+  function fadeAway(sl){
+    add(sl, anim(sl, [{opacity: 1}, {opacity: 0}], {duration: 220, fill: 'forwards'}));
+    sl._t = setTimeout(function(){ kill(sl); sl.classList.remove('on', 'is-on', 'peek'); sl.style.zIndex = ''; }, 240);
+  }
+  function jacketSwap(prev, i, dir){
+    var a = slides[prev], b = slides[i], oldPeek = slides[prev + 1] || null, newPeek = slides[i + 1] || null, P = peekPose();
+    slides.forEach(function(sl){
+      kill(sl);
+      sl.style.zIndex = '';
+      if (!(dir > 0 && sl === a)) sl.classList.remove('jsettled');
+      if (sl !== a && sl !== b && sl !== oldPeek && sl !== newPeek) sl.classList.remove('on', 'is-on', 'peek');
+    });
+    clearTimeout(settleT);
+    settleT = setTimeout(function(){ if (slides[cur] === b) b.classList.add('jsettled'); }, reduce ? 0 : 600);
+    if (reduce){
+      a.classList.remove('on', 'is-on', 'peek'); if (oldPeek) oldPeek.classList.remove('peek');
+      b.classList.remove('peek'); b.classList.add('on', 'is-on'); if (newPeek) newPeek.classList.add('peek');
+      return;
+    }
+    if (dir > 0){
+      a.classList.remove('peek'); a.classList.add('on'); a.style.zIndex = 5;
+      add(a, anim(a, [{transform: 'none', opacity: 1}, {transform: OUT, opacity: 1, offset: .85}, {transform: OUT, opacity: 0}], {duration: 560, easing: EI, fill: 'forwards'}));
+      a._t = setTimeout(function(){ kill(a); a.classList.remove('on', 'is-on', 'jsettled'); a.style.zIndex = ''; }, 580);
+      b.classList.remove('peek'); b.classList.add('on', 'is-on'); b.style.zIndex = 4;
+      add(b, anim(b, [{transform: P, filter: 'brightness(.55)'}, {transform: 'none', filter: 'brightness(1)'}], {duration: 500, delay: 140, easing: EO, fill: 'backwards'}));
+      if (oldPeek && oldPeek !== b) fadeAway(oldPeek);
+    } else {
+      b.classList.remove('peek'); b.classList.add('on', 'is-on'); b.style.zIndex = 5;
+      add(b, anim(b, [{transform: OUT, opacity: 0}, {transform: OUT, opacity: 1, offset: .12}, {transform: 'none', opacity: 1}], {duration: 600, easing: EO, fill: 'backwards'}));
+      if (newPeek === a){
+        a.classList.remove('on', 'is-on'); a.classList.add('peek'); a.style.zIndex = 2;
+        add(a, anim(a, [{transform: 'none', filter: 'brightness(1)'}, {transform: P, filter: 'brightness(.55)'}], {duration: 480, delay: 120, easing: EO, fill: 'backwards'}));
+        a._t = setTimeout(function(){ a.style.zIndex = ''; }, 640);
+      } else {
+        a.classList.remove('is-on'); fadeAway(a);
+      }
+      if (oldPeek && oldPeek !== newPeek) fadeAway(oldPeek);
+    }
+    b._t = setTimeout(function(){ b.style.zIndex = ''; }, 760);
+    if (newPeek && newPeek !== a){
+      newPeek.classList.add('peek');
+      add(newPeek, anim(newPeek, [{opacity: 0}, {opacity: 1}], {duration: 320, delay: 320, fill: 'backwards'}));
+    }
+  }
+  window.addEventListener('scroll', function(){
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function(){
+      ticking = false;
+      update();
+      var pn = pinned();
+      if (pn && !wasPinned){
+        arrived = performance.now(); locked = true;
+        if (arrived - lastWheel < 1500){ clearTimeout(anchorT); anchorT = setTimeout(anchor, 650); }
+      }
+      wasPinned = pn;
+    });
+  }, {passive: true});
+  // 舞台に着いた後、見えない所で今の作品の場所の頭へそろえる（着いた勢いで少し奥へ入っていると、上へ戻るのに余分に回すことになるので）
+  var anchorT = 0, touching = false;
+  window.addEventListener('touchstart', function(){ touching = true; }, {passive: true});
+  window.addEventListener('touchend', function(){ touching = false; }, {passive: true});
+  window.addEventListener('touchcancel', function(){ touching = false; }, {passive: true});
+  function anchor(){
+    if (touching || !pinned() || cur < 0) return;
+    var y = secs[cur].getBoundingClientRect().top + window.scrollY;
+    if (Math.abs(window.scrollY - y) <= 2) return;
+    stopScroll();
+    try{ window.scrollTo({top: y, left: 0, behavior: 'instant'}); }catch(e){ window.scrollTo(0, y); }
+  }
+  // ホイール 1 目盛り・キー 1 回で次の作品へ（舞台が止まっている間だけ。最初の作品の上・最後の作品の下は本体に任せる）。
+  // 舞台は止まっているので、見えない所で作品の場所の頭へ移るだけ。慣性の続きは止まるまで飲み込む
+  function stopScroll(){ try{ window.dispatchEvent(new KeyboardEvent('keydown', {key: 'Home'})); }catch(e){} }
+  function pinned(){ var r = pin.getBoundingClientRect(); return r.top <= 2 && r.bottom >= H - 2; }
+  function go(i){
+    stopScroll();
+    var y = secs[i].getBoundingClientRect().top + window.scrollY;
+    try{ window.scrollTo({top: y, left: 0, behavior: 'instant'}); }catch(e){ window.scrollTo(0, y); }
+    update();
+  }
+  // 新しい操作か、慣性の続きかを見分ける：間が 250 ms 空いた・前より強くなった・マウスの 1 目盛り（50 以上）で動きが終わっている、のどれかなら新しい操作
+  // 動きの間（0.7 s）と、舞台に着いた直後（0.6 s。プロフィール・連絡先から回したホイールの残りで飛ばさない）は飲み込む
+  var lastWheel = 0, lastAbs = 0, acc = 0, locked = false, lastGo = 0, arrived = 0, wasPinned = false;
+  window.addEventListener('wheel', function(e){
+    if (reduce || e.ctrlKey || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+    if (e.target.closest && e.target.closest('#drawer, dialog')) return;
+    if (html.classList.contains('dlg-open')) return;
+    var now = performance.now(), ad = Math.abs(e.deltaY) * (e.deltaMode === 1 ? 16 : 1);
+    var fresh = now - lastWheel > 250 || ad > lastAbs * 1.4 + 4 || (ad >= 50 && now - lastGo > 750);
+    lastWheel = now; lastAbs = ad;
+    if (!pinned() || cur < 0){ acc = 0; return; }
+    if (now - lastGo < 700 || now - arrived < 600 || (locked && !fresh)){ acc = 0; e.preventDefault(); e.stopImmediatePropagation(); return; }
+    locked = false;
+    var dir = e.deltaY > 0 ? 1 : -1, i = cur + dir;
+    if (i < 0 || i >= slides.length) return;
+    e.preventDefault(); e.stopImmediatePropagation();
+    acc += ad;
+    if (acc < 30) return;
+    acc = 0; locked = true; lastGo = now;
+    go(i);
+  }, {capture: true, passive: false});
+  window.addEventListener('keydown', function(e){
+    if (reduce || e.ctrlKey || e.metaKey || e.altKey) return;
+    var t = e.target, dir = (e.key === 'ArrowDown' || e.key === 'PageDown' || (e.key === ' ' && !e.shiftKey)) ? 1 : (e.key === 'ArrowUp' || e.key === 'PageUp' || (e.key === ' ' && e.shiftKey)) ? -1 : 0;
+    if (!dir || !pinned() || cur < 0) return;
+    if (t && t.closest && t.closest('input, textarea, select, [contenteditable], #smap, dialog')) return;
+    if (e.key === ' ' && t && t.closest && t.closest('button, a')) return;
+    var i = cur + dir;
+    if (i < 0 || i >= slides.length) return;
+    e.preventDefault(); e.stopImmediatePropagation();
+    if (performance.now() - lastShow < 450) return;
+    lastGo = performance.now();
+    go(i);
+  }, true);
+  // 中身の高さを全作品で一番高い物にそろえ、1 枚に収まらない時は全作品を同じだけ縮める（作品ごとに文字の大きさや場所が変わらないように）
+  // ジャケットは、縮めた後の見た目の幅が決めた幅（スマホは画面の幅 −10 px、PC は 1080 px まで）になるよう、縮める前のカードを広げる（3 回で落ち着く）
+  function fit(){
+    var ws = slides.map(function(sl){ return sl.querySelector('.wrap'); }).filter(Boolean), maxH = 0, sc = 1, k;
+    var cs = getComputedStyle(slides[0]), avail = slides[0].clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+    var jacket = mode() === 'jacket', sw = stage.clientWidth, Wv = sw <= 860 ? sw - 10 : sw < 1100 ? sw - 120 : Math.min(980, sw - 240);
+    for (k = 0; k < (jacket ? 3 : 1); k++){
+      ws.forEach(function(w){ w.style.transform = ''; w.style.minHeight = ''; w.style.width = jacket ? (Wv / Math.max(sc, .77)).toFixed(1) + 'px' : ''; });  // 広げるのは 1.3 倍まで
+      maxH = 0;
+      ws.forEach(function(w){ maxH = Math.max(maxH, w.scrollHeight); });
+      sc = maxH > avail && avail > 0 ? avail / maxH : 1;
+    }
+    ws.forEach(function(w){ w.style.minHeight = maxH + 'px'; if (sc < 1) w.style.transform = 'scale(' + sc.toFixed(3) + ')'; });
+    // ジャケットの盤の出る長さ：縮めた後の見た目で、カードの横の余白まで（盤の幅の 52% を上限に。ラベルが見える）
+    var vw = stage.clientWidth;
+    slides.forEach(function(sl){
+      var w = sl.querySelector('.wrap'), d = sl.querySelector('.w-jdisc');
+      if (!w || !d || !d.offsetWidth) return;
+      var margin = (vw - w.offsetWidth * sc) / 2, jp = Math.max(0, Math.min(margin - 16, d.offsetWidth * sc * .52));
+      d.style.setProperty('--jp', (jp / sc).toFixed(1) + 'px');
+    });
+  }
+  window.addEventListener('resize', function(){ if (measure(false)){ fit(); update(); } });
+  window.addEventListener('load', fit);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+  // MORE：もとの仕組みはもとの節を見ているので、舞台の作品から窓を開く形に差し替える
+  var wdlg = document.getElementById('w-dlg');
+  slides.forEach(function(sl){
+    var b = sl.querySelector('.w-more');
+    if (!b || !wdlg) return;
+    b.addEventListener('click', function(e){
+      e.stopImmediatePropagation();
+      if (!wdlg.showModal) return;
+      var ex = sl.querySelector('.w-extra'), idx = sl.querySelector('.w-idx'), lead = sl.querySelector('.w-facts dd'), wa = getComputedStyle(sl).getPropertyValue('--wa').trim();
+      wdlg.querySelector('.dlg-eb').textContent = 'Works ' + (idx ? idx.textContent : '');
+      wdlg.querySelector('h3').textContent = sl.querySelector('h2').textContent;
+      wdlg.querySelector('.dlg-lead').textContent = lead ? lead.textContent : '';
+      wdlg.querySelector('.dlg-more').innerHTML = ex ? ex.innerHTML : '';
+      if (wa) wdlg.style.setProperty('--wa', wa);
+      stopScroll();
+      html.classList.add('dlg-open');
+      wdlg.showModal();
+      wdlg.scrollTop = 0;
+    }, true);
+  });
+  fit();
+  update();
 })();
 </script>
 </body>
