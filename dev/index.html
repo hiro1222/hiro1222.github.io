@@ -618,11 +618,11 @@ html[data-works="jacket"] .w-stage .w-play{color:var(--wa-ink)}
 .w-wave canvas{cursor:pointer}
 /* /DEV-ONLY */
 /* DEV-ONLY: 舞台の盤（確認用だけ） */
-/* 盤は舞台に 1 枚だけ。カードの下（重なりの一番下）にいつもあって、今のカードの右からのぞいて回る。切り替えの間も出たまま
+/* 盤は舞台に 1 枚だけ。重なりは 下のカード（次の作品）→ 盤 → 今のカード で、今のカードの右からのぞいて回る（盤は今の作品の物に見えるように）。切り替えの間も出たまま
    （カードごとに盤を持つと、ほかのカードに重なって欠けて見えた）。ラベルの色は今の作品の色 */
 .w-sdisc{display:none}
 @media (min-width:861px){
-  html[data-works="jacket"] .w-sdisc{display:block; position:absolute; z-index:0; left:0; top:0; width:300px; height:300px; pointer-events:none}
+  html[data-works="jacket"] .w-sdisc{display:block; position:absolute; z-index:2; left:0; top:0; width:300px; height:300px; pointer-events:none}
   html[data-works="jacket"] .w-sdisc .w-disc-in{animation:w-spin 4.5s linear infinite}
   html[data-works="jacket"] .w-sdisc::after{content:""; position:absolute; inset:0; border-radius:50%; background:conic-gradient(from 200deg, transparent 0 8%, rgba(255,255,255,.08) 13%, transparent 19% 58%, rgba(255,255,255,.06) 63%, transparent 69%)}
 }
