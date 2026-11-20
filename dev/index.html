@@ -508,7 +508,21 @@ html.dlg-open{overflow:hidden}
 .w-pin > .w-spacer{position:absolute; left:0; right:0; top:calc(var(--k, 0) * 100vh); top:calc(var(--k, 0) * var(--sh, 100svh)); height:100vh; height:var(--sh, 100svh); min-height:0}
 .w-stage > .w-slide{position:absolute; inset:0; min-height:0; height:100%; visibility:hidden}
 .w-stage > .w-slide.on{visibility:visible}
-.w-stage > .w-slide > .wrap{transform-origin:50% 50%}
+.w-stage > .w-slide > .wrap{transform-origin:50% 50%; display:flex; flex-direction:column}
+/* 作品が変わっても、文字の大きさと題・画像・MORE の場所がずれないように：中身の高さは全作品で一番高い物にそろえ（JS）、縮みも全作品で同じ。
+   題は上、画像は真ん中、MORE は下にそろえる */
+.w-stage .w-grid{flex:1 1 auto}
+.w-stage .w-detail{display:flex; flex-direction:column}
+.w-stage .w-acts{margin-top:auto; padding-top:24px}
+@media (min-width:861px){
+  .w-stage .w-grid{grid-template-rows:auto minmax(0,1fr)}
+  .w-stage .w-head{align-self:start}
+  .w-stage .w-detail{align-self:stretch}
+}
+@media (max-width:860px){
+  .w-stage .w-grid{grid-template-rows:auto auto minmax(0,1fr)}
+  .w-stage .w-acts{padding-top:14px}
+}
 .w-spacer{visibility:hidden}
 /* レコード＝画像をジャケットに見立て、上から作品の色のラベルの盤がのぞいて回る。フィルム＝画像の上下にフィルムの穴の帯。どちらも画像の大きさは今のまま */
 .w-media{position:relative}
@@ -2243,18 +2257,18 @@ html[data-works="film"] .w-flash{display:block; position:absolute; inset:0; z-in
     lastGo = performance.now();
     go(i);
   }, true);
-  // 1 枚に収まらない時は、中身を縮める（ノート PC の低い画面・スマホ）
+  // 中身の高さを全作品で一番高い物にそろえ、1 枚に収まらない時は全作品を同じだけ縮める（作品ごとに文字の大きさや場所が変わらないように）
   function fit(){
-    slides.forEach(function(sl){
-      var w = sl.querySelector('.wrap');
-      if (!w) return;
-      w.style.transform = '';
-      var cs = getComputedStyle(sl), avail = sl.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom), h = w.scrollHeight;
-      if (h > avail && avail > 0) w.style.transform = 'scale(' + Math.max(.6, avail / h).toFixed(3) + ')';
-    });
+    var ws = slides.map(function(sl){ return sl.querySelector('.wrap'); }).filter(Boolean), maxH = 0;
+    ws.forEach(function(w){ w.style.transform = ''; w.style.minHeight = ''; });
+    ws.forEach(function(w){ maxH = Math.max(maxH, w.scrollHeight); });
+    var cs = getComputedStyle(slides[0]), avail = slides[0].clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+    var sc = maxH > avail && avail > 0 ? Math.max(.6, avail / maxH) : 1;
+    ws.forEach(function(w){ w.style.minHeight = maxH + 'px'; if (sc < 1) w.style.transform = 'scale(' + sc.toFixed(3) + ')'; });
   }
   window.addEventListener('resize', function(){ if (measure(false)){ fit(); update(); } });
   window.addEventListener('load', fit);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
   // MORE：もとの仕組みはもとの節を見ているので、舞台の作品から窓を開く形に差し替える
   var wdlg = document.getElementById('w-dlg');
   slides.forEach(function(sl){
