@@ -338,6 +338,9 @@ button{font:inherit}
 /* 作品資料（今は IdReal だけ）。PDF（docs/<名前>.pdf）が無い間は薄く「準備中」 */
 .w-doc-s{margin-left:8px; font-size:11px; font-weight:400; letter-spacing:.08em}
 .w-doc:not(:disabled) .w-doc-s{display:none}
+/* 作品資料がある作品は MORE と横に並べる（両方の横の余白を詰める） */
+.w-acts:has(.w-doc) .w-more{padding-left:38px; padding-right:38px}
+.w-acts .w-doc{padding-left:26px; padding-right:26px}
 html[data-works="jacket"] .w-stage .w-doc{border-color:var(--wa-ink); background:var(--wa-ink); color:#ECE6DA}
 .w-more:focus-visible, .w-doc:focus-visible{outline:2px solid var(--wa); outline-offset:3px}
 /* 作品の MORE・詳細資料の窓（<dialog>）。開いている間は後ろのページを止める */
