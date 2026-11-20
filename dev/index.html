@@ -2165,7 +2165,7 @@ html[data-works="film"] .w-flash{display:block; position:absolute; inset:0; z-in
       ticking = false;
       update();
       var pn = pinned();
-      if (pn && !wasPinned){ arrived = performance.now(); locked = true; }
+      if (pn && !wasPinned){ arrived = performance.now(); locked = true; clearTimeout(anchorT); anchorT = setTimeout(anchor, 650); }
       wasPinned = pn;
     });
   }, {passive: true});
@@ -2178,6 +2178,18 @@ html[data-works="film"] .w-flash{display:block; position:absolute; inset:0; z-in
       inside = now;
     }, {threshold: [0, .25, .5, .75, 1]});
     ends.forEach(function(x){ io.observe(x); });
+  }
+  // 舞台に着いた後、見えない所で今の作品の場所の頭へそろえる（着いた勢いで少し奥へ入っていると、上へ戻るのに余分に回すことになるので）
+  var anchorT = 0, touching = false;
+  window.addEventListener('touchstart', function(){ touching = true; }, {passive: true});
+  window.addEventListener('touchend', function(){ touching = false; }, {passive: true});
+  window.addEventListener('touchcancel', function(){ touching = false; }, {passive: true});
+  function anchor(){
+    if (touching || !pinned() || cur < 0) return;
+    var y = secs[cur].getBoundingClientRect().top + window.scrollY;
+    if (Math.abs(window.scrollY - y) <= 2) return;
+    stopScroll();
+    try{ window.scrollTo({top: y, left: 0, behavior: 'instant'}); }catch(e){ window.scrollTo(0, y); }
   }
   // ホイール 1 目盛り・キー 1 回で次の作品へ（舞台が止まっている間だけ。最初の作品の上・最後の作品の下は本体に任せる）。
   // 舞台は止まっているので、見えない所で作品の場所の頭へ移るだけ。慣性の続きは止まるまで飲み込む
