@@ -132,6 +132,7 @@ button{font:inherit}
 .hero-name .en{font-family:var(--f-label); font-size:13px; letter-spacing:.24em; text-transform:uppercase; color:var(--night-muted)}
 .hero-name .role{margin-top:4px; font-size:14px; color:#C9D3DA}
 .hero .lead{margin-top:18px; max-width:29em; font-size:14.5px; color:#AEBAC3}
+/* DEV-ONLY: ミニマップ（確認用だけ） */
 /* 01 ホーム右：ミニマップ（十字キーで歩くと、部屋ごとに足音の響きが変わる）。PC は地図の下に十字キー、スマホは地図の右 */
 .top-grid{display:grid; grid-template-columns:minmax(0,1fr); row-gap:28px; align-items:center}
 .smap{--map:clamp(150px, calc(100vw - 190px), 250px); justify-self:start; width:fit-content; max-width:100%; padding:12px 12px 14px; border:1px solid var(--night-line); border-radius:14px; background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02)); box-shadow:0 18px 50px rgba(0,0,0,.35); -webkit-user-select:none; user-select:none; -webkit-touch-callout:none}
@@ -191,6 +192,7 @@ button{font:inherit}
 @media (min-width:861px) and (pointer:fine){ .sm-kb{display:block} }
 @media (min-width:861px) and (max-height:760px){ .sm-kb{display:none!important} .sm-body{row-gap:10px} .sm-top{margin-bottom:8px} }  /* 低い画面では 1 ページに収める */
 .sm-hint .nw{display:inline-block}
+/* /DEV-ONLY */
 .cue{
   position:absolute; left:50%; bottom:calc(18px + env(safe-area-inset-bottom, 0px)); transform:translateX(-50%);
   display:flex; flex-direction:column; align-items:center; gap:8px; text-decoration:none;
@@ -320,6 +322,7 @@ button{font:inherit}
 .w-ic{grid-row:1 / 3; width:34px; height:34px; border:1.5px solid var(--wa); border-radius:6px; display:grid; place-items:center; font-family:var(--f-mono); font-size:12px; color:var(--wa)}
 .w-pts h4{font-size:14.5px; font-weight:700; line-height:1.45; word-break:keep-all}
 .w-pts p{font-size:13px; color:var(--night-muted); line-height:1.7; margin-top:2px}
+/* DEV-ONLY: MORE と窓（確認用だけ） */
 /* MORE と 詳細資料（右の列の真ん中に並べる） */
 .w-acts{display:flex; justify-content:center; align-items:center; flex-wrap:wrap; gap:12px; margin-top:28px}
 .w-more{display:inline-block; margin:0; padding:9px 36px; border:1px solid var(--wa); border-radius:3px; background:none; color:var(--wa); font-family:var(--f-label); font-size:13px; letter-spacing:.22em; text-decoration:none; cursor:pointer; transition:background .2s ease, color .2s ease}
@@ -349,6 +352,7 @@ html.dlg-open{overflow:hidden}
 .dlg-pdf{width:min(1200px, calc(100% - 32px)); height:calc(100vh - 48px); height:calc(100dvh - 48px); overflow:hidden}
 .dlg-pdf[open]{display:flex; flex-direction:column}
 .dlg-pdf iframe{flex:1; min-height:0; width:100%; border:0; background:#525659}
+/* /DEV-ONLY */
 /* 制作中の印（題の上の行、作品の番号の横。点がゆっくり明滅） */
 .w-wip{display:inline-flex; align-items:center; gap:7px; margin-left:4px; padding:1px 12px 1px 10px; border:1px solid var(--wa); border-radius:999px; color:var(--wa); font-family:var(--f-body); font-weight:700; font-size:12.5px; letter-spacing:.12em; line-height:1.6; white-space:nowrap}
 .w-wip::before{content:""; width:7px; height:7px; border-radius:50%; background:currentColor; animation:wip 1.8s ease-in-out infinite}
@@ -383,9 +387,11 @@ html.dlg-open{overflow:hidden}
   .w-facts dt{font-size:14px}
   .w-facts dd{font-size:15.5px}
   .w-wip{font-size:13.5px}
+  /* DEV-ONLY: MORE（確認用だけ） */
   .w-acts{margin-top:clamp(32px, 6vh, 68px); gap:16px}  /* 右の列の真ん中・離して・大きく */
   .w-more{padding:15px 68px; font-size:16px; letter-spacing:.26em}
   .w-doc{padding:15px 40px; font-size:16px}
+  /* /DEV-ONLY */
 }
 @media (max-width:480px){ .w-pts{grid-template-columns:minmax(0,1fr); gap:16px} }
 
@@ -531,6 +537,7 @@ html.dlg-open{overflow:hidden}
           <p class="role">サウンドプログラマー志望 ／ 2028年3月卒業予定</p>
         </div>
       </div>
+      <!-- DEV-ONLY: ミニマップ（確認用だけ） -->
       <!-- ミニマップ：十字キーで歩くと、いる部屋の響きで足音が鳴る（中身は下の script）。
            data-sound="idreal" で、Idreal で前もって計算した足音（audio/idreal-steps/）に切り替わる。synth は合成の足音と響き -->
       <div class="smap" id="smap" data-sound="synth" role="group" aria-label="ミニマップ：十字キーで歩くと、部屋ごとに足音の響きが変わります">
@@ -553,6 +560,7 @@ html.dlg-open{overflow:hidden}
         </div>
         <p class="sm-hint">足音はどこも同じ。変わるのは場所の響きだけ<span class="nw">（音が出ます）</span><span class="sm-kb">キーボード：地図をクリックして 矢印キー・Z・X</span></p>
       </div>
+      <!-- /DEV-ONLY -->
     </div>
     <a class="cue" href="#profile" data-go="profile">SCROLL</a>
   </section>
@@ -905,6 +913,7 @@ html.dlg-open{overflow:hidden}
         <div class="w-shot"><img src="img/works/idreal.jpg?v=4" width="1400" height="788" alt="IdReal のデバッグ表示（床に並んだプローブの点と、右上の耳から出る 16 本のレイで壁までの距離を測っている地図）" decoding="async"></div>
         <div class="w-detail">
           <dl class="w-facts"><div><dt>概要</dt><dd>自作の音響エンジンと、それを扱うゲーム側の仕組み。空間の広さや壁などの近さが、見えていなくても伝わる体験を目指して制作。</dd></div><div><dt>ゲームジャンル</dt><dd>—（音響エンジン）</dd></div><div><dt>制作規模</dt><dd>個人制作</dd></div><div><dt>担当範囲</dt><dd>すべて</dd></div><div><dt>制作期間</dt><dd>2026年7月〜制作中</dd></div><div><dt>制作環境</dt><dd>C++（Visual Studio 2022）／Unreal Engine 5.6／Wwise 2025.1</dd></div></dl>
+          <!-- DEV-ONLY: MORE（確認用だけ） -->
           <div class="w-acts">
             <button type="button" class="w-more" aria-haspopup="dialog">MORE</button>
             <button type="button" class="w-doc" data-pdf="docs/idreal.pdf" data-title="IdReal 詳細資料" aria-haspopup="dialog" disabled title="準備中" hidden>詳細資料</button>
@@ -916,6 +925,7 @@ html.dlg-open{overflow:hidden}
                 <li><span class="w-ic" aria-hidden="true">02</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
             </ul>
           </div>
+          <!-- /DEV-ONLY -->
         </div>
       </div>
     </div>
@@ -931,6 +941,7 @@ html.dlg-open{overflow:hidden}
         <div class="w-shot"><img src="img/works/horror.jpg" width="1400" height="788" alt="探索型ホラーゲームの画面（懐中電灯で照らした暗い部屋、隅に人形、奥に扉）" decoding="async"></div>
         <div class="w-detail">
           <dl class="w-facts"><div><dt>概要</dt><dd>自作の音響エンジン IdReal を使った探索型ホラー。暗い視界の中、足音や周りの音の聞こえ方を頼りに、どんな空間にいるのかを感じ取りながらキーアイテムを集めていく。</dd></div><div><dt>ゲームジャンル</dt><dd>探索型ホラー</dd></div><div><dt>制作規模</dt><dd>個人制作</dd></div><div><dt>担当範囲</dt><dd>すべて</dd></div><div><dt>制作期間</dt><dd>2026年9月〜制作中</dd></div><div><dt>制作環境</dt><dd>Unreal Engine 5.6／Wwise 2025.1／自作の音響エンジン IdReal</dd></div></dl>
+          <!-- DEV-ONLY: MORE（確認用だけ） -->
           <div class="w-acts">
             <button type="button" class="w-more" aria-haspopup="dialog">MORE</button>
           </div>
@@ -941,6 +952,7 @@ html.dlg-open{overflow:hidden}
                 <li><span class="w-ic" aria-hidden="true">02</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
             </ul>
           </div>
+          <!-- /DEV-ONLY -->
         </div>
       </div>
     </div>
@@ -956,6 +968,7 @@ html.dlg-open{overflow:hidden}
         <div class="w-shot"><img src="img/works/osumitsuki.jpg?v=2" width="1400" height="788" alt="御墨付のタイトル画面" decoding="async"></div>
         <div class="w-detail">
           <dl class="w-facts"><div><dt>概要</dt><dd>世界に色を付け、その上を歩いていく3Dアクションゲーム。</dd></div><div><dt>ゲームジャンル</dt><dd>3Dアクションゲーム</dd></div><div><dt>制作規模</dt><dd>チーム制作・11人</dd></div><div><dt>担当範囲</dt><dd>サブリーダー、プレイヤー制御、サウンド設計・実装</dd></div><div><dt>制作期間</dt><dd>3か月</dd></div><div><dt>制作環境</dt><dd>Unity 6</dd></div></dl>
+          <!-- DEV-ONLY: MORE（確認用だけ） -->
           <div class="w-acts">
             <button type="button" class="w-more" aria-haspopup="dialog">MORE</button>
           </div>
@@ -966,6 +979,7 @@ html.dlg-open{overflow:hidden}
                 <li><span class="w-ic" aria-hidden="true">02</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
             </ul>
           </div>
+          <!-- /DEV-ONLY -->
         </div>
       </div>
     </div>
@@ -981,6 +995,7 @@ html.dlg-open{overflow:hidden}
         <div class="w-shot"><img src="img/works/ribbond.jpg?v=2" width="1400" height="788" alt="RibBond のタイトル画面" decoding="async"></div>
         <div class="w-detail">
           <dl class="w-facts"><div><dt>概要</dt><dd>裁縫の世界で、針にリボンを引っかけたり、敵をリボンで飾ったりして先へ進んでいくワイヤーアクションゲーム。</dd></div><div><dt>ゲームジャンル</dt><dd>2D横スクロールワイヤーアクション</dd></div><div><dt>制作規模</dt><dd>チーム制作・10人</dd></div><div><dt>担当範囲</dt><dd>リードプログラマー、リーダー、全体設計、ロード制御、サウンド制御、ステージ管理</dd></div><div><dt>制作期間</dt><dd>4か月</dd></div><div><dt>制作環境</dt><dd>DirectX 11</dd></div></dl>
+          <!-- DEV-ONLY: MORE（確認用だけ） -->
           <div class="w-acts">
             <button type="button" class="w-more" aria-haspopup="dialog">MORE</button>
           </div>
@@ -991,6 +1006,7 @@ html.dlg-open{overflow:hidden}
                 <li><span class="w-ic" aria-hidden="true">02</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
             </ul>
           </div>
+          <!-- /DEV-ONLY -->
         </div>
       </div>
     </div>
@@ -1006,6 +1022,7 @@ html.dlg-open{overflow:hidden}
         <div class="w-shot"><img src="img/works/soundmarker.jpg?v=2" width="1400" height="789" alt="SoundMarker の画面（アニメーションのタイムラインに音を置く）" decoding="async"></div>
         <div class="w-detail">
           <dl class="w-facts"><div><dt>概要</dt><dd>サウンドデザイナーさんとのチーム制作で経験した、実装して検証するまでの時間や、実装後の手戻りを減らすために、サウンドデザイナーさんと話し合って制作した検証ツール。</dd></div><div><dt>ゲームジャンル</dt><dd>—（アニメーション・サウンド検証ツール）</dd></div><div><dt>制作規模</dt><dd>個人制作</dd></div><div><dt>担当範囲</dt><dd>すべて</dd></div><div><dt>制作期間</dt><dd>2週間</dd></div><div><dt>制作環境</dt><dd>DirectX 11／C++17</dd></div></dl>
+          <!-- DEV-ONLY: MORE（確認用だけ） -->
           <div class="w-acts">
             <button type="button" class="w-more" aria-haspopup="dialog">MORE</button>
           </div>
@@ -1016,6 +1033,7 @@ html.dlg-open{overflow:hidden}
                 <li><span class="w-ic" aria-hidden="true">02</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
             </ul>
           </div>
+          <!-- /DEV-ONLY -->
         </div>
       </div>
     </div>
@@ -1031,6 +1049,7 @@ html.dlg-open{overflow:hidden}
         <div class="w-shot">画像 準備中</div>
         <div class="w-detail">
           <dl class="w-facts"><div><dt>概要</dt><dd><span class="todo">準備中</span></dd></div><div><dt>ゲームジャンル</dt><dd><span class="todo">準備中</span></dd></div><div><dt>制作規模</dt><dd>—</dd></div><div><dt>担当範囲</dt><dd>サウンド面で協力、<span class="todo">詳しくは準備中</span></dd></div><div><dt>制作期間</dt><dd>1か月</dd></div><div><dt>制作環境</dt><dd>DirectX 11／C++17</dd></div></dl>
+          <!-- DEV-ONLY: MORE（確認用だけ） -->
           <div class="w-acts">
             <button type="button" class="w-more" aria-haspopup="dialog">MORE</button>
           </div>
@@ -1041,6 +1060,7 @@ html.dlg-open{overflow:hidden}
                 <li><span class="w-ic" aria-hidden="true">02</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
             </ul>
           </div>
+          <!-- /DEV-ONLY -->
         </div>
       </div>
     </div>
@@ -1056,6 +1076,7 @@ html.dlg-open{overflow:hidden}
         <div class="w-shot">画像 準備中</div>
         <div class="w-detail">
           <dl class="w-facts"><div><dt>概要</dt><dd><span class="todo">準備中</span></dd></div><div><dt>ゲームジャンル</dt><dd><span class="todo">準備中</span></dd></div><div><dt>制作規模</dt><dd>—</dd></div><div><dt>担当範囲</dt><dd>サウンド面で協力、<span class="todo">詳しくは準備中</span></dd></div><div><dt>制作期間</dt><dd>1か月</dd></div><div><dt>制作環境</dt><dd>DirectX 12／C++17</dd></div></dl>
+          <!-- DEV-ONLY: MORE（確認用だけ） -->
           <div class="w-acts">
             <button type="button" class="w-more" aria-haspopup="dialog">MORE</button>
           </div>
@@ -1066,6 +1087,7 @@ html.dlg-open{overflow:hidden}
                 <li><span class="w-ic" aria-hidden="true">02</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
             </ul>
           </div>
+          <!-- /DEV-ONLY -->
         </div>
       </div>
     </div>
@@ -1089,6 +1111,7 @@ html.dlg-open{overflow:hidden}
   </section>
 </main>
 
+<!-- DEV-ONLY: MORE と詳細資料の窓（確認用だけ） -->
 <!-- 作品の MORE の窓（中身は各作品の .w-extra を写す。こだわりなどはそこに書く） -->
 <dialog class="dlg" id="w-dlg" aria-labelledby="w-dlg-title">
   <div class="dlg-bar"><p class="dlg-eb"></p><div class="dlg-bar-r"><button type="button" class="dlg-x" data-close>閉じる<span aria-hidden="true">×</span></button></div></div>
@@ -1099,6 +1122,7 @@ html.dlg-open{overflow:hidden}
   <div class="dlg-bar"><p class="dlg-eb"></p><div class="dlg-bar-r"><a class="dlg-open" id="pdf-open" href="#" target="_blank" rel="noopener">新しいタブで開く</a><button type="button" class="dlg-x" data-close>閉じる<span aria-hidden="true">×</span></button></div></div>
   <iframe id="pdf-frame" title="詳細資料（PDF）"></iframe>
 </dialog>
+<!-- /DEV-ONLY -->
 
 <script>
 (function(){
@@ -1286,6 +1310,7 @@ html.dlg-open{overflow:hidden}
   document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && drawer.classList.contains('open')) closeDrawer(); });
   window.addEventListener('resize', function(){ if (window.innerWidth > 860 && drawer.classList.contains('open')) closeDrawer(false); });
 
+  /* DEV-ONLY: MORE と窓（確認用だけ） */
   // ---- 作品の MORE（こだわりなどを窓で）・詳細資料（PDF） ----
   var wdlg = document.getElementById('w-dlg'), pdlg = document.getElementById('pdf-dlg'), pframe = document.getElementById('pdf-frame');
   function openDlg(d, sec){
@@ -1328,6 +1353,7 @@ html.dlg-open{overflow:hidden}
       openDlg(pdlg, sec);
     });
   });
+  /* /DEV-ONLY */
 
   // ---- 好きなゲーム体験：タイルを押すと右（スマホは下）に解説。帯はループする ----
   // タイルは同じ比率で大きさ 3 つ、並べ方は 3 種類。どの作品をどの大きさにするかは開くたびにランダム。
@@ -1497,6 +1523,7 @@ html.dlg-open{overflow:hidden}
   });
 })();
 </script>
+<!-- DEV-ONLY: ミニマップ（確認用だけ） -->
 <script>
 /* 01 ホーム：ミニマップ。十字キーで歩くと、いる部屋の響きで足音が鳴る（音は Web Audio でその場で作る） */
 (function(){
@@ -1863,6 +1890,7 @@ html.dlg-open{overflow:hidden}
   draw();
 })();
 </script>
+<!-- /DEV-ONLY -->
 <!-- DEV-ONLY: 調整確認用のページだけに出す（tools/site.py publish で消える） -->
 <style>
 .devbar{position:fixed; left:12px; bottom:12px; z-index:60; display:flex; flex-wrap:wrap; align-items:center; gap:6px 8px; max-width:calc(100% - 24px); padding:6px 10px; border-radius:8px; background:#D9774C; color:#0D1620; font:600 12px/1.4 var(--f-body); box-shadow:0 6px 20px rgba(0,0,0,.35)}

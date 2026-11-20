@@ -75,10 +75,14 @@ def mirror(src, dst):
     return added, changed, removed
 
 
+# 確認用だけの部分の印。HTML は <!-- DEV-ONLY: … --> 〜 <!-- /DEV-ONLY -->、CSS・JS は /* DEV-ONLY: … */ 〜 /* /DEV-ONLY */
+DEV_ONLY = re.compile(r'[ \t]*(?:<!--|/\*) DEV-ONLY.*?(?:<!--|/\*) /DEV-ONLY (?:-->|\*/)[ \t]*\r?\n?', re.S)
+
+
 def publish():
     s = read(os.path.join(DEV, 'index.html'))
-    n = len(re.findall(r'<!-- DEV-ONLY', s))
-    s = re.sub(r'<!-- DEV-ONLY.*?<!-- /DEV-ONLY -->\r?\n?', '', s, flags=re.S)
+    n = len(DEV_ONLY.findall(s))
+    s = DEV_ONLY.sub('', s)
     assert 'DEV-ONLY' not in s and 'devbar' not in s
     s = s.replace('<title>' + TITLE_DEV, '<title>')
     write(os.path.join(ROOT, 'index.html'), s)
