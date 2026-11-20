@@ -2351,6 +2351,14 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
     var cs = getComputedStyle(slides[0]), avail = slides[0].clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
     var sc = maxH > avail && avail > 0 ? avail / maxH : 1;
     ws.forEach(function(w){ w.style.minHeight = maxH + 'px'; if (sc < 1) w.style.transform = 'scale(' + sc.toFixed(3) + ')'; });
+    // ジャケットの盤の出る長さ：縮めた後の見た目で、カードの横の余白まで（盤の幅の 32% を上限に）
+    var vw = stage.clientWidth;
+    slides.forEach(function(sl){
+      var w = sl.querySelector('.wrap'), d = sl.querySelector('.w-jdisc');
+      if (!w || !d || !d.offsetWidth) return;
+      var margin = (vw - w.offsetWidth * sc) / 2, jp = Math.max(0, Math.min(margin - 16, d.offsetWidth * sc * .32));
+      d.style.setProperty('--jp', (jp / sc).toFixed(1) + 'px');
+    });
   }
   window.addEventListener('resize', function(){ if (measure(false)){ fit(); update(); } });
   window.addEventListener('load', fit);
