@@ -514,15 +514,16 @@ html.dlg-open{overflow:hidden}
 .w-stage .w-grid{flex:1 1 auto}
 .w-stage .w-detail{display:flex; flex-direction:column}
 .w-stage .w-acts{margin-top:auto; padding-top:24px}
-@media (min-width:861px) and (max-width:1100px){
-  .w-stage .w-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}  /* 狭い PC は文字の列を広くして、表が折れすぎないように */
+@media (min-width:1024px) and (max-width:1100px){
+  .w-stage .w-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}  /* 2 列の中で狭い所は、文字の列を広くして表が折れすぎないように */
 }
-@media (min-width:861px){
+/* 2 列（画像の横に文字）になるのは 1024 px から（作品の本体の決まりと同じ）。それより狭いと 1 列 */
+@media (min-width:1024px){
   .w-stage .w-grid{grid-template-rows:auto minmax(0,1fr)}
   .w-stage .w-head{align-self:start}
   .w-stage .w-detail{align-self:stretch}
 }
-@media (max-width:860px){
+@media (max-width:1023px){
   .w-stage .w-grid{grid-template-rows:auto auto minmax(0,1fr)}
   .w-stage .w-acts{padding-top:14px}
 }
@@ -2349,9 +2350,9 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
   function fit(){
     var ws = slides.map(function(sl){ return sl.querySelector('.wrap'); }).filter(Boolean), maxH = 0, sc = 1, k;
     var cs = getComputedStyle(slides[0]), avail = slides[0].clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
-    var jacket = mode() === 'jacket', sw = stage.clientWidth, Wv = sw <= 860 ? sw - 10 : Math.min(1080, sw - 96);
+    var jacket = mode() === 'jacket', sw = stage.clientWidth, Wv = sw <= 860 ? sw - 10 : sw < 1024 ? Math.min(680, sw - 96) : Math.min(1080, sw - 96);
     for (k = 0; k < (jacket ? 3 : 1); k++){
-      ws.forEach(function(w){ w.style.transform = ''; w.style.minHeight = ''; w.style.width = jacket ? (Wv / sc).toFixed(1) + 'px' : ''; });
+      ws.forEach(function(w){ w.style.transform = ''; w.style.minHeight = ''; w.style.width = jacket ? (Wv / Math.max(sc, .77)).toFixed(1) + 'px' : ''; });  // 広げるのは 1.3 倍まで
       maxH = 0;
       ws.forEach(function(w){ maxH = Math.max(maxH, w.scrollHeight); });
       sc = maxH > avail && avail > 0 ? avail / maxH : 1;
