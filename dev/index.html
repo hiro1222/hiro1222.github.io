@@ -602,7 +602,7 @@ html[data-works="jacket"] .w-slide.is-on .w-jdisc .w-disc-in{animation:w-spin 4.
   html[data-works="jacket"] .w-stage > .w-slide.peek{transform:translate(4px, 30px) rotate(1.2deg)}
 }
 @media (prefers-reduced-motion: reduce){ html[data-works="jacket"] .w-slide.is-on .w-jdisc .w-disc-in{animation:none} }
-/* DEV-ONLY: 作品のトラックリスト（確認用だけ） */
+/* 作品のトラックリスト */
 /* 舞台の上に作品の一覧（色の点・番号・題）。押すとその作品へ飛ぶ。今の作品はカードと同じ生成りに。入りきらない時は横に送れる */
 .w-tl{position:absolute; z-index:6; top:calc(env(safe-area-inset-top, 0px) + var(--bar) + 12px); left:50%; transform:translateX(-50%); max-width:calc(100% - 24px); display:flex; align-items:center; gap:2px; padding:3px; border:1px solid rgba(236,230,218,.14); border-radius:999px; background:rgba(8,12,16,.6); overflow-x:auto; overscroll-behavior-x:contain; scrollbar-width:none; scroll-behavior:smooth; -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px)}
 .w-tl::-webkit-scrollbar{display:none}
@@ -620,12 +620,10 @@ html[data-works="jacket"].has-tl .w-stage > .w-slide{padding-top:calc(env(safe-a
   html[data-works="jacket"].has-tl .w-stage > .w-slide{padding-top:calc(env(safe-area-inset-top, 0px) + var(--bar) + 46px)}
 }
 @media (prefers-reduced-motion: reduce){ .w-tl{scroll-behavior:auto} }
-/* /DEV-ONLY */
-/* DEV-ONLY: 作品の横スライド（確認用だけ） */
+/* 作品の横スライド */
 /* 舞台の上の横の動きはブラウザに使わせない（JS が作品の切り替えに使う）。縦のスクロールと拡大はそのまま。札の列は横に流れる */
 .w-stage{touch-action:pan-y pinch-zoom}
 .w-tl{touch-action:pan-x pinch-zoom}
-/* /DEV-ONLY */
 /* DEV-ONLY: 作品の動画（確認用だけ） */
 /* 波形の帯の左の ▶（動画が無い作品は薄く「準備中」）。押すと画像の所に動画が出て音付きで流れ、波形が進み具合になる */
 .w-play{flex:none; display:flex; align-items:center; gap:8px; padding:0; border:0; background:none; color:var(--wa); font:inherit; cursor:pointer}
@@ -2493,7 +2491,7 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
       wdlg.scrollTop = 0;
     }, true);
   });
-  /* DEV-ONLY: 作品のトラックリスト（確認用だけ） */
+  // 作品のトラックリスト
   // 舞台の上に作品の一覧。押すとその作品へ飛ぶ（本人「見たいのだけ見る」ができるように）。今の作品に印
   var tl = document.createElement('nav'), tlItems = [];
   tl.className = 'w-tl';
@@ -2520,8 +2518,7 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
     if (tl.scrollWidth > tl.clientWidth + 1) tl.scrollLeft = tlItems[i].offsetLeft - (tl.clientWidth - tlItems[i].offsetWidth) / 2;
   }
   if ('MutationObserver' in window) slides.forEach(function(sl){ new MutationObserver(tlMark).observe(sl, {attributes: true, attributeFilter: ['class']}); });
-  /* /DEV-ONLY */
-  /* DEV-ONLY: 作品の横スライド（確認用だけ） */
+  // 作品の横スライド
   // 作品カードの上で横に動かすと作品が替わる（左へ＝次、右へ＝前）。スマホはスワイプ、PC はタッチパッドの横の動き（Shift＋ホイール）と ← → キー
   // 一覧（札の列）の上では列が流れるだけ（本人「一覧と作品カードは別に」）。舞台が止まっている間だけ
   function sideGo(dir){
@@ -2577,7 +2574,6 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
     if (performance.now() - lastShow < 450) return;
     sideGo(e.key === 'ArrowRight' ? 1 : -1);
   }, true);
-  /* /DEV-ONLY */
   fit();
   update();
 })();
