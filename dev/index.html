@@ -719,9 +719,9 @@ html[data-works="jacket"] .w-stage .w-play{color:var(--wa-ink)}
         </div>
       </div>
       <!-- DEV-ONLY: ミニマップ（確認用だけ） -->
-      <!-- ミニマップ：十字キーで歩くと、いる部屋の響きで足音が鳴る（中身は下の script）。
-           data-sound="idreal" で、Idreal で前もって計算した足音（audio/idreal-steps/）に切り替わる。synth は合成の足音と響き -->
-      <div class="smap" id="smap" data-sound="synth" role="group" aria-label="ミニマップ：歩くと、部屋ごとに足音の響きが変わります">
+      <!-- ミニマップ：歩くと、いる部屋の響きで足音が鳴る（中身は下の script）。
+           data-sound="idreal"：Idreal で前もって計算した足音と手拍子（audio/idreal-steps/・audio/idreal-claps/）。"synth" にすると前の合成の足音と響き -->
+      <div class="smap" id="smap" data-sound="idreal" role="group" aria-label="ミニマップ：歩くと、部屋ごとに足音の響きが変わります">
         <div class="sm-top">
           <p class="sm-lab">SOUND MAP</p>
           <button type="button" class="sm-mute" aria-pressed="false" aria-label="音を消す"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 6h3l4-3v10l-4-3H2z" fill="currentColor"/><path class="w" d="M11 5.5a3.5 3.5 0 0 1 0 5M12.8 3.8a6 6 0 0 1 0 8.4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><span class="t">ON</span></button>
@@ -1716,7 +1716,7 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
 </script>
 <!-- DEV-ONLY: ミニマップ（確認用だけ） -->
 <script>
-/* 01 ホーム：ミニマップ。十字キーで歩くと、いる部屋の響きで足音が鳴る（音は Web Audio でその場で作る） */
+/* 01 ホーム：ミニマップ。歩くと、いる部屋の響きで足音が鳴る（既定は Idreal で前もって計算した音。data-sound="synth" で Web Audio でその場で作る合成の音） */
 (function(){
   'use strict';
   var root = document.getElementById('smap');
@@ -1831,29 +1831,39 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
       rig = makeRig(ac);
     }
     if (ac.state === 'suspended') ac.resume();
-    if (idrOn()) idrInit();
+    if (idrOn()){ idrInit(); idrNear(); }
     return rig;
   }
 
-  // ---------- Idreal で焼いた足音（data-sound="idreal" の時） ----------
-  // マスごとに「そこに立って足もとで足音を鳴らした時の、素の音＋響き」を Idreal で前もって計算した mp3
-  // （C:\dev\Idreal\Projects\tools\portfolio_bake の bake_footmap → encode_footmap）。外は素の足音（dry）
-  var IDR_BASE = 'audio/idreal-steps/', idr = {map: null, loading: false, byTile: {}, buf: {}, lastId: ''};
+  // ---------- Idreal で焼いた音（data-sound="idreal" の時） ----------
+  // マスごとに「そこに立って足もとで鳴らした時の、素の音＋響き」を Idreal で前もって計算した mp3。足音と手拍子の 2 組
+  // （C:\dev\Idreal\Projects\tools\portfolio_bake の bake_footmap → encode_footmap。元の音は上の stepSound・clapSound と同じ作りの素の音）。外は素の音（dry）
+  // 2 組とも一番大きい山を -3 dBFS にそろえて焼いてあるので、手拍子は CLAP_VOL で合成の時と同じ大きさの比に戻す
+  var IDR = {step: 'audio/idreal-steps/', clap: 'audio/idreal-claps/'}, CLAP_VOL = .55;
+  var idr = {map: null, loading: false, byTile: {}, raw: {}, buf: {}, lastId: ''};
   function idrOn(){ return root.getAttribute('data-sound') === 'idreal'; }
-  function idrLoad(id){
-    if (idr.buf[id] || !ac) return;
-    idr.buf[id] = 'loading';
-    fetch(IDR_BASE + id + '.mp3').then(function(r){ if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); })
-      .then(function(a){ return new Promise(function(ok, ng){ ac.decodeAudioData(a, ok, ng); }); })
-      .then(function(b){ idr.buf[id] = b; }, function(){ delete idr.buf[id]; });
+  // mp3 の中身を取る（音の器ができる前から取っておける）
+  function idrFetch(kind, id){
+    var key = kind + ':' + id;
+    if (!idr.raw[key]) idr.raw[key] = fetch(IDR[kind] + id + '.mp3').then(function(r){ if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); });
+    return idr.raw[key];
   }
+  // 音にする（できあがるまでは Promise が入っている）
+  function idrLoad(kind, id){
+    var key = kind + ':' + id;
+    if (idr.buf[key] || !ac) return idr.buf[key];
+    idr.buf[key] = idrFetch(kind, id).then(function(a){ return new Promise(function(ok, ng){ ac.decodeAudioData(a.slice(0), ok, ng); }); })
+      .then(function(b){ idr.buf[key] = b; return b; }, function(){ delete idr.buf[key]; delete idr.raw[key]; return null; });
+    return idr.buf[key];
+  }
+  function ready(b){ return !!(b && b.getChannelData); }
   function idrInit(){
     if (idr.map || idr.loading) return;
     idr.loading = true;
-    fetch(IDR_BASE + 'map.json').then(function(r){ return r.json(); }).then(function(m){
+    fetch(IDR.step + 'map.json').then(function(r){ return r.json(); }).then(function(m){
       idr.map = m;
       m.points.forEach(function(q){ idr.byTile[q.tx + ',' + q.ty] = q.id; });
-      idrLoad('dry'); idrNear();
+      idrNear();
     }, function(){ idr.loading = false; });
   }
   // 今いる部屋のマス（戸口に立っている時は、部屋の中のいちばん近いマス）
@@ -1863,26 +1873,32 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
     tx = Math.max(R.box[0], Math.min(R.box[2], tx)); ty = Math.max(R.box[1], Math.min(R.box[3], ty));
     return idr.byTile[tx + ',' + ty] || 'dry';
   }
-  // まわり 2 マスを先に取っておく（戸口の向こうの部屋のマスも。入った最初の 1 歩に間に合うように）
+  // まわりを先に取っておく（戸口の向こうの部屋のマスも。入った最初の 1 歩に間に合うように）。器ができる前は中身だけ、まわり 1 マス
   function idrNear(){
-    var tx = Math.floor(me.x), ty = Math.floor(me.y), dx, dy, id;
-    for (dy = -2; dy <= 2; dy++) for (dx = -2; dx <= 2; dx++){
-      idrLoad(idrId(tx + dx, ty + dy));
+    if (!idr.map) return;
+    var tx = Math.floor(me.x), ty = Math.floor(me.y), r = ac ? 2 : 1, get = ac ? idrLoad : idrFetch, ids = ['dry'], dx, dy, id;
+    for (dy = -r; dy <= r; dy++) for (dx = -r; dx <= r; dx++){
+      ids.push(idrId(tx + dx, ty + dy));
       id = idr.byTile[(tx + dx) + ',' + (ty + dy)];
-      if (id) idrLoad(id);
+      if (id) ids.push(id);
     }
+    ids.forEach(function(q){ get('step', q); get('clap', q); });
   }
-  function idrStep(foot){
-    var id = idrId(Math.floor(me.x), Math.floor(me.y)), b = idr.buf[id];
+  // 鳴らす。まだ届いていない時、足音は素の音で代わりに、手拍子は少しだけ（0.3 秒まで）待つ
+  function idrPlay(kind, pan, vol){
+    var id = idrId(Math.floor(me.x), Math.floor(me.y)), b = idrLoad(kind, id), dry = idrLoad(kind, 'dry'), t0 = performance.now();
     idrNear();
-    if (!b || typeof b === 'string'){ id = 'dry'; b = idr.buf.dry; }  // まだ届いていない時は素の足音
-    if (!b || typeof b === 'string') return;
+    if (ready(b)) return idrStart(b, pan, vol, id);
+    if (kind === 'step'){ if (ready(dry)) idrStart(dry, pan, vol, 'dry'); return; }
+    if (b && b.then) b.then(function(x){ if (ready(x) && performance.now() - t0 < 300) idrStart(x, pan, vol, id); });
+  }
+  function idrStart(b, pan, vol, id){
     var c = rig.ctx, src = c.createBufferSource(), gn = c.createGain(), out = gn;
     src.buffer = b;
     if (src.detune) src.detune.value = (Math.random() - .5) * 60;
-    gn.gain.value = .85 + Math.random() * .2;
+    gn.gain.value = vol;
     src.connect(gn);
-    if (c.createStereoPanner){ var pn = c.createStereoPanner(); pn.pan.value = foot ? .08 : -.08; gn.connect(pn); out = pn; }
+    if (pan && c.createStereoPanner){ var pn = c.createStereoPanner(); pn.pan.value = pan; gn.connect(pn); out = pn; }
     out.connect(rig.out);
     src.start(c.currentTime + .005);
     idr.lastId = id;
@@ -2026,13 +2042,16 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
     me.foot ^= 1;
     var here = at(Math.floor(me.x), Math.floor(me.y)), surf = (ROOMS[here] || ROOMS[room]).surf;
     if (rig && !muted){
-      if (idrOn()){ idrInit(); if (idr.map) idrStep(me.foot); }
+      if (idrOn()){ idrInit(); if (idr.map) idrPlay('step', me.foot ? .08 : -.08, .85 + Math.random() * .2); }
       else stepSound(rig, room, surf, rig.ctx.currentTime + .005, me.foot);
     }
     ring(.6, 1);
   }
   function clap(){
-    if (rig && !muted) clapSound(rig, room, rig.ctx.currentTime + .005);
+    if (rig && !muted){
+      if (idrOn()){ idrInit(); if (idr.map) idrPlay('clap', 0, CLAP_VOL); }
+      else clapSound(rig, room, rig.ctx.currentTime + .005);
+    }
     ring(.9, 2); clapT = .25;
     btnA.classList.add('on'); setTimeout(function(){ btnA.classList.remove('on'); }, 120);
     kick();
@@ -2164,6 +2183,7 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
   muteBtn.addEventListener('click', function(){ setMute(!muted); if (!muted) ensureAudio(); });
   setMute(muted);
   showRoom(false);
+  if (idrOn()) idrInit();  // 地図と、立っているまわりの音の中身を先に取っておく
   fitRes();
   draw();
   window.addEventListener('resize', fitRes);
