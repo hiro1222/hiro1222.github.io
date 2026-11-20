@@ -617,6 +617,39 @@ html[data-works="jacket"] .w-stage .w-play{color:var(--wa-ink)}
 .w-shot video{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; background:#000; cursor:pointer}
 .w-wave canvas{cursor:pointer}
 /* /DEV-ONLY */
+/* DEV-ONLY: 舞台の盤（確認用だけ） */
+/* 盤は舞台に 1 枚だけ。カードの下（重なりの一番下）にいつもあって、今のカードの右からのぞいて回る。切り替えの間も出たまま
+   （カードごとに盤を持つと、ほかのカードに重なって欠けて見えた）。ラベルの色は今の作品の色 */
+.w-sdisc{display:none}
+@media (min-width:861px){
+  html[data-works="jacket"] .w-sdisc{display:block; position:absolute; z-index:0; left:0; top:0; width:300px; height:300px; pointer-events:none}
+  html[data-works="jacket"] .w-sdisc .w-disc-in{animation:w-spin 4.5s linear infinite}
+  html[data-works="jacket"] .w-sdisc::after{content:""; position:absolute; inset:0; border-radius:50%; background:conic-gradient(from 200deg, transparent 0 8%, rgba(255,255,255,.08) 13%, transparent 19% 58%, rgba(255,255,255,.06) 63%, transparent 69%)}
+}
+html[data-works="jacket"] .w-jdisc{display:none!important}
+@media (prefers-reduced-motion: reduce){ html[data-works="jacket"] .w-sdisc .w-disc-in{animation:none} }
+/* /DEV-ONLY */
+/* DEV-ONLY: ミニゲームの丸い操作（確認用だけ） */
+/* PC は地図の下に丸い棒（倒した向きに一番近い上下左右へ歩く、端まで倒すと走る）と A。スマホは横の操作を無くして地図を大きくし、
+   地図に触れた所に丸が出て、なぞった向き（上下左右）へ歩く（タップで手をたたく）。斜めには歩かない（人の向きが 4 つなので） */
+.sm-screen{position:relative}
+.sm-screen canvas{touch-action:none}
+.sm-float{position:absolute; left:0; top:0; z-index:2; width:84px; height:84px; margin:-42px 0 0 -42px; border-radius:50%; border:2px solid rgba(29,92,120,.6); background:rgba(29,92,120,.12); pointer-events:none; display:none}
+.sm-float.on{display:block}
+.sm-float i{position:absolute; left:50%; top:50%; width:34px; height:34px; margin:-17px 0 0 -17px; border-radius:50%; background:rgba(29,92,120,.72)}
+.sm-stick{position:relative; flex:none; width:96px; height:96px; border-radius:50%; background:#1B2731; box-shadow:inset 0 0 0 2px #2C3B46, 0 2px 0 #05080B; touch-action:none; cursor:pointer}
+.sm-knob{position:absolute; left:50%; top:50%; width:42px; height:42px; margin:-21px 0 0 -21px; border-radius:50%; background:#3A4E5C; box-shadow:0 2px 0 #05080B, inset 0 0 0 2px #4C6475; transition:transform .1s ease-out}
+.sm-stick.on .sm-knob{background:var(--accent-hi); transition:none}
+.sm-btn:last-child{margin-top:0}
+.sm-tp{display:none}
+@media (max-width:860px){
+  .smap{--map:clamp(200px, calc(100vw - 80px), 290px)}
+  .sm-body{grid-template-columns:auto}
+  .sm-pad{display:none}
+  .sm-tp{display:inline}
+  .sm-hint{max-width:calc(var(--map) + 12px)}
+}
+/* /DEV-ONLY */
 </style>
 </head>
 <body>
@@ -667,7 +700,7 @@ html[data-works="jacket"] .w-stage .w-play{color:var(--wa-ink)}
       <!-- DEV-ONLY: ミニマップ（確認用だけ） -->
       <!-- ミニマップ：十字キーで歩くと、いる部屋の響きで足音が鳴る（中身は下の script）。
            data-sound="idreal" で、Idreal で前もって計算した足音（audio/idreal-steps/）に切り替わる。synth は合成の足音と響き -->
-      <div class="smap" id="smap" data-sound="synth" role="group" aria-label="ミニマップ：十字キーで歩くと、部屋ごとに足音の響きが変わります">
+      <div class="smap" id="smap" data-sound="synth" role="group" aria-label="ミニマップ：歩くと、部屋ごとに足音の響きが変わります">
         <div class="sm-top">
           <p class="sm-lab">SOUND MAP</p>
           <button type="button" class="sm-mute" aria-pressed="false" aria-label="音を消す"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 6h3l4-3v10l-4-3H2z" fill="currentColor"/><path class="w" d="M11 5.5a3.5 3.5 0 0 1 0 5M12.8 3.8a6 6 0 0 1 0 8.4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><span class="t">ON</span></button>
@@ -678,14 +711,13 @@ html[data-works="jacket"] .w-stage .w-play{color:var(--wa-ink)}
             <p class="sm-room" aria-live="polite"><span class="sm-rn">大広間</span><span class="sm-rt">響き 2.4 秒</span></p>
           </div>
           <div class="sm-pad">
-            <div class="sm-dpad" aria-hidden="true"><span class="sm-up"></span><span class="sm-right"></span><span class="sm-down"></span><span class="sm-left"></span><span class="sm-mid"></span></div>
+            <div class="sm-stick" aria-hidden="true"><span class="sm-knob"></span></div>
             <div class="sm-ab">
-              <div class="sm-btn"><button type="button" class="sm-b" aria-label="B：押しながら走る">B</button><span>走る</span></div>
               <div class="sm-btn"><button type="button" class="sm-a" aria-label="A：手をたたく">A</button><span>たたく</span></div>
             </div>
           </div>
         </div>
-        <p class="sm-hint">足音はどこも同じ。変わるのは場所の響きだけ<span class="nw">（音が出ます）</span><span class="sm-kb">キーボード：地図をクリックして 矢印キー・Z・X</span></p>
+        <p class="sm-hint"><span class="sm-tp">地図をなぞった向き（上下左右）に歩きます（大きく引くと走る・タップで手をたたく）<br></span>足音はどこも同じ。変わるのは場所の響きだけ<span class="nw">（音が出ます）</span><span class="sm-kb">キーボード：地図をクリックして 矢印キー・Z・X</span></p>
       </div>
       <!-- /DEV-ONLY -->
     </div>
@@ -1665,7 +1697,7 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
   if (!root) return;
   var cv = root.querySelector('canvas'), g = cv.getContext('2d');
   var hud = root.querySelector('.sm-room'), hudName = root.querySelector('.sm-rn'), hudRt = root.querySelector('.sm-rt');
-  var pad = root.querySelector('.sm-dpad'), btnA = root.querySelector('.sm-a'), btnB = root.querySelector('.sm-b'), muteBtn = root.querySelector('.sm-mute');
+  var btnA = root.querySelector('.sm-a'), muteBtn = root.querySelector('.sm-mute');
   var reduce = false;
   try{ reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){}
 
@@ -1881,7 +1913,7 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
   var SPR = {"down0":["..kkkkkk..",".kppppppk.",".khhhhhhk.","pkhhhhhhkp","pksssssskp","pksesseskp",".kssssssk.","..kkkkkk..",".kooooook.","ksooooooks",".kOOOOOOk.","..knnnnk..","..knkknk..","..bb..bb.."],"up0":["..kkkkkk..",".kppppppk.",".khhhhhhk.","pkhhhhhhkp","pkhhhhhhkp","pkhhhhhhkp",".khhhhhhk.","..kkkkkk..",".kooooook.","ksooooooks",".kOOOOOOk.","..knnnnk..","..knkknk..","..bb..bb.."],"right0":["..kkkkkk..",".kppppppk.",".khhhhhhk.",".khpphssk.",".khpphssk.",".khpphsek.","..khhssk..","..kkkkkk..","..kooook..","..koosok..","..kOOOOk..","..knnnnk..","..knnnnk..","...bbbbb.."],"left0":["..kkkkkk..",".kppppppk.",".khhhhhhk.",".ksshpphk.",".ksshpphk.",".keshpphk.","..ksshhk..","..kkkkkk..","..kooook..","..kosook..","..kOOOOk..","..knnnnk..","..knnnnk..","..bbbbb..."],"down1":["..kkkkkk..",".kppppppk.",".khhhhhhk.","pkhhhhhhkp","pksssssskp","pksesseskp",".kssssssk.","..kkkkkk..",".kooooook.","ksooooooks",".kOOOOOOk.","..knnnnk..","..knkkbb..","..bb......"],"up1":["..kkkkkk..",".kppppppk.",".khhhhhhk.","pkhhhhhhkp","pkhhhhhhkp","pkhhhhhhkp",".khhhhhhk.","..kkkkkk..",".kooooook.","ksooooooks",".kOOOOOOk.","..knnnnk..","..knkkbb..","..bb......"],"right1":["..kkkkkk..",".kppppppk.",".khhhhhhk.",".khpphssk.",".khpphssk.",".khpphsek.","..khhssk..","..kkkkkk..","..kooook..","..koosok..","..kOOOOk..","..knnnnk..","..kn..nk..",".bb....bb."],"left1":["..kkkkkk..",".kppppppk.",".khhhhhhk.",".ksshpphk.",".ksshpphk.",".keshpphk.","..ksshhk..","..kkkkkk..","..kooook..","..kosook..","..kOOOOk..","..knnnnk..","..kn..nk..",".bb....bb."],"down2":["..kkkkkk..",".kppppppk.",".khhhhhhk.","pkhhhhhhkp","pksssssskp","pksesseskp",".kssssssk.","..kkkkkk..",".kooooook.","ksooooooks",".kOOOOOOk.","..knnnnk..","..bbkknk..","......bb.."],"up2":["..kkkkkk..",".kppppppk.",".khhhhhhk.","pkhhhhhhkp","pkhhhhhhkp","pkhhhhhhkp",".khhhhhhk.","..kkkkkk..",".kooooook.","ksooooooks",".kOOOOOOk.","..knnnnk..","..bbkknk..","......bb.."],"right2":["..kkkkkk..",".kppppppk.",".khhhhhhk.",".khpphssk.",".khpphssk.",".khpphsek.","..khhssk..","..kkkkkk..","..kooook..","..koosok..","..kOOOOk..","..knnnnk..","..knnnnk..","...bbbbb.."],"left2":["..kkkkkk..",".kppppppk.",".khhhhhhk.",".ksshpphk.",".ksshpphk.",".keshpphk.","..ksshhk..","..kkkkkk..","..kooook..","..kosook..","..kOOOOk..","..knnnnk..","..knnnnk..","..bbbbb..."]};
   var PAL = {"k": "#0B1116", "h": "#3A3F4B", "s": "#F1C9A5", "e": "#0B1116", "p": "#7DB8D1", "o": "#D9774C", "O": "#A9552F", "n": "#2C3E57", "b": "#161B21"};
   var me = {x: 5.5, y: 8.6, face: 'down', frame: 0, ft: 0, moving: false, foot: 0};
-  var room = 'H', held = [], run = false, stepT = .05, rings = [], clapT = 0, last = 0, rafOn = false;
+  var room = 'H', held = [], stick = {x: 0, y: 0, on: false}, run = false, stepT = .05, rings = [], clapT = 0, last = 0, rafOn = false;
   var DIRS = {up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0]};
   function solid(x, y){ var c = at(x, y); return c === '#' || c === 'T'; }
   function hits(x, y){
@@ -1889,26 +1921,40 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
     return solid(Math.floor(x - hw), Math.floor(y - hh)) || solid(Math.floor(x + hw), Math.floor(y - hh)) ||
            solid(Math.floor(x - hw), Math.floor(y + hh)) || solid(Math.floor(x + hw), Math.floor(y + hh));
   }
+  // 今の向き（上下左右だけ。長さ 0〜1）：丸い棒・地図をなぞる指は一番近い上下左右へ、なければ最後に押したキー
+  function vec(){
+    if (stick.on){
+      var ax = Math.abs(stick.x), ay = Math.abs(stick.y), m = Math.max(ax, ay);
+      if (m < .3) return {x: 0, y: 0};
+      return ax > ay ? {x: stick.x > 0 ? m : -m, y: 0} : {x: 0, y: stick.y > 0 ? m : -m};
+    }
+    var d = DIRS[held[held.length - 1]];
+    return d ? {x: d[0], y: d[1]} : {x: 0, y: 0};
+  }
   function move(dt){
-    var key = held[held.length - 1], d = DIRS[key];
-    if (!d){ me.moving = false; return; }
-    me.face = key;
-    var sp = (run ? 4.6 : 2.7) * dt, nx = me.x + d[0] * sp, ny = me.y + d[1] * sp, s, c0;
+    var v = vec(), m = Math.sqrt(v.x * v.x + v.y * v.y);
+    if (m < .15){ me.moving = false; return; }
+    var dx = v.x / m, dy = v.y / m, fast = run || (stick.on && m > .85);
+    me.face = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'right' : 'left') : (dy > 0 ? 'down' : 'up');
+    var sp = (fast ? 4.6 : 2.7) * dt, nx = me.x + dx * sp, ny = me.y + dy * sp, s, c0;
+    me.moving = false;
     if (!hits(nx, ny)){ me.x = nx; me.y = ny; me.moving = true; }
     else {
-      // 戸口の角に引っかかったら、通れる方へ少しずらす
-      me.moving = false;
-      if (d[0] === 0){ c0 = Math.floor(me.x); if (!solid(c0, Math.floor(me.y + d[1] * .6))){ s = c0 + .5 - me.x; s = Math.sign(s) * Math.min(Math.abs(s), sp); if (s && !hits(me.x + s, me.y)){ me.x += s; me.moving = true; } } }
-      else { c0 = Math.floor(me.y); if (!solid(Math.floor(me.x + d[0] * .6), c0)){ s = c0 + .5 - me.y; s = Math.sign(s) * Math.min(Math.abs(s), sp); if (s && !hits(me.x, me.y + s)){ me.y += s; me.moving = true; } } }
+      // 壁に沿ってすべる（斜めに当たった時）
+      if (Math.abs(dx) > .2 && !hits(nx, me.y)){ me.x = nx; me.moving = true; }
+      else if (Math.abs(dy) > .2 && !hits(me.x, ny)){ me.y = ny; me.moving = true; }
+      // 戸口の角に引っかかったら、通れる方へ少しずらす（ほぼまっすぐの時）
+      else if (Math.abs(dx) < .4){ c0 = Math.floor(me.x); if (!solid(c0, Math.floor(me.y + (dy > 0 ? .6 : -.6)))){ s = c0 + .5 - me.x; s = Math.sign(s) * Math.min(Math.abs(s), sp); if (s && !hits(me.x + s, me.y)){ me.x += s; me.moving = true; } } }
+      else if (Math.abs(dy) < .4){ c0 = Math.floor(me.y); if (!solid(Math.floor(me.x + (dx > 0 ? .6 : -.6)), c0)){ s = c0 + .5 - me.y; s = Math.sign(s) * Math.min(Math.abs(s), sp); if (s && !hits(me.x, me.y + s)){ me.y += s; me.moving = true; } } }
     }
     var here = at(Math.floor(me.x), Math.floor(me.y));
     if (ROOMS[here] && here !== room){ room = here; showRoom(true); }
     if (me.moving){
       me.ft += dt;
-      var fi = run ? .09 : .14;
+      var fi = fast ? .09 : .14;
       if (me.ft >= fi){ me.ft -= fi; me.frame = me.frame === 1 ? 2 : 1; }
       stepT -= dt;
-      if (stepT <= 0){ stepT += run ? .26 : .40; step(); }
+      if (stepT <= 0){ stepT += fast ? .26 : .40; step(); }
     }
   }
   function step(){
@@ -1958,7 +2004,7 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
     rings.forEach(function(r){ r.t += dt; });
     clapT -= dt;
     draw();
-    if (held.length || rings.length || clapT > 0) requestAnimationFrame(tick);
+    if (active() || rings.length || clapT > 0) requestAnimationFrame(tick);
     else { rafOn = false; me.moving = false; me.frame = 0; draw(); }
   }
   function kick(){ if (!rafOn){ rafOn = true; last = performance.now(); requestAnimationFrame(tick); } }
@@ -1970,27 +2016,55 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
   }
 
   // ---------- 操作 ----------
-  function press(d){ var i = held.indexOf(d); if (i >= 0) held.splice(i, 1); held.push(d); if (held.length === 1) stepT = .05; kick(); }
+  function active(){ return stick.on || held.length > 0; }
+  function press(d){ var was = active(), i = held.indexOf(d); if (i >= 0) held.splice(i, 1); held.push(d); if (!was) stepT = .05; kick(); }
   function release(d){ var i = held.indexOf(d); if (i >= 0) held.splice(i, 1); }
-  function releaseAll(){ held.length = 0; setPad(null); padId = null; run = false; btnB.classList.remove('on'); }
-  // 十字キー：押した所から真ん中への向きで決める（指を滑らせても向きが変わる）
-  var padDir = null, padId = null;
-  function padAt(e){
-    var r = pad.getBoundingClientRect(), dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2);
-    if (dx * dx + dy * dy < 49) return padDir;
-    return Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'right' : 'left') : (dy > 0 ? 'down' : 'up');
+  function setStick(x, y){ var was = active(); stick.x = x; stick.y = y; if (!stick.on){ stick.on = true; if (!was) stepT = .05; } kick(); }
+  function endStick(){ stick.on = false; stick.x = stick.y = 0; }
+  function releaseAll(){ held.length = 0; endStick(); knob(0, 0); fl.classList.remove('on'); stickEl && stickEl.classList.remove('on'); run = false; }
+  // 丸い棒（PC）：真ん中からの向きと長さで歩く。端まで倒すと走る
+  var stickEl = root.querySelector('.sm-stick'), knobEl = stickEl && stickEl.querySelector('.sm-knob'), stId = null;
+  function knob(x, y){ if (knobEl) knobEl.style.transform = 'translate(' + (x * 27).toFixed(1) + 'px, ' + (y * 27).toFixed(1) + 'px)'; }
+  function stickAt(e){
+    var r = stickEl.getBoundingClientRect(), x = (e.clientX - (r.left + r.width / 2)) / (r.width * .32), y = (e.clientY - (r.top + r.height / 2)) / (r.height * .32), m = Math.sqrt(x * x + y * y);
+    if (m > 1){ x /= m; y /= m; }
+    knob(x, y); setStick(x, y);
   }
-  function setPad(d){ if (d === padDir) return; if (padDir) release(padDir); padDir = d; if (d) press(d); pad.setAttribute('data-on', d || ''); }
-  pad.addEventListener('pointerdown', function(e){
-    e.preventDefault(); ensureAudio(); padId = e.pointerId;
-    try{ pad.setPointerCapture(e.pointerId); }catch(err){}
-    setPad(padAt(e));
+  if (stickEl){
+    stickEl.addEventListener('pointerdown', function(e){ e.preventDefault(); ensureAudio(); stId = e.pointerId; try{ stickEl.setPointerCapture(e.pointerId); }catch(err){} stickEl.classList.add('on'); stickAt(e); });
+    stickEl.addEventListener('pointermove', function(e){ if (e.pointerId === stId) stickAt(e); });
+    ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(function(t){ stickEl.addEventListener(t, function(e){ if (e.pointerId === stId){ stId = null; stickEl.classList.remove('on'); knob(0, 0); endStick(); } }); });
+  }
+  // 地図をなぞる：触れた所に丸が出て、なぞった向きへ歩く（離すと止まる）。動かさずに離したら手をたたく
+  var scr = root.querySelector('.sm-screen'), fl = document.createElement('div'), flId = null, fl0 = null;
+  fl.className = 'sm-float';
+  fl.innerHTML = '<i></i>';
+  scr.appendChild(fl);
+  cv.addEventListener('pointerdown', function(e){
+    e.preventDefault(); ensureAudio(); flId = e.pointerId;
+    try{ cv.setPointerCapture(e.pointerId); }catch(err){}
+    var r = scr.getBoundingClientRect();
+    fl0 = {x: e.clientX, y: e.clientY, t: performance.now(), moved: false};
+    fl.style.left = (e.clientX - r.left) + 'px'; fl.style.top = (e.clientY - r.top) + 'px';
+    fl.querySelector('i').style.transform = '';
+    fl.classList.add('on');
   });
-  pad.addEventListener('pointermove', function(e){ if (e.pointerId === padId) setPad(padAt(e)); });
-  ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(function(t){ pad.addEventListener(t, function(e){ if (e.pointerId === padId){ padId = null; setPad(null); } }); });
+  cv.addEventListener('pointermove', function(e){
+    if (e.pointerId !== flId || !fl0) return;
+    var x = (e.clientX - fl0.x) / 34, y = (e.clientY - fl0.y) / 34, m = Math.sqrt(x * x + y * y);
+    if (m > .25) fl0.moved = true;
+    if (!fl0.moved) return;
+    if (m > 1){ x /= m; y /= m; }
+    fl.querySelector('i').style.transform = 'translate(' + (x * 25).toFixed(1) + 'px, ' + (y * 25).toFixed(1) + 'px)';
+    setStick(x, y);
+  });
+  ['pointerup', 'pointercancel'].forEach(function(t){ cv.addEventListener(t, function(e){
+    if (e.pointerId !== flId) return;
+    var tap = t === 'pointerup' && fl0 && !fl0.moved && performance.now() - fl0.t < 300;
+    flId = null; fl0 = null; fl.classList.remove('on'); endStick();
+    if (tap) clap();
+  }); });
   btnA.addEventListener('pointerdown', function(e){ e.preventDefault(); ensureAudio(); clap(); });
-  btnB.addEventListener('pointerdown', function(e){ e.preventDefault(); ensureAudio(); run = true; btnB.classList.add('on'); try{ btnB.setPointerCapture(e.pointerId); }catch(err){} });
-  ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(function(t){ btnB.addEventListener(t, function(){ run = false; btnB.classList.remove('on'); }); });
   root.addEventListener('contextmenu', function(e){ if (e.target.closest('.sm-pad')) e.preventDefault(); });
   // キーボード：地図（かボタン）を選んでいる時だけ。矢印・WASD で歩く、Z・Space で手をたたく、X・Shift で走る
   var KEYS = {ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right', w: 'up', s: 'down', a: 'left', d: 'right'};
@@ -1999,12 +2073,12 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
     var k = e.key.length === 1 ? e.key.toLowerCase() : e.key, d = KEYS[k];
     if (d){ e.preventDefault(); if (!e.repeat){ ensureAudio(); press(d); } }
     else if (k === 'z' || k === ' ' || k === 'Enter'){ e.preventDefault(); if (!e.repeat){ ensureAudio(); clap(); } }
-    else if (k === 'x' || k === 'Shift'){ if (!e.repeat){ ensureAudio(); run = true; btnB.classList.add('on'); } }
+    else if (k === 'x' || k === 'Shift'){ if (!e.repeat){ ensureAudio(); run = true; } }
   });
   root.addEventListener('keyup', function(e){
     var k = e.key.length === 1 ? e.key.toLowerCase() : e.key, d = KEYS[k];
     if (d) release(d);
-    if (k === 'x' || k === 'Shift'){ run = false; btnB.classList.remove('on'); }
+    if (k === 'x' || k === 'Shift'){ run = false; }
   });
   root.addEventListener('focusout', function(e){ if (!root.contains(e.relatedTarget)) releaseAll(); });
   window.addEventListener('blur', releaseAll);
@@ -2142,6 +2216,11 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
   stage.className = 'w-stage';
   secs[0].parentNode.insertBefore(pin, secs[0]);
   pin.appendChild(stage);
+  var sdisc = document.createElement('div');
+  sdisc.className = 'w-sdisc';
+  sdisc.setAttribute('aria-hidden', 'true');
+  sdisc.innerHTML = '<div class="w-disc-in"></div>';
+  stage.appendChild(sdisc);
   var slides0 = 0, H = 0, VW = 0;
   pin.style.setProperty('--n', secs.length);
   // 舞台の高さ＝アドレスバーが出ている時の画面の高さ（100svh）と今の高さの小さい方。どの時でも MORE まで見えるように
@@ -2249,6 +2328,7 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
     else { leave(slides[cur], dir); come(slides[i], dir); }
     cur = i;
     lastShow = performance.now();
+    setTimeout(placeDisc, 260);
   }
   // ジャケット：次へ＝上のカードが左上へ抜け、下からのぞいていたカードが持ち上がる。新しく次のカードが下に入る。
   // 前へ＝前のカードが左上から戻ってきて重なり、今のカードは下へ回ってのぞく側になる
@@ -2373,7 +2453,7 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
   function fit(){
     var ws = slides.map(function(sl){ return sl.querySelector('.wrap'); }).filter(Boolean), maxH = 0, sc = 1, k;
     var cs = getComputedStyle(slides[0]), avail = slides[0].clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
-    var jacket = mode() === 'jacket', sw = stage.clientWidth, Wv = sw <= 860 ? sw - 10 : Math.min(1080, sw - 96);
+    var jacket = mode() === 'jacket', sw = stage.clientWidth, Wv = sw <= 860 ? sw - 10 : sw < 1100 ? sw - 120 : Math.min(980, sw - 240);
     for (k = 0; k < (jacket ? 3 : 1); k++){
       ws.forEach(function(w){ w.style.transform = ''; w.style.minHeight = ''; w.style.width = jacket ? (Wv / Math.max(sc, .77)).toFixed(1) + 'px' : ''; });  // 広げるのは 1.3 倍まで
       maxH = 0;
@@ -2381,6 +2461,8 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
       sc = maxH > avail && avail > 0 ? avail / maxH : 1;
     }
     ws.forEach(function(w){ w.style.minHeight = maxH + 'px'; if (sc < 1) w.style.transform = 'scale(' + sc.toFixed(3) + ')'; });
+    lastSc = sc;
+    placeDisc();
     // ジャケットの盤の出る長さ：縮めた後の見た目で、カードの横の余白まで（盤の幅の 32% を上限に）
     var vw = stage.clientWidth;
     slides.forEach(function(sl){
@@ -2391,6 +2473,19 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
     });
   }
   window.addEventListener('resize', function(){ if (measure(false)){ fit(); update(); } });
+  // 舞台の盤：今のカードの見た目の右に、盤の幅の 52% まで（カードの横の余白まで）出す。ラベルは今の作品の色
+  var lastSc = 1;
+  function placeDisc(){
+    if (cur < 0 || !slides[cur]) return;
+    var w = slides[cur].querySelector('.wrap');
+    if (!w) return;
+    var vwid = w.offsetWidth * lastSc, vh = w.offsetHeight * lastSc, vl = w.offsetLeft + (w.offsetWidth - vwid) / 2, vt = w.offsetTop + (w.offsetHeight - vh) / 2;
+    var size = vh * .52, margin = stage.clientWidth - (vl + vwid), jp = Math.max(0, Math.min(margin - 16, size * .52));
+    sdisc.style.width = sdisc.style.height = size.toFixed(1) + 'px';
+    sdisc.style.left = (vl + vwid + jp - size).toFixed(1) + 'px';
+    sdisc.style.top = (vt + vh * .22).toFixed(1) + 'px';
+    sdisc.style.setProperty('--wa', getComputedStyle(slides[cur]).getPropertyValue('--wa').trim());
+  }
   window.addEventListener('load', fit);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
   // MORE：もとの仕組みはもとの節を見ているので、舞台の作品から窓を開く形に差し替える
