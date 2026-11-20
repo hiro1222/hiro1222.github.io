@@ -516,13 +516,15 @@ html.dlg-open{overflow:hidden}
 .w-stage .w-acts{margin-top:auto; padding-top:24px}
 /* 舞台の中は 861 px から 2 列（画像の横に文字）。作品の本体は 1024 px からなので、861〜1023 は並べ方ごと決める。1100 px までは文字の列を広く */
 @media (min-width:861px) and (max-width:1100px){
-  .w-stage .w-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr); grid-template-areas:"shot head" "shot detail"; column-gap:28px; row-gap:0}
-  .w-stage .w-media{align-self:center}
+  .w-stage .w-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr); column-gap:28px}
 }
 @media (min-width:861px){
-  .w-stage .w-grid{grid-template-rows:auto minmax(0,1fr)}
-  .w-stage .w-head{align-self:start}
+  /* 左の列に 番号・題 → 画像、右の列に 表 → MORE（本人「番号と題は作品画像の上に」） */
+  .w-stage .w-grid{grid-template-areas:"head detail" "shot detail"; grid-template-rows:auto minmax(0,1fr); row-gap:16px}
+  .w-stage .w-head{align-self:end}
+  .w-stage .w-media{align-self:start}
   .w-stage .w-detail{align-self:stretch}
+  .w-stage .w-detail .w-facts{margin-top:6px}
 }
 @media (max-width:860px){
   .w-stage .w-grid{grid-template-rows:auto auto minmax(0,1fr)}
