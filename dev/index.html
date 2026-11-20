@@ -2053,7 +2053,7 @@ html[data-works="film"] .w-flash{display:block; position:absolute; inset:0; z-in
 <!-- /DEV-ONLY -->
 <!-- DEV-ONLY: 作品の切り替え（レコード／フィルム、確認用だけ） -->
 <script>
-// 作品を画面に止めた舞台の上で入れ替える。スクロールは今までどおり（ホイール・キー・指）で、作品の場所の半分を過ぎたら次の作品が「来る」。
+// 作品を画面に止めた舞台の上で入れ替える。スクロールは今までどおり（ホイール・キー・指）で、作品の場所の半分を過ぎたら次の作品が「来る」。プロフィール・連絡先との行き来は普通のスクロール（切り替えの動きは作品どうしの間だけ）。
 // 動きは レコード（盤が戻ってジャケットが抜け、次のジャケットが入って盤が出る）／フィルム（コマが横へ送られる）／なし（重ねて切り替え）
 (function(){
   var html = document.documentElement, reduce = false, KEY = 'dev-works';
@@ -2174,16 +2174,6 @@ html[data-works="film"] .w-flash{display:block; position:absolute; inset:0; z-in
       wasPinned = pn;
     });
   }, {passive: true});
-  // 上のプロフィールから・下の連絡先から入ってきた時にも、来る動きを 1 回
-  if ('IntersectionObserver' in window){
-    var ends = [secs[0], secs[secs.length - 1]], inside = false;
-    var io = new IntersectionObserver(function(es){
-      var r = pin.getBoundingClientRect(), now = r.top < window.innerHeight * .5 && r.bottom > window.innerHeight * .5;
-      if (now && !inside && performance.now() - lastShow > 900 && cur >= 0) come(slides[cur], r.top > -10 ? 1 : -1);
-      inside = now;
-    }, {threshold: [0, .25, .5, .75, 1]});
-    ends.forEach(function(x){ io.observe(x); });
-  }
   // 舞台に着いた後、見えない所で今の作品の場所の頭へそろえる（着いた勢いで少し奥へ入っていると、上へ戻るのに余分に回すことになるので）
   var anchorT = 0, touching = false;
   window.addEventListener('touchstart', function(){ touching = true; }, {passive: true});
