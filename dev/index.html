@@ -555,6 +555,43 @@ html[data-works="film"] .w-flash{display:block; position:absolute; inset:0; z-in
 }
 @media (prefers-reduced-motion: reduce){ html[data-works="record"] .p-work.is-on .w-disc-in{animation:none} }
 /* /DEV-ONLY */
+/* DEV-ONLY: ジャケット風のカード（確認用だけ） */
+/* 作品 1 つ＝生成りの紙のジャケット 1 枚。次の作品のカードが右下からのぞき、切り替えると上のカードが左上へ抜けて下のカードが持ち上がる */
+html[data-works="jacket"] .w-stage{background:#121C25}
+html[data-works="jacket"] .w-stage > .w-slide{background:none; padding-bottom:64px}
+html[data-works="jacket"] .w-stage > .w-slide > .bg{display:none}
+html[data-works="jacket"] .w-stage > .w-slide > .wrap{position:relative; isolation:isolate; width:min(1080px, calc(100% - 96px)); max-width:none; margin:0 auto; padding:26px 32px 30px; color:#2B2620; --wa-ink:color-mix(in srgb, var(--wa) 58%, #1E1A16)}
+html[data-works="jacket"] .w-stage > .w-slide > .wrap::before{content:""; position:absolute; inset:0; z-index:-1; border-radius:10px; background:#ECE6DA; box-shadow:0 26px 60px rgba(0,0,0,.5), inset 0 0 0 1px rgba(255,255,255,.5)}
+html[data-works="jacket"] .w-stage > .w-slide.on{z-index:3}
+html[data-works="jacket"] .w-stage > .w-slide.peek{visibility:visible; z-index:1; transform:translate(24px, 38px) rotate(2deg); filter:brightness(.55)}
+html[data-works="jacket"] .w-stage .w-head .eyebrow, html[data-works="jacket"] .w-stage .w-facts dt, html[data-works="jacket"] .w-stage .w-wave-lab{color:var(--wa-ink)}
+html[data-works="jacket"] .w-stage .w-idx{color:#7A6E60}
+html[data-works="jacket"] .w-stage h2{color:#211D18}
+html[data-works="jacket"] .w-stage .w-wip{border-color:var(--wa-ink); color:var(--wa-ink)}
+html[data-works="jacket"] .w-stage .w-facts{border-top:1px solid rgba(43,38,32,.28)}
+html[data-works="jacket"] .w-stage .w-facts div{border-bottom:1px dotted rgba(43,38,32,.3)}
+html[data-works="jacket"] .w-stage .w-facts dd{color:#3A332B}
+html[data-works="jacket"] .w-stage .w-shot{border-color:rgba(43,38,32,.2)}
+html[data-works="jacket"] .w-stage .w-wave{background:rgba(43,38,32,.05); border-color:rgba(43,38,32,.16)}
+html[data-works="jacket"] .w-stage .w-more{border-color:var(--wa-ink); color:var(--wa-ink)}
+html[data-works="jacket"] .w-stage .w-more:hover{background:var(--wa-ink); color:#ECE6DA}
+/* 右下の札（番号と題）。下からのぞいている時はここが見える */
+.w-jlab{display:none}
+html[data-works="jacket"] .w-jlab{display:block; position:absolute; right:18px; bottom:9px; font-family:var(--f-mono); font-size:12px; letter-spacing:.08em; color:var(--wa-ink); white-space:nowrap}
+/* 盤：ジャケットの右から少し出て回る（PC だけ。のぞいているカードの盤は出さない） */
+.w-jdisc{display:none}
+@media (min-width:861px){
+  html[data-works="jacket"] .w-jdisc{display:block; position:absolute; z-index:-2; top:18%; right:0; height:64%; aspect-ratio:1 / 1; transform:translateX(28%)}
+  html[data-works="jacket"] .w-stage > .w-slide.peek .w-jdisc{display:none}
+}
+html[data-works="jacket"] .w-slide.is-on .w-jdisc .w-disc-in{animation:w-spin 4.5s linear infinite}
+@media (max-width:860px){
+  html[data-works="jacket"] .w-stage > .w-slide{padding-bottom:46px}
+  html[data-works="jacket"] .w-stage > .w-slide > .wrap{width:calc(100% - 24px); padding:16px 16px 28px}
+  html[data-works="jacket"] .w-stage > .w-slide.peek{transform:translate(8px, 30px) rotate(1.5deg)}
+}
+@media (prefers-reduced-motion: reduce){ html[data-works="jacket"] .w-slide.is-on .w-jdisc .w-disc-in{animation:none} }
+/* /DEV-ONLY */
 </style>
 </head>
 <body>
@@ -1175,6 +1212,12 @@ html[data-works="film"] .w-flash{display:block; position:absolute; inset:0; z-in
     </div>
   </section>
 </main>
+<!-- DEV-ONLY: 友人作品 A・B（確認用だけ。公開用は hidden のまま、番号も / 05） -->
+<script>
+document.querySelectorAll('#work-6, #work-7').forEach(function(x){ x.removeAttribute('hidden'); });
+document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent = x.textContent.replace('/ 05', '/ 07'); });
+</script>
+<!-- /DEV-ONLY -->
 
 <!-- DEV-ONLY: MORE と詳細資料の窓（確認用だけ） -->
 <!-- 作品の MORE の窓（中身は各作品の .w-extra を写す。こだわりなどはそこに書く） -->
@@ -2102,7 +2145,13 @@ html[data-works="film"] .w-flash{display:block; position:absolute; inset:0; z-in
     return sl;
   });
   function mode(){ return html.getAttribute('data-works') || 'record'; }
-  html.setAttribute('data-works', 'record');  // 切り替えの動きはレコード（フィルムは data-works="film"、重ねるだけは "none"）
+  html.setAttribute('data-works', 'jacket');  // 切り替えはジャケットのカード（前のレコードは "record"、フィルムは "film"、重ねるだけは "none"）
+  // ジャケットの札（番号と題）と、右から出る盤
+  slides.forEach(function(sl){
+    var w = sl.querySelector('.wrap'), idx = sl.querySelector('.w-idx'), h2 = sl.querySelector('h2');
+    if (!w) return;
+    w.insertAdjacentHTML('beforeend', '<span class="w-jlab" aria-hidden="true">' + (idx ? idx.textContent.split('/')[0].trim() : '') + '\u3000' + (h2 ? h2.textContent : '') + '</span><div class="w-jdisc" aria-hidden="true"><div class="w-disc-in"></div></div>');
+  });
   // 確認用の帯に 切り替えのボタン
   var bar = document.querySelector('.devbar');
   if (bar){
@@ -2162,12 +2211,60 @@ html[data-works="film"] .w-flash{display:block; position:absolute; inset:0; z-in
   function update(){
     var i = index();
     if (i === cur) return;
-    if (cur < 0){ slides[i].classList.add('on', 'is-on'); cur = i; return; }
+    if (cur < 0){
+      slides[i].classList.add('on', 'is-on');
+      if (mode() === 'jacket' && slides[i + 1]) slides[i + 1].classList.add('peek');
+      cur = i; return;
+    }
     var dir = i > cur ? 1 : -1;
-    leave(slides[cur], dir);
-    come(slides[i], dir);
+    if (mode() === 'jacket') jacketSwap(cur, i, dir);
+    else { leave(slides[cur], dir); come(slides[i], dir); }
     cur = i;
     lastShow = performance.now();
+  }
+  // ジャケット：次へ＝上のカードが左上へ抜け、下からのぞいていたカードが持ち上がる。新しく次のカードが下に入る。
+  // 前へ＝前のカードが左上から戻ってきて重なり、今のカードは下へ回ってのぞく側になる
+  var OUT = 'translate(-55vw, -16vh) rotate(-16deg)';
+  function peekPose(){ return window.matchMedia('(max-width: 860px)').matches ? 'translate(8px, 30px) rotate(1.5deg)' : 'translate(24px, 38px) rotate(2deg)'; }
+  function fadeAway(sl){
+    add(sl, anim(sl, [{opacity: 1}, {opacity: 0}], {duration: 220, fill: 'forwards'}));
+    sl._t = setTimeout(function(){ kill(sl); sl.classList.remove('on', 'is-on', 'peek'); sl.style.zIndex = ''; }, 240);
+  }
+  function jacketSwap(prev, i, dir){
+    var a = slides[prev], b = slides[i], oldPeek = slides[prev + 1] || null, newPeek = slides[i + 1] || null, P = peekPose();
+    slides.forEach(function(sl){
+      kill(sl);
+      sl.style.zIndex = '';
+      if (sl !== a && sl !== b && sl !== oldPeek && sl !== newPeek) sl.classList.remove('on', 'is-on', 'peek');
+    });
+    if (reduce){
+      a.classList.remove('on', 'is-on', 'peek'); if (oldPeek) oldPeek.classList.remove('peek');
+      b.classList.remove('peek'); b.classList.add('on', 'is-on'); if (newPeek) newPeek.classList.add('peek');
+      return;
+    }
+    if (dir > 0){
+      a.classList.remove('peek'); a.classList.add('on'); a.classList.remove('is-on'); a.style.zIndex = 5;
+      add(a, anim(a, [{transform: 'none', opacity: 1}, {transform: OUT, opacity: 0}], {duration: 520, easing: EI, fill: 'forwards'}));
+      a._t = setTimeout(function(){ kill(a); a.classList.remove('on'); a.style.zIndex = ''; }, 540);
+      b.classList.remove('peek'); b.classList.add('on', 'is-on'); b.style.zIndex = 4;
+      add(b, anim(b, [{transform: P, filter: 'brightness(.55)'}, {transform: 'none', filter: 'brightness(1)'}], {duration: 500, delay: 140, easing: EO, fill: 'backwards'}));
+      if (oldPeek && oldPeek !== b) fadeAway(oldPeek);
+    } else {
+      b.classList.remove('peek'); b.classList.add('on', 'is-on'); b.style.zIndex = 5;
+      add(b, anim(b, [{transform: OUT, opacity: 0}, {transform: 'none', opacity: 1}], {duration: 560, easing: EO, fill: 'backwards'}));
+      if (newPeek === a){
+        a.classList.remove('on', 'is-on'); a.classList.add('peek'); a.style.zIndex = 2;
+        add(a, anim(a, [{transform: 'none', filter: 'brightness(1)'}, {transform: P, filter: 'brightness(.55)'}], {duration: 480, delay: 120, easing: EO, fill: 'backwards'}));
+      } else {
+        a.classList.remove('is-on'); fadeAway(a);
+      }
+      if (oldPeek && oldPeek !== newPeek) fadeAway(oldPeek);
+    }
+    b._t = setTimeout(function(){ b.style.zIndex = ''; }, 760);
+    if (newPeek && newPeek !== a){
+      newPeek.classList.add('peek');
+      add(newPeek, anim(newPeek, [{opacity: 0}, {opacity: 1}], {duration: 320, delay: 320, fill: 'backwards'}));
+    }
   }
   window.addEventListener('scroll', function(){
     if (ticking) return;
