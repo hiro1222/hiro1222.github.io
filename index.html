@@ -51,9 +51,14 @@ button{font:inherit}
   background:var(--bar-bg); border-bottom:2px solid var(--bar-line);
 }
 .bar-in{height:var(--bar); display:flex; align-items:center; gap:16px}
-.logo{display:flex; flex-direction:column; justify-content:center; text-decoration:none; color:var(--bar-ink); line-height:1.25; min-width:0}
-.logo .mark{font-size:11.5px; letter-spacing:.12em; color:#5C6770}
-.logo .who{font-weight:600; font-size:19px; letter-spacing:.08em}
+/* 左上のロゴ：小さなレコードの盤（作品ページの盤と同じ形）＋ 英字の名前と Portfolio */
+.logo{display:flex; align-items:center; gap:10px; text-decoration:none; color:var(--bar-ink); line-height:1.2; min-width:0}
+.logo-disc{position:relative; flex:none; width:30px; height:30px; border-radius:50%; background:radial-gradient(circle closest-side, #FFFFFF 0 11%, var(--bar-line) 13% 40%, #15191C 42% 100%); box-shadow:inset 0 0 0 1px rgba(0,0,0,.25); transition:transform .6s ease}
+.logo-disc::after{content:""; position:absolute; inset:0; border-radius:50%; background:repeating-radial-gradient(circle closest-side, transparent 0 1.2px, rgba(255,255,255,.07) 1.2px 2px); -webkit-mask:radial-gradient(circle closest-side, transparent 0 44%, #000 46%); mask:radial-gradient(circle closest-side, transparent 0 44%, #000 46%)}
+.logo:hover .logo-disc{transform:rotate(180deg)}
+.logo-t{display:flex; flex-direction:column; min-width:0}
+.logo .who{font-family:var(--f-label); font-weight:500; font-size:16px; letter-spacing:.14em; white-space:nowrap}
+.logo .mark{font-size:11px; letter-spacing:.06em; color:#5C6770}
 .todo{display:inline-block; font-family:var(--f-mono); font-size:.86em; letter-spacing:.04em; border-bottom:1px dashed currentColor; opacity:.75; line-height:1.4}
 .nav{margin-left:auto; display:flex; gap:clamp(18px, 3.2vw, 52px)}
 .nav a{
@@ -376,7 +381,7 @@ button{font:inherit}
     background:transparent; border:0; color:var(--bar-ink); cursor:pointer;
   }
   .menu-btn svg{width:24px; height:24px}
-  .logo .who{font-size:17px}
+  .logo .who{font-size:15px}
   .panel{padding-top:calc(env(safe-area-inset-top, 0px) + var(--bar) + 32px); padding-bottom:48px}
   .head{margin-bottom:26px}
 }
@@ -401,9 +406,9 @@ button{font:inherit}
     <button type="button" class="menu-btn" id="menu-btn" aria-label="メニューを開く" aria-expanded="false" aria-controls="drawer">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
     </button>
-    <a class="logo" href="#top" data-go="top">
-      <span class="mark">ポートフォリオ</span>
-      <span class="who">竹内寛登</span>
+    <a class="logo" href="#top" data-go="top" aria-label="Hiroto Takeuchi Portfolio（ホームへ）">
+      <span class="logo-disc" aria-hidden="true"></span>
+      <span class="logo-t"><span class="who">HIROTO TAKEUCHI</span><span class="mark">Portfolio</span></span>
     </a>
     <nav class="nav" aria-label="ページの中身">
       <a href="#top" data-go="top"><span class="en">Home</span><span class="ja">ホーム</span></a>
@@ -497,7 +502,7 @@ button{font:inherit}
               <article class="pr-card">
                 <p class="pr-lab">考え方</p>
                 <h4>作りたい体験の仕組みを、<wbr>とことん深掘りする</h4>
-                <p>これまでのチーム制作でも、就職作品のサウンド表現でも、まず「どんな体験を作りたいか」を、自身の体験をリファレンスとして具体的にし、チーム間でメンバーと共有したり作品のコンセプトとして置いたりすることで、どういった体験が作りたいのかの方向性をぶれずに作っていけるように考えていました。</p>
+                <p>これまでのチーム制作や、就職作品のサウンド表現でも、まず「どんな体験を作りたいか」を、自身の過去の体験や、どういった聞こえ方にしたいかをリファレンスとして具体的にし、チーム間でメンバーと共有したり作品のコンセプトとして置いたりすることで、どういった体験が作りたいのかの方向性をぶれずに作っていけるように考えていました。</p>
                 <p>そこから、どうすればその体験を作れるのか、どうすれば<mark>自分が好き・面白いと思う体験を、みんなにも感じてもらえるのか</mark>を考え、仕組みに落として実装しています。</p>
               </article>
             </div>
@@ -806,7 +811,7 @@ button{font:inherit}
         </div>
         <div class="w-shot"><img src="img/works/horror.jpg" width="1400" height="788" alt="探索型ホラーゲームの画面（懐中電灯で照らした暗い部屋、隅に人形、奥に扉）" decoding="async"></div>
         <div class="w-detail">
-          <dl class="w-facts"><div><dt>概要</dt><dd>自作の音響エンジン IdReal を使った探索型ホラー。暗い視界の中、足音や周りの音の聞こえ方を頼りに、どんな空間にいるのかを感じ取りながらキーアイテムを集めていく。</dd></div><div><dt>ゲームジャンル</dt><dd>探索型ホラー</dd></div><div><dt>制作規模</dt><dd>個人制作</dd></div><div><dt>担当範囲</dt><dd>すべて</dd></div><div><dt>制作期間</dt><dd>2026年9月〜制作中</dd></div><div><dt>制作環境</dt><dd>Unreal Engine 5.6／Wwise 2025.1／自作の音響エンジン IdReal</dd></div></dl>
+          <dl class="w-facts"><div><dt>概要</dt><dd>自作の音響エンジン IdReal を使った探索型ホラー。暗い視界の中、足音や周りの音の聞こえ方を頼りに、どんな空間にいるのかを感じ取りながらキーアイテムを集めていく。</dd></div><div><dt>ゲームジャンル</dt><dd>探索型ホラー</dd></div><div><dt>制作規模</dt><dd>個人制作</dd></div><div><dt>担当範囲</dt><dd>すべて</dd></div><div><dt>制作期間</dt><dd>2026年9月〜制作中</dd></div><div><dt>制作環境</dt><dd>Unreal Engine 5.6／Wwise 2025.1</dd></div></dl>
         </div>
       </div>
     </div>
