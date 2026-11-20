@@ -1906,18 +1906,25 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
     get(idrLoad, fs[1])(here);
   }
   // 鳴らす: 素の音（pan で左右へ少し振る）と、そのマス・その向きの響きを同時に。響きの無いマスは素の音だけ
-  // 一番近い向きがまだ音になっていなければ同じマスの次に近い向き。それも無ければ、足音は素の音だけ、手拍子は 0.3 秒まで待ってから一緒に鳴らす
+  // 一番近い向きがまだ音になっていなければ同じマスの次に近い向き。それも無ければ、足音は 0.12 秒・手拍子は 0.3 秒まで待って一緒に鳴らす（間に合わなければその時に素の音だけ）
   function idrPlay(kind, pan, vol){
-    var id = idrId(Math.floor(me.x), Math.floor(me.y)), fs = faces(), dry = idrLoad(kind, '', 'dry'), t0 = performance.now(), wet = null, wid = '', i, b;
+    var id = idrId(Math.floor(me.x), Math.floor(me.y)), fs = faces(), dry = idrLoad(kind, '', 'dry'), wet = null, wid = '', i, b;
     idrNear();
     if (id) for (i = 0; i < fs.length && !wet; i++){
       b = i ? idr.buf[keyOf(kind, fs[i], id)] : idrLoad(kind, fs[0], id);
       if (ready(b)){ wet = b; wid = fs[i] + ':' + id; }
     }
-    if (!id || wet || kind === 'step') return idrStart(dry, wet, pan, vol, wid || 'dry');
+    if (!id || wet) return idrStart(dry, wet, pan, vol, wid || 'dry');
+    var done = false, timer = setTimeout(function(){
+      if (done) return;
+      done = true;
+      Promise.resolve(dry).then(function(d){ idrStart(d, null, pan, vol, 'dry'); });
+    }, kind === 'step' ? 120 : 300);
     Promise.all([idrLoad(kind, fs[0], id), dry]).then(function(r){
-      if (performance.now() - t0 < 300) idrStart(r[1], r[0], pan, vol, fs[0] + ':' + id);
-      else idrStart(r[1], null, pan, vol, 'dry');
+      if (done) return;
+      done = true;
+      clearTimeout(timer);
+      idrStart(r[1], r[0], pan, vol, fs[0] + ':' + id);
     });
   }
   // 素の音と響きを同じ時刻・同じ音の高さの揺れで鳴らす（響きは振らない、焼いた時に左右が入っている）
