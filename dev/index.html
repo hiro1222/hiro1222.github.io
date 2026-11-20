@@ -560,7 +560,8 @@ html[data-works="film"] .w-flash{display:block; position:absolute; inset:0; z-in
 html[data-works="jacket"] .w-stage{background:#121C25}
 html[data-works="jacket"] .w-stage > .w-slide{background:none; padding-top:calc(env(safe-area-inset-top, 0px) + var(--bar) + 20px); padding-bottom:56px}
 html[data-works="jacket"] .w-stage > .w-slide > .bg{display:none}
-html[data-works="jacket"] .w-stage > .w-slide > .wrap{position:relative; isolation:isolate; width:min(1080px, calc(100% - 96px)); max-width:none; margin:0 auto; padding:22px 28px 28px; color:#2B2620; --wa-ink:color-mix(in srgb, var(--wa) 58%, #1E1A16)}
+html[data-works="jacket"] .w-stage > .w-slide{justify-content:center}  /* カードは縮める前に広げることがあるので、はみ出しても真ん中に */
+html[data-works="jacket"] .w-stage > .w-slide > .wrap{flex:none; position:relative; isolation:isolate; width:min(1080px, calc(100% - 96px)); max-width:none; margin:0 auto; padding:22px 28px 28px; color:#2B2620; --wa-ink:color-mix(in srgb, var(--wa) 58%, #1E1A16)}
 html[data-works="jacket"] .w-stage > .w-slide > .wrap::before{content:""; position:absolute; inset:0; z-index:-1; border-radius:10px; background:#ECE6DA; box-shadow:0 26px 60px rgba(0,0,0,.5), inset 0 0 0 1px rgba(255,255,255,.5)}
 html[data-works="jacket"] .w-stage > .w-slide.on{z-index:3}
 html[data-works="jacket"] .w-stage > .w-slide.peek{visibility:visible; z-index:1; transform:translate(24px, 38px) rotate(2deg); filter:brightness(.55)}
@@ -2344,12 +2345,17 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
     go(i);
   }, true);
   // 中身の高さを全作品で一番高い物にそろえ、1 枚に収まらない時は全作品を同じだけ縮める（作品ごとに文字の大きさや場所が変わらないように）
+  // ジャケットは、縮めた後の見た目の幅が決めた幅（スマホは画面の幅 −10 px、PC は 1080 px まで）になるよう、縮める前のカードを広げる（3 回で落ち着く）
   function fit(){
-    var ws = slides.map(function(sl){ return sl.querySelector('.wrap'); }).filter(Boolean), maxH = 0;
-    ws.forEach(function(w){ w.style.transform = ''; w.style.minHeight = ''; });
-    ws.forEach(function(w){ maxH = Math.max(maxH, w.scrollHeight); });
+    var ws = slides.map(function(sl){ return sl.querySelector('.wrap'); }).filter(Boolean), maxH = 0, sc = 1, k;
     var cs = getComputedStyle(slides[0]), avail = slides[0].clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
-    var sc = maxH > avail && avail > 0 ? avail / maxH : 1;
+    var jacket = mode() === 'jacket', sw = stage.clientWidth, Wv = sw <= 860 ? sw - 10 : Math.min(1080, sw - 96);
+    for (k = 0; k < (jacket ? 3 : 1); k++){
+      ws.forEach(function(w){ w.style.transform = ''; w.style.minHeight = ''; w.style.width = jacket ? (Wv / sc).toFixed(1) + 'px' : ''; });
+      maxH = 0;
+      ws.forEach(function(w){ maxH = Math.max(maxH, w.scrollHeight); });
+      sc = maxH > avail && avail > 0 ? avail / maxH : 1;
+    }
     ws.forEach(function(w){ w.style.minHeight = maxH + 'px'; if (sc < 1) w.style.transform = 'scale(' + sc.toFixed(3) + ')'; });
     // ジャケットの盤の出る長さ：縮めた後の見た目で、カードの横の余白まで（盤の幅の 32% を上限に）
     var vw = stage.clientWidth;
