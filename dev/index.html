@@ -499,6 +499,27 @@ html.dlg-open{overflow:hidden}
 .w-wave-lab b{font-family:var(--f-mono); font-size:20px; font-weight:600; letter-spacing:.04em}
 .w-wave canvas{flex:1; min-width:0; height:40px; display:block; cursor:crosshair; touch-action:pan-y}
 /* /DEV-ONLY */
+/* DEV-ONLY: 作品の切り替え（レコード／フィルム、確認用だけ） */
+/* レコード＝画像をジャケットに見立て、上から作品の色のラベルの盤がのぞいて回る。フィルム＝画像の上下にフィルムの穴の帯。どちらも画像の大きさは今のまま */
+.w-media{position:relative}
+.w-film{position:relative; z-index:2}
+.w-disc, .w-holes, .w-flash{display:none}
+html[data-works="record"] .w-media{padding-top:19%}
+html[data-works="record"] .w-disc{display:block; position:absolute; z-index:1; top:0; left:50%; width:38%; aspect-ratio:1 / 1; margin-left:-19%}
+.w-disc-in{position:relative; width:100%; height:100%; border-radius:50%; background:radial-gradient(circle closest-side, #0D1620 0 3.5%, var(--wa) 4% 33%, #0A0A0B 33.6% 36%, transparent 36.4%), repeating-radial-gradient(circle closest-side, #141416 0 1.4px, #1D1D20 1.4px 2.8px); box-shadow:0 -4px 22px rgba(0,0,0,.5), inset 0 0 0 2px #050506}
+.w-disc-in::after{content:""; position:absolute; left:47%; top:37%; width:6%; height:6%; border-radius:50%; background:#F2F4F5; opacity:.85}
+.w-disc::after{content:""; position:absolute; inset:0; border-radius:50%; background:conic-gradient(from 200deg, transparent 0 8%, rgba(255,255,255,.08) 13%, transparent 19% 58%, rgba(255,255,255,.06) 63%, transparent 69%); pointer-events:none}
+html[data-works="record"] .p-work.is-on .w-disc-in{animation:w-spin 4.5s linear infinite}
+@keyframes w-spin{to{transform:rotate(1turn)}}
+html[data-works="film"] .w-film{padding:20px 0; background:#0B0B0C; border-radius:6px; overflow:hidden; box-shadow:0 10px 30px rgba(0,0,0,.4)}
+html[data-works="film"] .w-film .w-shot{border-radius:2px; border-color:#000}
+html[data-works="film"] .w-holes{display:block; position:absolute; left:0; right:0; height:8px; background:repeating-linear-gradient(90deg, transparent 0 7px, #D9D5CC 7px 16px, transparent 16px 22px); opacity:.72; border-radius:2px}
+html[data-works="film"] .w-holes.t{top:6px}
+html[data-works="film"] .w-holes.b{bottom:6px}
+html[data-works="film"] .w-flash{display:block; position:absolute; inset:0; z-index:3; background:#FFFFFF; opacity:0; pointer-events:none}
+.w-veil{position:fixed; inset:0; z-index:30; background:#0A0D10; opacity:0; pointer-events:none}
+@media (prefers-reduced-motion: reduce){ html[data-works="record"] .p-work.is-on .w-disc-in{animation:none} }
+/* /DEV-ONLY */
 </style>
 </head>
 <body>
@@ -2010,6 +2031,152 @@ html.dlg-open{overflow:hidden}
   var v = sm.getAttribute('data-sound') || 'synth';
   try{ v = localStorage.getItem('dev-snd') || v; }catch(e){}
   set(v);
+})();
+</script>
+<!-- /DEV-ONLY -->
+<!-- DEV-ONLY: 作品の切り替え（レコード／フィルム、確認用だけ） -->
+<script>
+// 作品の切り替えを レコード／フィルム で見せる。PC のホイール・キーは、作品のページの端で次の作品へ「入れ替え」（流れずにその場で切り替わる）。
+// 指のスクロールは今までどおり流れて、作品が見えた時に入ってくる動きだけ（スマホは表が長いので、読むのを止めない）
+(function(){
+  var html = document.documentElement, reduce = false, busy = false, KEY = 'dev-works';
+  try{ reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){}
+  var works = [].slice.call(document.querySelectorAll('.p-work')).filter(function(x){ return !x.hidden; });
+  if (!works.length) return;
+  // 画像のまわりを組み立てる（盤・フィルムの穴・光る板）
+  document.querySelectorAll('.p-work').forEach(function(sec){
+    var shot = sec.querySelector('.w-shot');
+    if (!shot) return;
+    var media = shot.closest('.w-media'), film = document.createElement('div');
+    if (!media){ media = document.createElement('div'); media.className = 'w-media'; shot.parentNode.insertBefore(media, shot); media.appendChild(shot); }
+    film.className = 'w-film';
+    shot.parentNode.insertBefore(film, shot);
+    film.appendChild(shot);
+    film.insertAdjacentHTML('beforeend', '<i class="w-holes t"></i><i class="w-holes b"></i><i class="w-flash"></i>');
+    media.insertAdjacentHTML('afterbegin', '<div class="w-disc" aria-hidden="true"><div class="w-disc-in"></div></div>');
+  });
+  function mode(){ return html.getAttribute('data-works') || 'record'; }
+  var m0 = 'record';
+  try{ m0 = localStorage.getItem(KEY) || m0; }catch(e){}
+  html.setAttribute('data-works', m0);
+  // 確認用の帯に 切り替えのボタン
+  var bar = document.querySelector('.devbar');
+  if (bar){
+    bar.insertAdjacentHTML('beforeend', '<span>作品の切り替え:</span><button type="button" data-wk="record">レコード</button><button type="button" data-wk="film">フィルム</button><button type="button" data-wk="none">なし</button>');
+    var bs = bar.querySelectorAll('[data-wk]');
+    var mark = function(){ bs.forEach(function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-wk') === mode() ? 'true' : 'false'); }); };
+    bs.forEach(function(b){ b.addEventListener('click', function(){ html.setAttribute('data-works', b.getAttribute('data-wk')); try{ localStorage.setItem(KEY, b.getAttribute('data-wk')); }catch(e){} mark(); }); });
+    mark();
+  }
+  var EO = 'cubic-bezier(.22,1,.36,1)', EI = 'cubic-bezier(.55,0,1,.45)';
+  function parts(sec){
+    return {media: sec.querySelector('.w-media'), shot: sec.querySelector('.w-shot'), disc: sec.querySelector('.w-disc'), holes: [].slice.call(sec.querySelectorAll('.w-holes')),
+            flash: sec.querySelector('.w-flash'), text: [sec.querySelector('.w-head'), sec.querySelector('.w-detail')].filter(Boolean)};
+  }
+  function anim(el, kf, o){ return el && el.animate ? el.animate(kf, o) : null; }
+  // レコード：盤がジャケットへ戻る → ジャケットが横へ抜ける ／ 次のジャケットが入る → 盤が上へ出て回り出す
+  function recordOut(q, dir){
+    return [anim(q.disc, [{transform: 'translateY(0)'}, {transform: 'translateY(50%)'}], {duration: 200, easing: EI, fill: 'forwards'}),
+            anim(q.media, [{transform: 'none', opacity: 1}, {transform: 'translateX(' + (-dir * 35) + '%) rotate(' + (-dir * 3) + 'deg)', opacity: 0}], {duration: 240, delay: 150, easing: EI, fill: 'forwards'})];
+  }
+  function recordIn(q, dir){
+    anim(q.media, [{transform: 'translateX(' + (dir * 35) + '%) rotate(' + (dir * 3) + 'deg)', opacity: 0}, {transform: 'none', opacity: 1}], {duration: 420, easing: EO, fill: 'backwards'});
+    anim(q.disc, [{transform: 'translateY(50%)'}, {transform: 'translateY(-5%)', offset: .75}, {transform: 'translateY(0)'}], {duration: 560, delay: 280, easing: EO, fill: 'backwards'});
+  }
+  // フィルム：コマが横へ送られて（穴の帯も流れる）、次のコマで止まる。止まる時に少しちらつく
+  function filmOut(q, dir){
+    var a = [anim(q.shot, [{transform: 'none', filter: 'blur(0px)'}, {transform: 'translateX(' + (-dir * 106) + '%)', filter: 'blur(3px)'}], {duration: 260, easing: EI, fill: 'forwards'})];
+    q.holes.forEach(function(h){ a.push(anim(h, [{backgroundPosition: '0px 0px'}, {backgroundPosition: (-dir * 220) + 'px 0px'}], {duration: 260, easing: EI, fill: 'forwards'})); });
+    return a;
+  }
+  function filmIn(q, dir){
+    anim(q.shot, [{transform: 'translateX(' + (dir * 106) + '%)', filter: 'blur(3px)'}, {transform: 'translateX(' + (-dir * 1.5) + '%)', filter: 'blur(0px)', offset: .8}, {transform: 'none', filter: 'blur(0px)'}], {duration: 440, easing: EO, fill: 'backwards'});
+    q.holes.forEach(function(h){ anim(h, [{backgroundPosition: (dir * 220) + 'px 0px'}, {backgroundPosition: '0px 0px'}], {duration: 440, easing: EO}); });
+    anim(q.flash, [{opacity: 0}, {opacity: .22, offset: .15}, {opacity: 0, offset: .35}, {opacity: .1, offset: .5}, {opacity: 0}], {duration: 380, delay: 80});
+  }
+  function textIn(q, dir){
+    q.text.forEach(function(el, i){ anim(el, [{opacity: 0, transform: 'translateY(' + (dir * 18) + 'px)'}, {opacity: 1, transform: 'none'}], {duration: 420, delay: 140 + i * 90, easing: EO, fill: 'backwards'}); });
+  }
+  function playIn(sec, dir){
+    var q = parts(sec);
+    if (mode() === 'film') filmIn(q, dir); else recordIn(q, dir);
+  }
+  // 入れ替え：今の作品を抜く → 次の作品へ一瞬で移る → 入れる（背景が一瞬で変わらないように、間に薄い幕）
+  var veil = document.createElement('div');
+  veil.className = 'w-veil';
+  document.body.appendChild(veil);
+  function docTop(el){ return el.getBoundingClientRect().top + window.scrollY; }
+  function jump(y){ try{ window.scrollTo({top: y, left: 0, behavior: 'instant'}); }catch(e){ window.scrollTo(0, y); } }
+  function swap(from, to, dir){
+    busy = true;
+    var qf = parts(from), qt = parts(to), outs = mode() === 'film' ? filmOut(qf, dir) : recordOut(qf, dir);
+    qf.text.forEach(function(el){ outs.push(anim(el, [{opacity: 1, transform: 'none'}, {opacity: 0, transform: 'translateY(' + (-dir * 14) + 'px)'}], {duration: 220, easing: EI, fill: 'forwards'})); });
+    anim(veil, [{opacity: 0}, {opacity: .55}], {duration: 280, delay: 140, fill: 'forwards'});
+    setTimeout(function(){
+      to._swapAt = performance.now();
+      jump(docTop(to));
+      outs.forEach(function(a){ if (a) a.cancel(); });
+      anim(veil, [{opacity: .55}, {opacity: 0}], {duration: 320, fill: 'forwards'});
+      playIn(to, dir);
+      textIn(qt, dir);
+      setTimeout(function(){ busy = false; }, 560);
+    }, 420);
+  }
+  // 今ちょうど画面を占めている作品（なければ null）・その端にいるか・となりの作品
+  function current(){
+    var y = window.scrollY, vh = window.innerHeight, i, t;
+    for (i = 0; i < works.length; i++){ t = docTop(works[i]); if (y >= t - 4 && y + vh <= t + works[i].offsetHeight + 4) return works[i]; }
+    return null;
+  }
+  function atEdge(sec, dir){ var t = docTop(sec); return dir > 0 ? window.scrollY + window.innerHeight >= t + sec.offsetHeight - 4 : window.scrollY <= t + 4; }
+  function neighbor(sec, dir){ return works[works.indexOf(sec) + dir] || null; }
+  function off(){ return mode() === 'none' || reduce; }
+  // ホイール：作品の端で次の作品へ。慣性の続き（止まるまで）は飲み込んで、1 回だけ切り替える
+  var lastWheel = 0, acc = 0, locked = false;
+  window.addEventListener('wheel', function(e){
+    if (off() || e.ctrlKey || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+    if (e.target.closest && e.target.closest('#drawer, dialog, .devbar')) return;
+    if (html.classList.contains('dlg-open')) return;
+    var now = performance.now();
+    if (locked){
+      if (busy || now - lastWheel < 280){ lastWheel = now; e.preventDefault(); e.stopImmediatePropagation(); return; }
+      locked = false; acc = 0;
+    }
+    var cur = current(), dir = e.deltaY > 0 ? 1 : -1, to = cur && neighbor(cur, dir);
+    if (!cur || !to || !atEdge(cur, dir)){ acc = 0; return; }
+    e.preventDefault(); e.stopImmediatePropagation();
+    if (now - lastWheel > 300) acc = 0;
+    lastWheel = now;
+    acc += Math.abs(e.deltaY) * (e.deltaMode === 1 ? 16 : 1);
+    if (acc < 30) return;
+    acc = 0; locked = true;
+    swap(cur, to, dir);
+  }, {capture: true, passive: false});
+  // キー：↓ PageDown Space で次、↑ PageUp Shift+Space で前
+  window.addEventListener('keydown', function(e){
+    if (off() || e.ctrlKey || e.metaKey || e.altKey) return;
+    var t = e.target, dir = (e.key === 'ArrowDown' || e.key === 'PageDown' || (e.key === ' ' && !e.shiftKey)) ? 1 : (e.key === 'ArrowUp' || e.key === 'PageUp' || (e.key === ' ' && e.shiftKey)) ? -1 : 0;
+    if (!dir) return;
+    if (t && t.closest && t.closest('input, textarea, select, [contenteditable], #smap, dialog')) return;
+    if (e.key === ' ' && t && t.closest && t.closest('button, a')) return;
+    if (busy){ e.preventDefault(); e.stopImmediatePropagation(); return; }
+    var cur = current(), to = cur && neighbor(cur, dir);
+    if (!cur || !to || !atEdge(cur, dir)) return;
+    e.preventDefault(); e.stopImmediatePropagation();
+    swap(cur, to, dir);
+  }, true);
+  // 見えている作品だけ盤を回す。スクロールで入ってきた時（指・上の帯から）は、入ってくる動きだけ
+  if ('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        var sec = e.target;
+        sec.classList.toggle('is-on', e.isIntersecting);
+        if (!e.isIntersecting || off() || (sec._swapAt && performance.now() - sec._swapAt < 1200)) return;
+        playIn(sec, e.boundingClientRect.top >= 0 ? 1 : -1);
+      });
+    }, {threshold: .6});
+    works.forEach(function(x){ io.observe(x); });
+  }
 })();
 </script>
 <!-- /DEV-ONLY -->
