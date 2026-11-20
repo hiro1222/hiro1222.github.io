@@ -578,17 +578,20 @@ html[data-works="jacket"] .w-stage .w-more:hover{background:var(--wa-ink); color
 /* 右下の札（番号と題）。下からのぞいている時はここが見える */
 .w-jlab{display:none}
 html[data-works="jacket"] .w-jlab{display:block; position:absolute; right:18px; bottom:9px; font-family:var(--f-mono); font-size:12px; letter-spacing:.08em; color:var(--wa-ink); white-space:nowrap}
-/* 盤：ジャケットの右から少し出て回る（PC だけ。のぞいているカードの盤は出さない） */
+/* 盤：ジャケットの右から少し出て回る（PC だけ）。切り替えの間はジャケットの中にしまって（ほかのカードに重なって欠けて見えないように）、
+   カードが止まってから横へすべり出る。出る長さはカードの横の余白まで（画面の端で切れないように） */
 .w-jdisc{display:none}
 @media (min-width:861px){
-  html[data-works="jacket"] .w-jdisc{display:block; position:absolute; z-index:-2; top:18%; right:0; height:64%; aspect-ratio:1 / 1; transform:translateX(28%)}
-  html[data-works="jacket"] .w-stage > .w-slide.peek .w-jdisc{display:none}
+  html[data-works="jacket"] .w-jdisc{--jp:clamp(32px, calc(max((100vw - 1080px) / 2, 48px) - 16px), 110px); display:block; position:absolute; z-index:-2; top:18%; right:calc(-1 * var(--jp)); height:64%; aspect-ratio:1 / 1;
+    transform:translateX(calc(-1 * var(--jp))); opacity:0; transition:transform .45s cubic-bezier(.22,1,.36,1), opacity .15s linear}
+  html[data-works="jacket"] .w-stage > .w-slide.jsettled .w-jdisc{transform:none; opacity:1; transition:transform .55s cubic-bezier(.22,1,.36,1), opacity .2s linear}
 }
+@media (prefers-reduced-motion: reduce){ html[data-works="jacket"] .w-jdisc{transition:none!important} }
 html[data-works="jacket"] .w-slide.is-on .w-jdisc .w-disc-in{animation:w-spin 4.5s linear infinite}
 @media (max-width:860px){
   html[data-works="jacket"] .w-stage > .w-slide{padding-bottom:46px}
-  html[data-works="jacket"] .w-stage > .w-slide > .wrap{width:calc(100% - 24px); padding:16px 16px 28px}
-  html[data-works="jacket"] .w-stage > .w-slide.peek{transform:translate(8px, 30px) rotate(1.5deg)}
+  html[data-works="jacket"] .w-stage > .w-slide > .wrap{width:calc(100% - 10px); padding:14px 12px 28px}
+  html[data-works="jacket"] .w-stage > .w-slide.peek{transform:translate(4px, 30px) rotate(1.2deg)}
 }
 @media (prefers-reduced-motion: reduce){ html[data-works="jacket"] .w-slide.is-on .w-jdisc .w-disc-in{animation:none} }
 /* /DEV-ONLY */
@@ -2212,7 +2215,7 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
     var i = index();
     if (i === cur) return;
     if (cur < 0){
-      slides[i].classList.add('on', 'is-on');
+      slides[i].classList.add('on', 'is-on', 'jsettled');
       if (mode() === 'jacket' && slides[i + 1]) slides[i + 1].classList.add('peek');
       cur = i; return;
     }
@@ -2224,8 +2227,8 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
   }
   // ジャケット：次へ＝上のカードが左上へ抜け、下からのぞいていたカードが持ち上がる。新しく次のカードが下に入る。
   // 前へ＝前のカードが左上から戻ってきて重なり、今のカードは下へ回ってのぞく側になる
-  var OUT = 'translate(-55vw, -16vh) rotate(-16deg)';
-  function peekPose(){ return window.matchMedia('(max-width: 860px)').matches ? 'translate(8px, 30px) rotate(1.5deg)' : 'translate(24px, 38px) rotate(2deg)'; }
+  var OUT = 'translate(-55vw, -16vh) rotate(-16deg)', settleT = 0;
+  function peekPose(){ return window.matchMedia('(max-width: 860px)').matches ? 'translate(4px, 30px) rotate(1.2deg)' : 'translate(24px, 38px) rotate(2deg)'; }
   function fadeAway(sl){
     add(sl, anim(sl, [{opacity: 1}, {opacity: 0}], {duration: 220, fill: 'forwards'}));
     sl._t = setTimeout(function(){ kill(sl); sl.classList.remove('on', 'is-on', 'peek'); sl.style.zIndex = ''; }, 240);
@@ -2235,8 +2238,11 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
     slides.forEach(function(sl){
       kill(sl);
       sl.style.zIndex = '';
+      sl.classList.remove('jsettled');
       if (sl !== a && sl !== b && sl !== oldPeek && sl !== newPeek) sl.classList.remove('on', 'is-on', 'peek');
     });
+    clearTimeout(settleT);
+    settleT = setTimeout(function(){ if (slides[cur] === b) b.classList.add('jsettled'); }, reduce ? 0 : 720);
     if (reduce){
       a.classList.remove('on', 'is-on', 'peek'); if (oldPeek) oldPeek.classList.remove('peek');
       b.classList.remove('peek'); b.classList.add('on', 'is-on'); if (newPeek) newPeek.classList.add('peek');
