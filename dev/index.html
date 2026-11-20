@@ -502,9 +502,10 @@ html.dlg-open{overflow:hidden}
 /* DEV-ONLY: 作品の切り替え（レコード／フィルム、確認用だけ） */
 /* 作品は画面に止めた舞台（.w-stage）の上で入れ替わる。もとの節（.w-spacer）は空の場所取りで、スクロールの止まる位置と上のバーの印のために残す */
 /* 舞台の範囲＝作品の数×画面の高さ。舞台はその中だけ止まり、最後の作品の所で一緒に流れて連絡先が出る（場所取りは中に重ねて置く） */
-.w-pin{position:relative; height:calc(var(--n, 5) * 100vh); height:calc(var(--n, 5) * 100svh)}
-.w-stage{position:sticky; top:0; z-index:1; height:100vh; height:100svh; overflow:hidden; background:var(--black)}
-.w-pin > .w-spacer{position:absolute; left:0; right:0; top:calc(var(--k, 0) * 100vh); top:calc(var(--k, 0) * 100svh); height:100vh; height:100svh; min-height:0}
+/* 高さ（--sh）は開いた時の画面の高さを JS が px で入れる。スマホのアドレスバーが出入りしても変えない（変えると中身の縮みが変わったり、位置がずれたりする） */
+.w-pin{position:relative; height:calc(var(--n, 5) * 100vh); height:calc(var(--n, 5) * var(--sh, 100svh))}
+.w-stage{position:sticky; top:0; z-index:1; height:100vh; height:var(--sh, 100svh); overflow:hidden; background:var(--black)}
+.w-pin > .w-spacer{position:absolute; left:0; right:0; top:calc(var(--k, 0) * 100vh); top:calc(var(--k, 0) * var(--sh, 100svh)); height:100vh; height:var(--sh, 100svh); min-height:0}
 .w-stage > .w-slide{position:absolute; inset:0; min-height:0; height:100%; visibility:hidden}
 .w-stage > .w-slide.on{visibility:visible}
 .w-stage > .w-slide > .wrap{transform-origin:50% 50%}
@@ -2078,8 +2079,17 @@ html[data-works="film"] .w-flash{display:block; position:absolute; inset:0; z-in
   stage.className = 'w-stage';
   secs[0].parentNode.insertBefore(pin, secs[0]);
   pin.appendChild(stage);
-  var slides0 = 0;
+  var slides0 = 0, H = 0, VW = 0;
   pin.style.setProperty('--n', secs.length);
+  // 舞台の高さ。アドレスバーの出し入れ（〜100 px）では変えない
+  function measure(force){
+    var h = window.innerHeight, w = window.innerWidth;
+    if (!force && w === VW && Math.abs(h - H) < 120) return false;
+    H = h; VW = w;
+    pin.style.setProperty('--sh', h + 'px');
+    return true;
+  }
+  measure(true);
   var slides = secs.map(function(sec){
     var sl = document.createElement('div');
     pin.appendChild(sec);
@@ -2152,7 +2162,7 @@ html[data-works="film"] .w-flash{display:block; position:absolute; inset:0; z-in
   }
   // 今の作品＝舞台の場所のうち、画面の上がどの作品の場所の半分を過ぎたか
   var cur = -1, lastShow = 0, ticking = false;
-  function index(){ var r = pin.getBoundingClientRect(); return Math.max(0, Math.min(slides.length - 1, Math.round(-r.top / window.innerHeight))); }
+  function index(){ var r = pin.getBoundingClientRect(); return Math.max(0, Math.min(slides.length - 1, Math.round(-r.top / H))); }
   function update(){
     var i = index();
     if (i === cur) return;
@@ -2170,7 +2180,10 @@ html[data-works="film"] .w-flash{display:block; position:absolute; inset:0; z-in
       ticking = false;
       update();
       var pn = pinned();
-      if (pn && !wasPinned){ arrived = performance.now(); locked = true; clearTimeout(anchorT); anchorT = setTimeout(anchor, 650); }
+      if (pn && !wasPinned){
+        arrived = performance.now(); locked = true;
+        if (arrived - lastWheel < 1500){ clearTimeout(anchorT); anchorT = setTimeout(anchor, 650); }
+      }
       wasPinned = pn;
     });
   }, {passive: true});
@@ -2189,7 +2202,7 @@ html[data-works="film"] .w-flash{display:block; position:absolute; inset:0; z-in
   // ホイール 1 目盛り・キー 1 回で次の作品へ（舞台が止まっている間だけ。最初の作品の上・最後の作品の下は本体に任せる）。
   // 舞台は止まっているので、見えない所で作品の場所の頭へ移るだけ。慣性の続きは止まるまで飲み込む
   function stopScroll(){ try{ window.dispatchEvent(new KeyboardEvent('keydown', {key: 'Home'})); }catch(e){} }
-  function pinned(){ var r = pin.getBoundingClientRect(); return r.top <= 2 && r.bottom >= window.innerHeight - 2; }
+  function pinned(){ var r = pin.getBoundingClientRect(); return r.top <= 2 && r.bottom >= H - 2; }
   function go(i){
     stopScroll();
     var y = secs[i].getBoundingClientRect().top + window.scrollY;
@@ -2240,7 +2253,7 @@ html[data-works="film"] .w-flash{display:block; position:absolute; inset:0; z-in
       if (h > avail && avail > 0) w.style.transform = 'scale(' + Math.max(.6, avail / h).toFixed(3) + ')';
     });
   }
-  window.addEventListener('resize', function(){ fit(); update(); });
+  window.addEventListener('resize', function(){ if (measure(false)){ fit(); update(); } });
   window.addEventListener('load', fit);
   // MORE：もとの仕組みはもとの節を見ているので、舞台の作品から窓を開く形に差し替える
   var wdlg = document.getElementById('w-dlg');
