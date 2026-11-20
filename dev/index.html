@@ -1,0 +1,1892 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="竹内寛登のポートフォリオ。ゲームのサウンドプログラマーを目指し、音で空間を伝える音響エンジンを C++ で作っています。">
+<meta name="robots" content="noindex">
+<meta name="format-detection" content="telephone=no, email=no, address=no, date=no">
+<title>【確認用】ポートフォリオ 竹内寛登</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+JP:wght@400;500;600&family=Oswald:wght@400;500&family=Shippori+Mincho+B1:wght@600;800&display=swap">
+<style>
+/* 上に固定のバー。下は全画面の節が 6 枚、節ごとに背景が 1 つ。スクロールは節の頭に吸い付く。
+   スマホ（860px 以下）はバーの代わりに左上のボタン → 左から出るサイドバー。
+   見た目は 1 つに決めている（節ごとに明暗を交互にするので、OS の明暗には合わせない） */
+:root{
+  --bar-bg:#FFFFFF; --bar-ink:#1E2328; --bar-line:#2A86B5;
+  --paper:#EDF1F3; --paper-ink:#15191C; --paper-muted:#55616A; --paper-line:#C8D1D6;
+  --night:#0D1620; --slate:#121C25; --black:#0A0D10;
+  --night-ink:#E3E9EE; --night-muted:#93A1AB; --night-line:#26333D;
+  --accent:#1D5C78; --accent-hi:#7DB8D1; --signal:#D9774C;
+  --f-display:"Shippori Mincho B1","Hiragino Mincho ProN","Yu Mincho","YuMincho",serif;
+  --f-body:"IBM Plex Sans JP","Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic UI","Meiryo",sans-serif;
+  --f-label:"Oswald","Arial Narrow","Helvetica Neue",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"Consolas","Menlo",monospace;
+  --bar:64px;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+body{margin:0}
+[hidden]{display:none!important}
+img{max-width:100%}
+body{background:var(--night); color:var(--paper-ink); font-family:var(--f-body); font-size:15.5px; line-height:1.85; -webkit-font-smoothing:antialiased}
+h1,h2,h3{margin:0; text-wrap:balance}
+p{margin:0}
+a{color:inherit}
+button{font:inherit}
+:focus-visible{outline:2px solid var(--bar-line); outline-offset:3px}
+
+.wrap{
+  width:100%; max-width:1160px; margin:0 auto;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));
+  padding-right:max(16px, env(safe-area-inset-right, 0px));
+}
+
+/* ---------- 上のバー ---------- */
+.bar{
+  position:fixed; top:0; left:0; right:0; z-index:40;
+  padding-top:env(safe-area-inset-top, 0px);
+  background:var(--bar-bg); border-bottom:2px solid var(--bar-line);
+}
+.bar-in{height:var(--bar); display:flex; align-items:center; gap:16px}
+.logo{display:flex; flex-direction:column; justify-content:center; text-decoration:none; color:var(--bar-ink); line-height:1.25; min-width:0}
+.logo .mark{font-size:11.5px; letter-spacing:.12em; color:#5C6770}
+.logo .who{font-weight:600; font-size:19px; letter-spacing:.08em}
+.todo{display:inline-block; font-family:var(--f-mono); font-size:.86em; letter-spacing:.04em; border-bottom:1px dashed currentColor; opacity:.75; line-height:1.4}
+.nav{margin-left:auto; display:flex; gap:clamp(18px, 3.2vw, 52px)}
+.nav a{
+  display:flex; flex-direction:column; align-items:center; gap:1px; text-decoration:none; color:var(--bar-ink);
+  padding-block:6px; border-bottom:2px solid transparent;
+}
+.nav .en{font-family:var(--f-label); font-size:15px; letter-spacing:.16em; text-transform:uppercase}
+.nav .ja{font-size:10.5px; color:#6B767F; letter-spacing:.04em}
+.nav a:hover .en{color:var(--accent)}
+.nav a[aria-current="true"]{border-bottom-color:var(--bar-line)}
+.nav a[aria-current="true"] .en{color:var(--accent)}
+.menu-btn{display:none}
+
+/* ---------- サイドバー（スマホ） ---------- */
+.scrim{position:fixed; inset:0; z-index:55; background:rgba(8,12,16,.5); opacity:0; pointer-events:none; transition:opacity .25s ease; touch-action:none}
+.scrim.open{opacity:1; pointer-events:auto}
+.drawer{
+  position:fixed; top:0; bottom:0; left:0; z-index:60; width:min(82vw, 320px);
+  background:#FFFFFF; color:var(--bar-ink); box-shadow:2px 0 18px rgba(0,0,0,.18);
+  padding-top:calc(env(safe-area-inset-top, 0px) + 12px);
+  padding-left:max(0px, env(safe-area-inset-left, 0px));
+  padding-bottom:env(safe-area-inset-bottom, 0px);
+  transform:translateX(-104%); visibility:hidden;
+  transition:transform .28s ease, visibility 0s linear .28s;
+  overflow-y:auto; overscroll-behavior:contain;
+}
+.drawer.open{transform:none; visibility:visible; transition:transform .28s ease}
+.close-btn{
+  margin-left:12px; width:44px; height:44px; display:grid; place-items:center;
+  background:#FFFFFF; border:1px solid #4A535B; border-radius:2px; color:var(--bar-ink); cursor:pointer;
+}
+.close-btn svg{width:20px; height:20px}
+.drawer ul{list-style:none; margin:20px 0 0; padding:0 0 24px}
+.drawer a{display:flex; align-items:baseline; gap:12px; padding:12px 28px 12px 40px; text-decoration:none; color:#4A535B; font-size:17px}
+.drawer a .en{font-family:var(--f-label); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:#8A949C}
+.drawer a[aria-current="true"]{color:var(--bar-ink); font-weight:600}
+.drawer a[aria-current="true"]::before{content:""; width:3px; align-self:stretch; background:var(--bar-line); margin-left:-14px; margin-right:11px}
+
+/* ---------- 節（全画面） ---------- */
+.panel{
+  position:relative; isolation:isolate;
+  clip-path:inset(0);                 /* 中の固定の背景を、この節の範囲だけ見せる */
+  min-height:100vh; min-height:100svh;
+  display:flex; align-items:center;
+  padding-top:calc(env(safe-area-inset-top, 0px) + var(--bar) + 40px);
+  padding-bottom:56px;
+}
+/* 背景は画面に固定した 1 枚。節の範囲だけ見えるので、節の境目が来ると次の背景に入れ替わる */
+.bg{position:fixed; inset:0; z-index:-1; pointer-events:none}
+.eyebrow{font-family:var(--f-label); font-size:13px; letter-spacing:.2em; text-transform:uppercase; display:flex; gap:12px; align-items:center}
+.eyebrow .no{font-variant-numeric:tabular-nums}
+.eyebrow .no::after{content:""; display:inline-block; width:28px; height:1px; background:currentColor; vertical-align:middle; margin-left:12px; opacity:.6}
+.panel h2{font-family:var(--f-display); font-weight:800; font-size:clamp(28px, 3.4vw, 40px); line-height:1.35; letter-spacing:.04em; margin-top:10px}
+.head{margin-bottom:36px}
+
+/* 明るい節・暗い節 */
+.light{background:var(--paper); color:var(--paper-ink)}
+.light .eyebrow{color:var(--accent)}
+.light .muted{color:var(--paper-muted)}
+.dark{color:var(--night-ink)}
+.dark .eyebrow{color:var(--accent-hi)}
+.dark .muted{color:var(--night-muted)}
+
+/* 01 ホーム */
+.p-top{background:var(--night); color:var(--night-ink)}
+@media (min-width:861px){ .p-top{padding-bottom:84px} }  /* 下の SCROLL と説明文が重ならないように */
+.p-top .bg{background:radial-gradient(ellipse 55% 60% at 78% 52%, rgba(125,184,209,.07), transparent 70%)}
+.hero{max-width:36em}
+.hero .kicker{font-family:var(--f-label); font-size:13px; letter-spacing:.22em; text-transform:uppercase; color:var(--accent-hi)}
+.hero h1{font-family:var(--f-display); font-weight:800; font-size:clamp(28px, min(8.4vw, 8.2vh), 68px); line-height:1.22; letter-spacing:.03em; margin-top:16px}
+.hero h1 .ln{display:block; white-space:nowrap}
+/* 名前・肩書き */
+.hero-name{margin-top:26px; padding-left:14px; border-left:2px solid var(--accent-hi)}
+.hero-name .nm{display:flex; flex-wrap:wrap; align-items:baseline; gap:2px 14px}
+.hero-name .jp{font-family:var(--f-display); font-weight:800; font-size:clamp(22px, 2.3vw, 30px); letter-spacing:.14em; line-height:1.4}
+.hero-name .en{font-family:var(--f-label); font-size:13px; letter-spacing:.24em; text-transform:uppercase; color:var(--night-muted)}
+.hero-name .role{margin-top:4px; font-size:14px; color:#C9D3DA}
+.hero .lead{margin-top:18px; max-width:29em; font-size:14.5px; color:#AEBAC3}
+/* 01 ホーム右：ミニマップ（十字キーで歩くと、部屋ごとに足音の響きが変わる）。PC は地図の下に十字キー、スマホは地図の右 */
+.top-grid{display:grid; grid-template-columns:minmax(0,1fr); row-gap:28px; align-items:center}
+.smap{--map:clamp(150px, calc(100vw - 190px), 250px); justify-self:start; width:fit-content; max-width:100%; padding:12px 12px 14px; border:1px solid var(--night-line); border-radius:14px; background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02)); box-shadow:0 18px 50px rgba(0,0,0,.35); -webkit-user-select:none; user-select:none; -webkit-touch-callout:none}
+.sm-top{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:10px; padding:0 2px}
+.sm-lab{font-family:var(--f-label); font-size:12px; letter-spacing:.22em; color:var(--accent-hi)}
+.sm-mute{display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border:1px solid var(--night-line); border-radius:999px; background:none; color:var(--night-muted); font-family:var(--f-label); font-size:11px; letter-spacing:.12em; line-height:1.4; cursor:pointer}
+.sm-mute svg{width:14px; height:14px}
+.sm-mute:hover{color:var(--night-ink); border-color:var(--night-muted)}
+.sm-mute[aria-pressed="true"] .w{display:none}
+.sm-body{display:grid; grid-template-columns:auto auto; column-gap:14px; align-items:center}
+.sm-screen{width:calc(var(--map) + 12px); padding:6px; background:#CFCDC8; border:1px solid #B9B7B1; border-radius:6px; outline:none}
+.sm-screen:focus-visible{outline:2px solid var(--accent-hi); outline-offset:2px}
+.sm-screen canvas{display:block; width:100%; aspect-ratio:1 / 1; height:auto; image-rendering:pixelated; image-rendering:crisp-edges; border-radius:2px; cursor:pointer}
+.sm-room{display:flex; justify-content:space-between; gap:8px; margin-top:6px; padding:0 2px; font-family:var(--f-mono); font-size:11.5px; line-height:1.5; color:#2B3238}
+.sm-room .sm-rt{color:var(--accent)}
+.sm-room.flash .sm-rn{animation:sm-flash .7s ease-out}
+@keyframes sm-flash{from{color:var(--accent); text-shadow:0 0 8px rgba(29,92,120,.45)}}
+.sm-pad{display:flex; flex-direction:column; align-items:center; gap:14px}
+/* 十字キー（押した所から真ん中への向きで決める。指を滑らせてもよい） */
+.sm-dpad{position:relative; width:96px; height:96px; touch-action:none; cursor:pointer; filter:drop-shadow(0 2px 0 #05080B)}
+.sm-dpad span{position:absolute; background:#22303A}
+.sm-up, .sm-down{left:32px; width:32px; height:33px}
+.sm-left, .sm-right{top:32px; width:33px; height:32px}
+.sm-up{top:0; border-radius:5px 5px 0 0}
+.sm-down{bottom:0; border-radius:0 0 5px 5px}
+.sm-left{left:0; border-radius:5px 0 0 5px}
+.sm-right{right:0; border-radius:0 5px 5px 0}
+.sm-mid{left:32px; top:32px; width:32px; height:32px}
+.sm-dpad span:not(.sm-mid)::after{content:""; position:absolute; left:50%; top:50%; width:0; height:0; border:5px solid transparent; transform:translate(-50%, -50%)}
+.sm-up::after{border-bottom-color:#5E7381!important; margin-top:-3px}
+.sm-down::after{border-top-color:#5E7381!important; margin-top:3px}
+.sm-left::after{border-right-color:#5E7381!important; margin-left:-3px}
+.sm-right::after{border-left-color:#5E7381!important; margin-left:3px}
+.sm-dpad[data-on="up"] .sm-up, .sm-dpad[data-on="down"] .sm-down, .sm-dpad[data-on="left"] .sm-left, .sm-dpad[data-on="right"] .sm-right{background:#30434F}
+.sm-dpad[data-on="up"] .sm-up::after{border-bottom-color:var(--accent-hi)!important}
+.sm-dpad[data-on="down"] .sm-down::after{border-top-color:var(--accent-hi)!important}
+.sm-dpad[data-on="left"] .sm-left::after{border-right-color:var(--accent-hi)!important}
+.sm-dpad[data-on="right"] .sm-right::after{border-left-color:var(--accent-hi)!important}
+/* 丸ボタン（A＝手をたたく、B＝押しながら走る） */
+.sm-ab{display:flex; gap:12px; align-items:flex-start}
+.sm-btn{display:flex; flex-direction:column; align-items:center; gap:4px; font-size:11px; line-height:1.3; color:var(--night-muted)}
+.sm-btn:last-child{margin-top:-12px}
+.sm-ab button{width:42px; height:42px; padding:0; border:0; border-radius:50%; font-family:var(--f-label); font-size:15px; letter-spacing:0; cursor:pointer; touch-action:none; box-shadow:0 3px 0 #05080B; transition:transform .06s ease, box-shadow .06s ease, filter .06s ease}
+.sm-a{background:var(--accent-hi); color:#0D1620}
+.sm-b{background:#2B3A45; color:var(--night-ink)}
+.sm-ab button.on{transform:translateY(2px); box-shadow:0 1px 0 #05080B; filter:brightness(1.18)}
+.sm-hint{margin-top:10px; max-width:calc(var(--map) + 124px); padding:0 2px; font-size:11.5px; line-height:1.65; color:var(--night-muted)}
+.sm-kb{display:none}
+@media (min-width:861px){
+  .top-grid{grid-template-columns:minmax(0,1fr) auto; column-gap:40px}
+  .hero h1{font-size:clamp(28px, min(8.2vh, calc((100vw - 470px) / 10.4)), 68px)}  /* 右にミニマップが入る分だけ小さく */
+  .smap{--map:clamp(180px, calc(100vh - 470px), 300px); justify-self:end; padding:14px 16px 16px}
+  .sm-body{grid-template-columns:auto; row-gap:14px}
+  .sm-pad{flex-direction:row; justify-content:space-between; width:100%; padding:0 8px}
+  .sm-hint{max-width:calc(var(--map) + 12px); font-size:12px}
+}
+@media (min-width:861px) and (pointer:fine){ .sm-kb{display:block} }
+@media (min-width:861px) and (max-height:760px){ .sm-kb{display:none!important} .sm-body{row-gap:10px} .sm-top{margin-bottom:8px} }  /* 低い画面では 1 ページに収める */
+.sm-hint .nw{display:inline-block}
+.cue{
+  position:absolute; left:50%; bottom:calc(18px + env(safe-area-inset-bottom, 0px)); transform:translateX(-50%);
+  display:flex; flex-direction:column; align-items:center; gap:8px; text-decoration:none;
+  font-family:var(--f-label); font-size:11px; letter-spacing:.24em; color:var(--night-muted);
+}
+.cue::after{content:""; width:1px; height:36px; background:linear-gradient(var(--night-muted), transparent)}
+
+/* 02 プロフィール（自己PR と同じ暗い背景・減り方の傾き） */
+.name{font-family:var(--f-display); font-weight:800; font-size:clamp(34px, 4.2vw, 48px); letter-spacing:.1em; line-height:1.7; margin:0 0 18px}
+.name ruby + ruby{margin-left:.45em}
+.name rt{font-family:var(--f-body); font-weight:500; font-size:.32em; letter-spacing:.18em; color:var(--night-muted)}
+.facts{display:grid; grid-template-columns:auto minmax(0,1fr); gap:10px 28px; margin:0}
+.facts dt{font-size:13px; color:var(--night-muted); white-space:nowrap}
+.facts dd{margin:0; min-width:0; word-break:keep-all; overflow-wrap:anywhere}
+
+/* プロフィールの中の スキル・資格・受賞記録 */
+/* PC: 頭は 名前・志望など が左、写真が右（下の 資格｜受賞記録 の 2 列に揃える）。
+   スキルは 4 つの分類を横に並べ、分類の中は縦に積む。その下に 資格｜受賞記録 */
+.who-block{display:grid; grid-template-columns:minmax(0,1fr); gap:24px; margin-bottom:8px}
+.who-text{display:flex; flex-direction:column; gap:16px; min-width:0}
+.who-block .name{margin:0}
+@media (min-width:1024px){
+  .who-block{grid-template-columns:minmax(0,1fr) minmax(0,1.2fr); grid-template-areas:"text photos"; gap:0 40px; align-items:center}
+  .who-text{grid-area:text}
+  .who-block .photos{grid-area:photos}
+}
+/* 写真 2 枚：高さが揃うように、横幅を縦横比で分ける（ベース 4:5・弓道 600:1220） */
+.photos{display:flex; align-items:flex-start; gap:10px; width:400px; max-width:100%}
+.photos img{display:block; min-width:0; height:auto; border-radius:3px; box-shadow:0 0 0 1px var(--night-line)}
+.photos .ph-bass{flex:.8 1 0}
+.photos .ph-kyudo{flex:.4918 1 0}
+.pf-cols{display:grid; grid-template-columns:minmax(0,1fr); align-items:start}
+.sk-groups{display:grid; grid-template-columns:minmax(0,1fr)}
+@media (min-width:1024px){
+  .pf-cols{grid-template-columns:minmax(0,1fr) minmax(0,1.2fr); column-gap:40px}
+  .pf-pr, .pf-about, .pf-skill{grid-column:1 / -1}
+  .sk-groups{grid-template-columns:repeat(4, minmax(0,1fr)); column-gap:20px}
+  /* 分類の中は縦に積む：アイコン・名前・年数を 1 行に */
+  .pf-cols .cards{grid-template-columns:minmax(0,1fr); gap:6px}
+  .pf-cols .card{grid-template-columns:26px minmax(0,1fr) auto; column-gap:10px; padding:7px 12px}
+  .pf-cols .card .ic{grid-row:auto; width:26px; height:26px}
+  .pf-cols .card .ic svg{width:22px; height:22px}
+  .pf-cols .card .ic.txt{font-size:11px}
+  .pf-cols .card.noyr .nm{grid-row:auto}
+  .pf-cols .block{margin-top:32px}
+  .pf-cols .sg{margin:14px 0 6px}
+}
+.block{margin-top:44px}
+.bh{font-family:var(--f-display); font-weight:800; font-size:22px; letter-spacing:.05em; word-break:keep-all; overflow-wrap:anywhere}
+/* 英語の見出しに添える日本語（上のバーの「ホーム」などと同じ扱い）。スマホは下の行に */
+.bh-sub{display:inline-block; margin-left:14px; font-family:var(--f-body); font-weight:500; font-size:13px; letter-spacing:.08em; color:var(--night-muted); vertical-align:.15em}
+@media (max-width:480px){ .bh-sub{display:block; margin:2px 0 0} }
+.sg{font-size:13px; font-weight:600; color:var(--night-muted); letter-spacing:.08em; margin:20px 0 8px}
+.cards{list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(auto-fill, minmax(230px, 1fr)); gap:10px}
+.card{display:grid; grid-template-columns:34px minmax(0,1fr); column-gap:12px; align-items:center; padding:12px 14px; background:rgba(255,255,255,.045); border:1px solid var(--night-line); border-left:3px solid var(--c); border-radius:3px; min-width:0}
+.card .ic{grid-row:1 / 3; width:32px; height:32px; display:grid; place-items:center; color:var(--c)}
+.card .ic svg{width:28px; height:28px; fill:currentColor}
+.card .ic.txt{box-sizing:border-box; border:1.5px solid var(--c); border-radius:5px; font-family:var(--f-mono); font-weight:500; font-size:12px; letter-spacing:.02em}
+.card .nm{font-weight:600; font-size:15px; line-height:1.35; overflow-wrap:anywhere}
+.card.noyr .nm{grid-row:1 / 3}
+.card .yr{font-family:var(--f-mono); font-weight:500; font-size:13px; color:var(--accent-hi); line-height:1.4}
+.lic-box{margin-top:14px; max-width:680px; background:rgba(255,255,255,.045); border:1px solid var(--night-line); border-radius:4px; padding:4px 20px}
+.lic{list-style:none; margin:0; padding:0}
+.lic li{display:flex; align-items:center; gap:14px; padding:13px 0; border-top:1px solid var(--night-line)}
+.lic li:first-child{border-top:0}
+.lk{flex:none; min-width:5.2em; text-align:center; font-size:11.5px; font-weight:600; letter-spacing:.04em; color:var(--c); border:1px solid var(--c); border-radius:999px; padding:1px 8px; line-height:1.6}
+.ln{font-weight:500; min-width:0}
+.ay{flex:none; font-family:var(--f-mono); font-size:13px; color:var(--night-muted)}
+.ap{flex:none; margin-left:auto; font-weight:700; color:#E58A5E}
+
+/* プロフィールとその続き（自己PR など）：暗い背景・減り方の傾き */
+.p-profile, .p-pr{background:var(--slate)}
+.p-profile .bg svg, .p-pr .bg svg{width:100%; height:100%; display:block}
+.pr{display:grid; grid-template-columns:minmax(0,1fr); align-items:start}  /* PC でも縦に 2 つ */
+.pr .block:first-child{margin-top:0}
+.pr-box{margin-top:14px; background:rgba(255,255,255,.04); border:1px solid var(--night-line); border-radius:4px; padding:18px 22px; color:#C9D3DA}
+.pr-box p{line-height:1.95}
+.pr-box p + p{margin-top:10px}
+.pr .pr-box p{max-width:46em}
+.about-box p{max-width:46em}
+.pr-catch{font-family:var(--f-display); font-weight:800; font-size:20px; line-height:1.5; letter-spacing:.03em; color:var(--night-ink); word-break:keep-all; overflow-wrap:anywhere}  /* 箱の頭の一言（自己PR のカードの見出しと同じ扱い） */
+/* PC の What I：右が空きすぎないよう、左に一言・右に本文の 2 列（間に細い線）。狭いと一言が「、」の前で折れるので 1024 から */
+@media (min-width:861px){ .pr-catch{font-size:22px} }
+@media (min-width:1024px){
+  .about-box{display:grid; grid-template-columns:minmax(0,.75fr) minmax(0,1.5fr); column-gap:32px; align-items:center; padding:26px 30px}
+  .about-box .pr-catch{font-size:24px}
+  .about-box .pr-catch + p{margin-top:0; max-width:none; padding-left:32px; border-left:1px solid var(--night-line)}
+}
+/* 自己PR：強み｜考え方 の 2 枚（スマホは縦）。左に色の線、右上の角を斜めに落とす */
+.pr-cards{display:grid; grid-template-columns:minmax(0,1fr); gap:16px; margin-top:14px}
+.pr-card{min-width:0; background:rgba(255,255,255,.04); border:1px solid var(--night-line); border-left:3px solid var(--accent-hi); padding:20px 24px 22px; clip-path:polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%)}
+.pr-lab{font-size:12.5px; font-weight:700; letter-spacing:.16em; color:var(--accent-hi)}
+.pr-card h4{margin-top:6px; font-family:var(--f-display); font-weight:800; font-size:20px; line-height:1.5; letter-spacing:.03em; color:var(--night-ink); word-break:keep-all; overflow-wrap:anywhere}
+.pr-card h4 + p{margin-top:12px}
+.pr-card p:not(.pr-lab){color:#C9D3DA; line-height:1.95}
+.pr-card p + p:not(.pr-lab){margin-top:10px}
+.pr-card mark{background:linear-gradient(transparent 60%, rgba(125,184,209,.30) 60%); color:#EEF5F8; font-weight:700; padding:0 1px}
+@media (min-width:861px){
+  .pr-cards{grid-template-columns:repeat(2, minmax(0,1fr)); gap:20px}
+  .pr-card{padding:24px 28px 26px}
+  .pr-card h4{font-size:22px}
+}
+
+/* 03 作品：1 作品 = 全画面 1 枚。左に大きな画像、右に題・概要・表・MORE（こだわりは MORE の窓）。色は作品ごとの --wa */
+.p-work{background:var(--black)}
+.p-work .bg{background:
+  radial-gradient(ellipse 60% 60% at 28% 50%, color-mix(in srgb, var(--wa) 15%, transparent), transparent 70%),
+  radial-gradient(ellipse 45% 45% at 88% 15%, color-mix(in srgb, var(--wa) 8%, transparent), transparent 70%),
+  var(--black)}
+/* 画像があれば背景はその画像をぼかして暗くした物（.w-shot に img を入れると、下の JS が --shot に写して has-shot を付ける） */
+.p-work .bg::before, .p-work .bg::after{content:""; position:absolute; inset:0; opacity:0; transition:opacity .4s}
+.p-work .bg::before{inset:-60px; background:var(--shot, none) center / cover no-repeat; filter:blur(24px) saturate(1.25) brightness(.72); transform:scale(1.06)}
+.p-work .bg::after{background:linear-gradient(90deg, rgba(8,10,13,.15) 0%, rgba(8,10,13,.52) 55%, rgba(8,10,13,.68) 100%)}
+.p-work.has-shot .bg::before, .p-work.has-shot .bg::after{opacity:1}
+@media (max-width:1023px){ .p-work .bg::after{background:rgba(8,10,13,.66)} }
+.w-grid{display:grid; grid-template-columns:minmax(0,1fr); grid-template-areas:"head" "shot" "detail"; gap:22px}
+.w-head{grid-area:head}
+.w-shot{grid-area:shot}
+.w-detail{grid-area:detail}
+.w-head .eyebrow{color:var(--wa)}
+.w-idx{font-family:var(--f-mono); letter-spacing:.08em; color:var(--night-muted)}
+.w-lead{margin-top:10px; font-size:14px; color:#C9D3DA}
+.w-shot{aspect-ratio:16/9; border-radius:8px; overflow:hidden; border:1px solid var(--night-line); background:repeating-linear-gradient(135deg, #0F151B 0 14px, #121A21 14px 28px); display:grid; place-items:center; color:var(--night-muted); font-family:var(--f-label); letter-spacing:.2em; font-size:12px; box-shadow:0 22px 50px rgba(0,0,0,.45)}
+.w-shot img{width:100%; height:100%; object-fit:cover; display:block}
+.w-pts{list-style:none; margin:18px 0 0; padding:0; display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:22px 28px}
+.w-pts li{display:grid; grid-template-columns:34px minmax(0,1fr); column-gap:12px; align-items:start}
+.w-ic{grid-row:1 / 3; width:34px; height:34px; border:1.5px solid var(--wa); border-radius:6px; display:grid; place-items:center; font-family:var(--f-mono); font-size:12px; color:var(--wa)}
+.w-pts h4{font-size:14.5px; font-weight:700; line-height:1.45; word-break:keep-all}
+.w-pts p{font-size:13px; color:var(--night-muted); line-height:1.7; margin-top:2px}
+/* MORE と 詳細資料（右の列の真ん中に並べる） */
+.w-acts{display:flex; justify-content:center; align-items:center; flex-wrap:wrap; gap:12px; margin-top:28px}
+.w-more{display:inline-block; margin:0; padding:9px 36px; border:1px solid var(--wa); border-radius:3px; background:none; color:var(--wa); font-family:var(--f-label); font-size:13px; letter-spacing:.22em; text-decoration:none; cursor:pointer; transition:background .2s ease, color .2s ease}
+.w-more:hover{background:var(--wa); color:#0D1620}
+.w-doc{display:inline-block; margin:0; padding:9px 24px; border:1px solid var(--wa); border-radius:3px; background:var(--wa); color:#0D1620; font-family:var(--f-body); font-weight:700; font-size:13.5px; letter-spacing:.14em; cursor:pointer; transition:filter .2s ease}
+.w-doc:hover{filter:brightness(1.12)}
+.w-doc:disabled{opacity:.4; cursor:default; filter:none}
+.w-more:focus-visible, .w-doc:focus-visible{outline:2px solid var(--wa); outline-offset:3px}
+/* 作品の MORE・詳細資料の窓（<dialog>）。開いている間は後ろのページを止める */
+html{scrollbar-gutter:stable}
+html.dlg-open{overflow:hidden}
+.dlg{width:min(880px, calc(100% - 32px)); max-width:none; max-height:calc(100vh - 48px); max-height:calc(100dvh - 48px); margin:auto; padding:0; border:1px solid var(--night-line); border-top:3px solid var(--wa, var(--accent-hi)); border-radius:6px; background:#0F171F; color:var(--night-ink); overflow:auto; overscroll-behavior:contain; box-shadow:0 30px 80px rgba(0,0,0,.6)}
+.dlg::backdrop{background:rgba(6,10,14,.74)}
+.dlg[open]{animation:dlg-in .22s ease-out}
+@keyframes dlg-in{from{opacity:0; transform:translateY(14px)}}
+@media (prefers-reduced-motion: reduce){ .dlg[open]{animation:none} }
+.dlg-bar{position:sticky; top:0; z-index:1; display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 12px 10px 24px; background:#0F171F; border-bottom:1px solid var(--night-line)}
+.dlg-eb{min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-family:var(--f-label); font-size:13px; letter-spacing:.16em; color:var(--wa, var(--accent-hi))}
+.dlg-bar-r{display:flex; align-items:center; gap:8px; flex:none}
+.dlg-x, .dlg-open{display:inline-flex; align-items:center; gap:6px; padding:7px 12px; border:1px solid var(--night-line); border-radius:3px; background:none; color:var(--night-ink); font:inherit; font-size:13px; line-height:1.4; text-decoration:none; cursor:pointer}
+.dlg-x:hover, .dlg-open:hover{border-color:var(--wa, var(--accent-hi)); color:var(--wa, var(--accent-hi))}
+.dlg-body{padding:26px 28px 34px}
+.dlg-body h3{font-family:var(--f-display); font-weight:800; font-size:clamp(26px, 4vw, 38px); line-height:1.3; letter-spacing:.03em}
+.dlg-lead{margin-top:10px; color:#C9D3DA; line-height:1.8}
+.dlg-h{margin-top:28px; padding-bottom:8px; border-bottom:1px solid var(--night-line); font-family:var(--f-display); font-weight:800; font-size:19px; letter-spacing:.06em}
+/* 詳細資料：PDF をそのまま窓いっぱいに */
+.dlg-pdf{width:min(1200px, calc(100% - 32px)); height:calc(100vh - 48px); height:calc(100dvh - 48px); overflow:hidden}
+.dlg-pdf[open]{display:flex; flex-direction:column}
+.dlg-pdf iframe{flex:1; min-height:0; width:100%; border:0; background:#525659}
+/* 制作中の印（題の上の行、作品の番号の横。点がゆっくり明滅） */
+.w-wip{display:inline-flex; align-items:center; gap:7px; margin-left:4px; padding:1px 12px 1px 10px; border:1px solid var(--wa); border-radius:999px; color:var(--wa); font-family:var(--f-body); font-weight:700; font-size:12.5px; letter-spacing:.12em; line-height:1.6; white-space:nowrap}
+.w-wip::before{content:""; width:7px; height:7px; border-radius:50%; background:currentColor; animation:wip 1.8s ease-in-out infinite}
+@keyframes wip{50%{opacity:.2}}
+@media (prefers-reduced-motion: reduce){ .w-wip::before{animation:none} }
+/* 作品の表（概要・ゲームジャンル・制作規模・担当範囲・制作期間・制作環境）。題のすぐ下 */
+.w-facts{margin:22px 0 0; border-top:1px solid var(--night-line)}
+.w-facts div{display:grid; grid-template-columns:7em minmax(0,1fr); column-gap:14px; padding:7px 0; border-bottom:1px solid var(--night-line)}
+.w-facts div:last-child{border-bottom:0}
+.w-facts dt{font-size:13px; font-weight:700; color:var(--wa); letter-spacing:.04em; white-space:nowrap}
+.w-facts dd{margin:0; font-size:14px; line-height:1.7; color:#D5DCE1}
+/* PC の作品（基本の指定より後ろに置く：同じ強さだと後ろが勝つ） */
+@media (min-width:1024px){
+  /* 画像を左へ寄せて大きく：作品の枠だけ横幅いっぱい（端は画面の 3.5%） */
+  .p-work .wrap{max-width:none; padding-left:max(24px, 3.5vw); padding-right:max(24px, 3.5vw)}
+  .p-work{padding-top:calc(env(safe-area-inset-top, 0px) + var(--bar) + 24px); padding-bottom:32px}
+  .w-grid{grid-template-columns:minmax(0,1.25fr) minmax(0,1fr); grid-template-areas:"shot head" "shot detail"; gap:0 clamp(32px, 3.5vw, 64px)}
+  .w-shot{align-self:center}
+  .w-head{align-self:end}
+  .w-head, .w-detail{max-width:780px}
+  /* 情報も大きく */
+  .p-work h2{font-size:clamp(38px, 3.8vw, 58px)}
+  .w-head .eyebrow{font-size:15px}
+  .w-lead{font-size:17px; margin-top:14px}
+  /* 縦の間は画面の高さに合わせる（大きい画面ほどゆったり、高さ 760 で 1 枚に収まる） */
+  .w-facts{margin-top:clamp(24px, 4.5vh, 52px)}
+  .w-pts{margin-top:clamp(22px, 3.6vh, 40px); gap:clamp(26px, 4.5vh, 52px) 40px}
+  .w-pts li{grid-template-columns:46px minmax(0,1fr); column-gap:16px}
+  .w-ic{width:46px; height:46px; font-size:15px}
+  .w-pts h4{font-size:18px}
+  .w-pts p{font-size:15.5px; line-height:1.85; margin-top:4px}
+  .w-facts dt{font-size:14px}
+  .w-facts dd{font-size:15.5px}
+  .w-wip{font-size:13.5px}
+  .w-acts{margin-top:clamp(32px, 6vh, 68px); gap:16px}  /* 右の列の真ん中・離して・大きく */
+  .w-more{padding:15px 68px; font-size:16px; letter-spacing:.26em}
+  .w-doc{padding:15px 40px; font-size:16px}
+}
+@media (max-width:480px){ .w-pts{grid-template-columns:minmax(0,1fr); gap:16px} }
+
+/* 02 の続き：好きなゲーム体験。左にスクショのモザイク（6 段、横に流す。タイルは同じ比率で大きさ 3 つ）、右に解説。--fc は選んだ 1 本の色。
+   背景は選んだ 1 本の色のにじみ、画像があればそれをぼかして暗くした物 */
+.p-fav{background:var(--black)}
+.p-fav .bg{background:radial-gradient(ellipse 55% 60% at 30% 55%, color-mix(in srgb, var(--fc, #7DB8D1) 16%, transparent), transparent 70%), var(--black)}
+.p-fav .bg::before{content:""; position:absolute; inset:-60px; background:var(--shot, none) center / cover no-repeat; filter:blur(28px) saturate(1.2) brightness(.5); transform:scale(1.06); opacity:0; transition:opacity .4s}
+.p-fav.has-shot .bg::before{opacity:1}
+.fav-head{margin-bottom:22px}
+.fav-grid{--sh:min(240px, 64vw); --ar:1.7778; display:grid; grid-template-columns:minmax(0,1fr); gap:18px}
+.fav-left{min-width:0}
+.fav-strip{height:var(--sh); overflow-x:auto; overflow-y:hidden; overscroll-behavior-x:contain; scrollbar-width:none; border-radius:4px; cursor:grab; user-select:none; -webkit-user-select:none}
+.fav-strip::-webkit-scrollbar{display:none}
+.fav-strip.dragging{cursor:grabbing}
+.fav-tiles{list-style:none; margin:0; padding:0; height:100%; width:max-content; display:grid; grid-template-rows:repeat(6, minmax(0,1fr)); grid-auto-columns:calc((var(--sh) - 20px) / 6 * var(--ar)); gap:4px}  /* 6 段。1 マス＝16:9（タイルは 2×2・3×3・4×4 マスなので、どれも同じ比率） */
+.fav-tiles > li{position:relative; min-width:0; min-height:0}
+.fav-tile{position:absolute; inset:0; width:100%; height:100%; padding:0; border:0; border-radius:3px; overflow:hidden; cursor:inherit; color:var(--night-ink); background:linear-gradient(135deg, color-mix(in srgb, var(--fc) 40%, #0B1015), color-mix(in srgb, var(--fc) 12%, #0B1015))}
+.fav-tile img{width:100%; height:100%; object-fit:cover; display:block; transition:transform .5s ease; -webkit-user-drag:none}
+.fav-tile:hover img{transform:scale(1.04)}
+.fav-ph{position:absolute; inset:0; display:grid; place-items:center; font-family:var(--f-label); font-size:12px; letter-spacing:.24em; color:rgba(227,233,238,.38)}
+.fav-tag{position:absolute; top:8px; right:8px; z-index:1; padding:0 10px; border:1px solid rgba(255,255,255,.8); background:rgba(8,10,13,.3); color:#fff; font-family:var(--f-label); font-size:12px; letter-spacing:.14em; line-height:1.7}
+.fav-tile::after{content:""; position:absolute; inset:0; border:2px solid transparent; border-radius:3px; pointer-events:none; transition:border-color .2s, background-color .2s}
+.fav-tile:hover::after{background-color:rgba(255,255,255,.06)}
+.fav-tile[aria-pressed="true"]::after{border-color:#fff}
+.fav-tile[aria-pressed="true"] .fav-tag{background:#fff; color:var(--night)}
+.fav-tile:focus-visible{outline-offset:-5px}
+.fav-ctrl{display:flex; align-items:center; gap:10px; margin-top:12px}
+.fav-arrow{flex:none; width:40px; height:40px; display:grid; place-items:center; border:1px solid var(--night-line); border-radius:50%; background:rgba(255,255,255,.04); color:var(--night-ink); cursor:pointer}
+.fav-arrow svg{width:18px; height:18px}
+.fav-hint{margin-left:6px; font-size:12.5px; color:var(--night-muted)}
+.fav-hint .sp{display:none}
+@media (max-width:860px){ .fav-hint .pc{display:none} .fav-hint .sp{display:inline} }
+.fav-detail{min-width:0; background:rgba(13,22,32,.72); border:1px solid var(--night-line); border-top:3px solid var(--fc, var(--accent-hi)); border-radius:4px; padding:18px 22px 20px}
+.fav-no{font-family:var(--f-mono); font-size:12.5px; letter-spacing:.08em; color:var(--night-muted)}
+.fav-title{font-family:var(--f-display); font-weight:800; font-size:24px; line-height:1.4; letter-spacing:.04em; margin-top:6px}
+.fav-scene{margin-top:4px; font-size:14px; color:#C9D3DA}
+.fav-tags{list-style:none; margin:12px 0 0; padding:0; display:flex; flex-wrap:wrap; gap:6px}
+.fav-tags li{font-size:12px; line-height:1.7; padding:0 10px; border:1px solid var(--fc); border-radius:999px; color:var(--fc)}
+.fav-dl{margin:14px 0 0}
+.fav-dl div{padding:10px 0; border-top:1px solid var(--night-line)}
+.fav-dl dt{font-size:12.5px; font-weight:700; letter-spacing:.06em; color:var(--fc)}
+.fav-dl dd{margin:2px 0 0; font-size:14.5px; line-height:1.85; color:#D5DCE1}
+.fav-credit{margin-top:10px; font-family:var(--f-mono); font-size:11.5px; color:var(--night-muted)}
+/* PC（基本の指定より後ろに置く）：横幅いっぱい、左にモザイク 1.55 : 右に解説 1。高さ 760 で 1 枚に収まる */
+@media (min-width:1024px){
+  .p-fav .wrap{max-width:none; padding-left:max(24px, 3.5vw); padding-right:max(24px, 3.5vw)}
+  .p-fav{padding-top:calc(env(safe-area-inset-top, 0px) + var(--bar) + 24px); padding-bottom:32px}
+  .fav-grid{--sh:clamp(300px, calc(100vh - 300px), 600px); grid-template-columns:minmax(0,1.55fr) minmax(0,1fr); gap:0 clamp(28px, 3vw, 56px); align-items:start}
+  .fav-detail{min-height:var(--sh); padding:24px 28px}
+  .fav-title{font-size:30px}
+  .fav-scene{font-size:15.5px}
+  .fav-dl dt{font-size:13.5px}
+  .fav-dl dd{font-size:15.5px}
+}
+
+/* 04 連絡先（波紋） */
+.p-contact{background:var(--accent); color:#F2F7FA; flex-direction:column; justify-content:center; align-items:stretch}
+.p-contact .bg{background:repeating-radial-gradient(circle at 82% 72%, transparent 0 46px, rgba(255,255,255,.07) 46px 47px)}
+.p-contact .eyebrow{color:#BFE0EE}
+.contact{margin:0; max-width:720px}
+.c-row{display:grid; grid-template-columns:7em minmax(0,1fr) auto; align-items:center; gap:8px 20px; padding:14px 0; border-top:1px solid rgba(255,255,255,.25)}
+.c-row:last-child{border-bottom:1px solid rgba(255,255,255,.25)}
+.c-row dt{font-size:13px; color:#BFE0EE}
+.c-row dd{margin:0; min-width:0; overflow-wrap:anywhere; font-family:var(--f-mono); font-size:14px}
+/* 番号やアドレスを iPhone が勝手にリンクにしても、押して何も起きないように */
+.c-row dd a[x-apple-data-detectors], .c-row dd a[href^="tel:"], .c-row dd a[href^="mailto:"]{color:inherit !important; text-decoration:none !important; pointer-events:none}
+.copy{font-size:12px; padding:3px 12px; border-radius:3px; border:1px solid rgba(255,255,255,.45); background:transparent; color:#F2F7FA; cursor:pointer}
+.copy:disabled{opacity:.4; cursor:default}
+.foot{margin-top:48px; display:flex; flex-wrap:wrap; justify-content:space-between; gap:8px 24px; font-size:12px; color:#BFE0EE}
+.foot time{font-family:var(--f-mono)}
+
+/* ---------- スマホ ---------- */
+@media (max-width:860px){
+  :root{--bar:56px}
+  .nav{display:none}
+  .menu-btn{
+    display:grid; place-items:center; width:44px; height:44px; margin-left:-8px;
+    background:transparent; border:0; color:var(--bar-ink); cursor:pointer;
+  }
+  .menu-btn svg{width:24px; height:24px}
+  .logo .who{font-size:17px}
+  .panel{padding-top:calc(env(safe-area-inset-top, 0px) + var(--bar) + 32px); padding-bottom:48px}
+  .head{margin-bottom:26px}
+}
+@media (max-width:480px){
+  .c-row{grid-template-columns:minmax(0,1fr) auto}
+  .c-row dt{grid-column:1 / -1}
+  .cards{grid-template-columns:repeat(2, minmax(0,1fr)); gap:8px}
+  .card{grid-template-columns:28px minmax(0,1fr); column-gap:10px; padding:10px 10px}
+  .card .ic{width:28px; height:28px}
+  .card .ic svg{width:24px; height:24px}
+  .card .nm{font-size:14px}
+}
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  .drawer,.scrim{transition:none}
+}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="wrap bar-in">
+    <button type="button" class="menu-btn" id="menu-btn" aria-label="メニューを開く" aria-expanded="false" aria-controls="drawer">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+    <a class="logo" href="#top" data-go="top">
+      <span class="mark">ポートフォリオ</span>
+      <span class="who">竹内寛登</span>
+    </a>
+    <nav class="nav" aria-label="ページの中身">
+      <a href="#top" data-go="top"><span class="en">Home</span><span class="ja">ホーム</span></a>
+      <a href="#profile" data-go="profile"><span class="en">Profile</span><span class="ja">プロフィール</span></a>
+      <a href="#works" data-go="works"><span class="en">Works</span><span class="ja">作品</span></a>
+      <a href="#contact" data-go="contact"><span class="en">Contact</span><span class="ja">連絡先</span></a>
+    </nav>
+  </div>
+</header>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-label="メニュー" aria-hidden="true" inert>
+  <button type="button" class="close-btn" id="close-btn" aria-label="メニューを閉じる">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"/></svg>
+  </button>
+  <ul>
+    <li><a href="#top" data-go="top">ホーム<span class="en">Home</span></a></li>
+    <li><a href="#profile" data-go="profile">プロフィール<span class="en">Profile</span></a></li>
+    <li><a href="#works" data-go="works">作品<span class="en">Works</span></a></li>
+    <li><a href="#contact" data-go="contact">連絡先<span class="en">Contact</span></a></li>
+  </ul>
+</aside>
+
+<main>
+  <!-- 01 ホーム：左に見出しと名前、右にミニマップ（歩くと部屋ごとに足音の響きが変わる） -->
+  <section class="panel p-top" id="top" aria-label="ホーム">
+    <div class="bg"></div>
+    <div class="wrap top-grid">
+      <div class="hero">
+        <p class="kicker">Sound Programmer Portfolio</p>
+        <h1><span class="ln">ゲームに沿った</span><span class="ln">サウンドアプローチを</span><span class="ln">考える。</span></h1>
+        <div class="hero-name">
+          <p class="nm"><span class="jp">竹内 寛登</span><span class="en">Hiroto Takeuchi</span></p>
+          <p class="role">サウンドプログラマー志望 ／ 2028年3月卒業予定</p>
+        </div>
+      </div>
+      <!-- ミニマップ：十字キーで歩くと、いる部屋の響きで足音が鳴る（中身は下の script）。
+           data-sound="idreal" で、Idreal で前もって計算した足音（audio/idreal-steps/）に切り替わる。synth は合成の足音と響き -->
+      <div class="smap" id="smap" data-sound="synth" role="group" aria-label="ミニマップ：十字キーで歩くと、部屋ごとに足音の響きが変わります">
+        <div class="sm-top">
+          <p class="sm-lab">SOUND MAP</p>
+          <button type="button" class="sm-mute" aria-pressed="false" aria-label="音を消す"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 6h3l4-3v10l-4-3H2z" fill="currentColor"/><path class="w" d="M11 5.5a3.5 3.5 0 0 1 0 5M12.8 3.8a6 6 0 0 1 0 8.4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><span class="t">ON</span></button>
+        </div>
+        <div class="sm-body">
+          <div class="sm-screen" tabindex="0" aria-label="地図（矢印キーで歩く・Z で手をたたく・X を押しながら走る）">
+            <canvas width="160" height="160" role="img" aria-label="上から見た地図。白いコンクリートの建物で、大広間・小部屋・廊下と外の広場があり、人が 1 人いる"></canvas>
+            <p class="sm-room" aria-live="polite"><span class="sm-rn">大広間</span><span class="sm-rt">響き 2.4 秒</span></p>
+          </div>
+          <div class="sm-pad">
+            <div class="sm-dpad" aria-hidden="true"><span class="sm-up"></span><span class="sm-right"></span><span class="sm-down"></span><span class="sm-left"></span><span class="sm-mid"></span></div>
+            <div class="sm-ab">
+              <div class="sm-btn"><button type="button" class="sm-b" aria-label="B：押しながら走る">B</button><span>走る</span></div>
+              <div class="sm-btn"><button type="button" class="sm-a" aria-label="A：手をたたく">A</button><span>たたく</span></div>
+            </div>
+          </div>
+        </div>
+        <p class="sm-hint">足音はどこも同じ。変わるのは場所の響きだけ<span class="nw">（音が出ます）</span><span class="sm-kb">キーボード：地図をクリックして 矢印キー・Z・X</span></p>
+      </div>
+    </div>
+    <a class="cue" href="#profile" data-go="profile">SCROLL</a>
+  </section>
+
+  <!-- 02 プロフィール -->
+  <section class="panel dark p-profile" id="profile" aria-labelledby="h-profile">
+    <div class="bg">
+      <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <g stroke="#7DB8D1" stroke-opacity=".09" stroke-width="1" fill="none">
+          <path d="M80 120H1560M80 332H1560M80 544H1560M80 756H1560"/>
+        </g>
+        <g fill="#7DB8D1" fill-opacity=".22" font-family="IBM Plex Mono, Consolas, monospace" font-size="15">
+          <text x="1500" y="112">0 dB</text><text x="1490" y="324">−20</text><text x="1490" y="536">−40</text><text x="1490" y="748">−60</text>
+        </g>
+        <g stroke="#7DB8D1" stroke-width="1.5" fill="none" stroke-linecap="round">
+          <path d="M80 120L329 756" stroke-opacity=".20"/>
+          <path d="M80 120L689 756" stroke-opacity=".15"/>
+          <path d="M80 120L1298 756" stroke-opacity=".11"/>
+        </g>
+        <g fill="#7DB8D1" fill-opacity=".26" font-family="IBM Plex Mono, Consolas, monospace" font-size="14">
+          <text x="300" y="790">RT60 0.45 s</text><text x="660" y="790">RT60 1.10 s</text><text x="1268" y="790">RT60 2.20 s</text>
+        </g>
+      </svg>
+    </div>
+    <div class="wrap">
+      <div class="head">
+        <p class="eyebrow"><span class="no">01</span>Profile</p>
+        <h2 id="h-profile">プロフィール</h2>
+      </div>
+      <div class="who-block">
+        <div class="photos">
+          <img class="ph-bass" src="img/photo-bass.jpg" width="640" height="800" alt="ベースを持った写真">
+          <img class="ph-kyudo" src="img/photo-kyudo.jpg" width="600" height="1220" alt="弓道の大会で弓を引いている写真">
+        </div>
+        <div class="who-text">
+          <p class="name"><ruby>竹内<rt>たけうち</rt></ruby><ruby>寛登<rt>ひろと</rt></ruby></p>
+          <dl class="facts">
+            <dt>志望</dt><dd>サウンドプログラマー</dd>
+            <dt>所属</dt><dd>HAL大阪 ゲーム4年制学科・<wbr>ゲーム制作コース</dd>
+            <dt>卒業予定</dt><dd>2028年3月 卒業予定</dd>
+          </dl>
+        </div>
+      </div>
+      <div class="pf-cols">
+        <div class="pf-pr">
+          <div class="block" id="pr-self">
+            <h3 class="bh">自己PR</h3>
+            <div class="pr-cards">
+              <article class="pr-card">
+                <p class="pr-lab">強み</p>
+                <h4>知らないことは、<wbr>まず調べてみる</h4>
+                <p>昔から細かな物事への好奇心が強く、「少しでも知ってみたい」「知らないことをなくしたい」と考えてきました。自分が興味を持つ分野はもちろん、それ以外でも少しでも気になったこと、興味のある物事に関わっていそうなことは、まず調べてみるところから始めます。</p>
+                <p>就職作品でも、授業ではサウンドを学ぶ機会がほとんどなかったため、必要なことはすべて自力で調べました。授業で学んだグラフィックスの分野も「ここはサウンドに応用できるのではないか？」と考え、<mark>まず知ってみる</mark>ことを信条にしています。</p>
+              </article>
+              <article class="pr-card">
+                <p class="pr-lab">考え方</p>
+                <h4>作りたい体験の仕組みを、<wbr>とことん深掘りする</h4>
+                <p>これまでのチーム制作でも、就職作品のサウンド表現でも、まず「どんな体験を作りたいか」を、自身の体験をリファレンスとして具体的にし、チーム間でメンバーと共有したり作品のコンセプトとして置いたりすることで、どういった体験が作りたいのかの方向性をぶれずに作っていけるように考えていました。</p>
+                <p>そこから、どうすればその体験を作れるのか、どうすれば<mark>自分が好き・面白いと思う体験を、みんなにも感じてもらえるのか</mark>を考え、仕組みに落として実装しています。</p>
+              </article>
+            </div>
+          </div>
+        </div>
+        <div class="pf-about">
+          <div class="block">
+            <h3 class="bh">What I Want to Create<span class="bh-sub">どんなものが作りたい？</span></h3>
+            <div class="pr-box about-box">
+              <p class="pr-catch">ゲームの体験を支える、<wbr>音の環境</p>
+              <p>ゲームで作りたい体験をサポートする、音の環境を作りたいと考えています。体験を向上させる音の鳴らし方の決まりや調整、デザイナーさんの作品をどうすればよりよく見せられるか。音の観点から、ゲーム全体のクオリティをサポートできるものを作っていきたいと考えています。</p>
+            </div>
+          </div>
+        </div>
+        <div class="pf-skill">
+          <div class="block">
+            <h3 class="bh">スキル</h3>
+            <div class="sk-groups">
+            <div class="sk-group">
+              <p class="sg">ゲームエンジン</p>
+              <ul class="cards">
+                <li class="card" style="--c:#D5DCE1"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12.9288 4.2939 3.7997 2.1929c.1366.077.1415.2905 0 .3675l-4.515 2.6076a.4192.4192 0 0 1-.4246 0L7.274 6.8543c-.139-.0745-.1415-.293 0-.3675l3.7972-2.193V0L1.3758 5.5977V16.793l3.7177-2.1456v-4.3858c-.0025-.1565.1813-.2682.318-.1838l4.5148 2.6076a.4252.4252 0 0 1 .2136.3676v5.2127c.0025.1565-.1813.2682-.3179.1838l-3.7996-2.1929-3.7178 2.1457L12 24l9.6954-5.5977-3.7178-2.1457-3.7996 2.1929c-.1341.082-.3229-.0248-.3179-.1838V13.053c0-.1565.087-.2956.2136-.3676l4.5149-2.6076c.134-.082.3228.0224.3179.1838v4.3858l3.7177 2.1456V5.5977L12.9288 0Z"/></svg></span><span class="nm">Unity</span><span class="yr">3年</span></li>
+                <li class="card" style="--c:#D5DCE1"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0a12 12 0 1012 12A12 12 0 0012 0zm0 23.52A11.52 11.52 0 1123.52 12 11.52 11.52 0 0112 23.52zm7.13-9.791c-.206.997-1.126 3.557-4.06 4.942l-1.179-1.325-1.988 2a7.338 7.338 0 01-5.804-2.978 2.859 2.859 0 00.65.123c.326.006.678-.114.678-.66v-5.394a.89.89 0 00-1.116-.89c-.92.212-1.656 2.509-1.656 2.509a7.304 7.304 0 012.528-5.597 7.408 7.408 0 013.73-1.721c-1.006.573-1.57 1.507-1.57 2.29 0 1.262.76 1.109.984.923v7.28a1.157 1.157 0 00.148.256 1.075 1.075 0 00.88.445c.76 0 1.747-.868 1.747-.868V9.172c0-.6-.452-1.324-.905-1.572 0 0 .838-.149 1.484.346a5.537 5.537 0 01.387-.425c1.508-1.48 2.929-1.902 4.112-2.112 0 0-2.151 1.69-2.151 3.96 0 1.687.043 5.801.043 5.801.799.771 1.986-.342 3.059-1.441Z"/></svg></span><span class="nm">Unreal Engine</span><span class="yr">2年</span></li>
+                <li class="card" style="--c:#A595E0"><span class="ic txt" aria-hidden="true">DX</span><span class="nm">DXライブラリ</span><span class="yr">2年</span></li>
+                <li class="card" style="--c:#6FA3C2"><span class="ic txt" aria-hidden="true">GL</span><span class="nm">OpenGL</span><span class="yr">1年</span></li>
+              </ul>
+            </div>
+            <div class="sk-group">
+              <p class="sg">言語</p>
+              <ul class="cards">
+                <li class="card" style="--c:#5FA8E3"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22.394 6c-.167-.29-.398-.543-.652-.69L12.926.22c-.509-.294-1.34-.294-1.848 0L2.26 5.31c-.508.293-.923 1.013-.923 1.6v10.18c0 .294.104.62.271.91.167.29.398.543.652.69l8.816 5.09c.508.293 1.34.293 1.848 0l8.816-5.09c.254-.147.485-.4.652-.69.167-.29.27-.616.27-.91V6.91c.003-.294-.1-.62-.268-.91zM12 19.11c-3.92 0-7.109-3.19-7.109-7.11 0-3.92 3.19-7.11 7.11-7.11a7.133 7.133 0 016.156 3.553l-3.076 1.78a3.567 3.567 0 00-3.08-1.78A3.56 3.56 0 008.444 12 3.56 3.56 0 0012 15.555a3.57 3.57 0 003.08-1.778l3.078 1.78A7.135 7.135 0 0112 19.11zm7.11-6.715h-.79v.79h-.79v-.79h-.79v-.79h.79v-.79h.79v.79h.79zm2.962 0h-.79v.79h-.79v-.79h-.79v-.79h.79v-.79h.79v.79h.79z"/></svg></span><span class="nm">C++</span><span class="yr">3年</span></li>
+                <li class="card" style="--c:#C882C3"><span class="ic txt" aria-hidden="true">C#</span><span class="nm">C#</span><span class="yr">3年</span></li>
+              </ul>
+            </div>
+            <div class="sk-group">
+              <p class="sg">サウンド</p>
+              <ul class="cards">
+                <li class="card" style="--c:#4FA8F0"><span class="ic txt" aria-hidden="true">Ww</span><span class="nm">Wwise</span><span class="yr">2年</span></li>
+              </ul>
+            </div>
+            <div class="sk-group">
+              <p class="sg">開発環境</p>
+              <ul class="cards">
+                <li class="card noyr" style="--c:#A884DD"><span class="ic txt" aria-hidden="true">VS</span><span class="nm">Visual Studio</span></li>
+                <li class="card noyr" style="--c:#F05032"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.09 23.549a1.54 1.54 0 0 1-2.18 0L.451 13.089a1.54 1.54 0 0 1 0-2.179l7.191-7.19 2.733 2.733a1.85 1.85 0 0 0 .964 2.326v6.66a1.849 1.849 0 1 0 1.54 0V8.957l2.508 2.508a1.85 1.85 0 1 0 1.09-1.09l-2.634-2.634a1.85 1.85 0 0 0-2.378-2.377L8.73 2.63 10.91.451a1.54 1.54 0 0 1 2.179 0l10.459 10.46a1.54 1.54 0 0 1 0 2.179z"/></svg></span><span class="nm">Git</span></li>
+                <li class="card noyr" style="--c:#D5DCE1"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></span><span class="nm">GitHub</span></li>
+              </ul>
+            </div>
+            </div>
+          </div>
+        </div>
+        <div class="pf-lic">
+          <div class="block">
+            <h3 class="bh">資格</h3>
+            <div class="lic-box">
+              <ul class="lic">
+                <li><span class="lk" style="--c:#7DB8D1">情報</span><span class="ln">基本情報技術者試験</span></li>
+                <li><span class="lk" style="--c:#7DB8D1">情報</span><span class="ln">J検 情報処理 2級</span></li>
+                <li><span class="lk" style="--c:#4FA8F0">サウンド</span><span class="ln">Wwise-101</span></li>
+                <li><span class="lk" style="--c:#E58A5E">武道</span><span class="ln">弓道 二段</span></li>
+                <li><span class="lk" style="--c:#E58A5E">武道</span><span class="ln">柔道 初段</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="pf-aw">
+          <div class="block">
+            <h3 class="bh">受賞記録</h3>
+            <div class="lic-box">
+              <ul class="lic aw">
+                <li><span class="ay">2024</span><span class="ln">2Dゲーム学内コンペ</span><span class="ap">技術力賞</span></li>
+                <li><span class="ay">2024</span><span class="ln">HAL大阪 HAL・EVENT・WEEK</span><span class="ap">技術賞</span></li>
+                <li><span class="ay">高校</span><span class="ln">第74回 滋賀県民体育大会 弓道 男子個人</span><span class="ap">優勝</span></li>
+                <li><span class="ay">高校</span><span class="ln">第75回 滋賀県民体育大会 弓道 男子個人</span><span class="ap">2位</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 の続き：プログラマーとして意識していること（暗い背景）。中身が入るまで hidden で隠している（2026-11-18 本人「一旦なくしておこう」） -->
+  <section class="panel dark p-pr" id="pr" data-nav="profile" aria-label="プログラマーとして意識していること" hidden>
+    <div class="bg">
+      <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <g stroke="#7DB8D1" stroke-opacity=".09" stroke-width="1" fill="none">
+          <path d="M80 120H1560M80 332H1560M80 544H1560M80 756H1560"/>
+        </g>
+        <g fill="#7DB8D1" fill-opacity=".22" font-family="IBM Plex Mono, Consolas, monospace" font-size="15">
+          <text x="1500" y="112">0 dB</text><text x="1490" y="324">−20</text><text x="1490" y="536">−40</text><text x="1490" y="748">−60</text>
+        </g>
+        <g stroke="#7DB8D1" stroke-width="1.5" fill="none" stroke-linecap="round">
+          <path d="M80 120L329 756" stroke-opacity=".20"/>
+          <path d="M80 120L689 756" stroke-opacity=".15"/>
+          <path d="M80 120L1298 756" stroke-opacity=".11"/>
+        </g>
+        <g fill="#7DB8D1" fill-opacity=".26" font-family="IBM Plex Mono, Consolas, monospace" font-size="14">
+          <text x="300" y="790">RT60 0.45 s</text><text x="660" y="790">RT60 1.10 s</text><text x="1268" y="790">RT60 2.20 s</text>
+        </g>
+      </svg>
+    </div>
+    <div class="wrap">
+      <div class="pr">
+        <div class="block" id="pr-mind">
+          <h3 class="bh">プログラマーとして<wbr>意識していること</h3>
+          <div class="pr-box"><p><span class="todo">準備中</span></p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 の続き：好きなゲーム体験。左にスクショのモザイク（横に流す、ループする。並べ方 3 種類・大きさは開くたびにランダム）、押すと右（スマホは下）に解説。
+       1 本 = li 1 つ。場所は JS が決める（style の grid-area は JS が無い時の並び、6 段）、色は --fc。
+       画像は .fav-tile の中に img（自分で撮ったスクショ）、解説は .fav-info の中（押すと右の欄へ写す） -->
+  <section class="panel dark p-fav" id="fav" data-nav="profile" aria-labelledby="h-fav" hidden>
+    <div class="bg"></div>
+    <div class="wrap">
+      <div class="fav-head">
+        <p class="eyebrow"><span class="no">01</span>Favorite Games</p>
+        <h2 id="h-fav">好きなゲーム体験</h2>
+      </div>
+      <div class="fav-grid">
+        <div class="fav-left">
+          <div class="fav-strip" id="fav-strip">
+            <ul class="fav-tiles">
+              <li style="grid-area:1/1/span 4/span 4; --fc:#5E8FB0">
+                <button type="button" class="fav-tile" aria-controls="fav-detail" aria-pressed="false" aria-label="好きなゲーム体験 01（準備中）"><span class="fav-tag">01</span><span class="fav-ph" aria-hidden="true">SCREENSHOT</span></button>
+                <div class="fav-info" hidden>
+                  <h3 class="fav-title"><span class="todo">ゲーム名（準備中）</span></h3>
+                  <p class="fav-scene"><span class="todo">場面（準備中）</span></p>
+                  <ul class="fav-tags"><li><span class="todo">音の札（準備中）</span></li></ul>
+                  <dl class="fav-dl">
+                    <div><dt>どんな体験</dt><dd><span class="todo">準備中</span></dd></div>
+                    <div><dt>どこが好きか</dt><dd><span class="todo">準備中</span></dd></div>
+                    <div><dt>自分の作品へ</dt><dd><span class="todo">準備中</span></dd></div>
+                  </dl>
+                  <p class="fav-credit">© <span class="todo">準備中</span></p>
+                </div>
+              </li>
+              <li style="grid-area:5/1/span 2/span 2; --fc:#B07A5E">
+                <button type="button" class="fav-tile" aria-controls="fav-detail" aria-pressed="false" aria-label="好きなゲーム体験 02（準備中）"><span class="fav-tag">02</span><span class="fav-ph" aria-hidden="true">SCREENSHOT</span></button>
+                <div class="fav-info" hidden>
+                  <h3 class="fav-title"><span class="todo">ゲーム名（準備中）</span></h3>
+                  <p class="fav-scene"><span class="todo">場面（準備中）</span></p>
+                  <ul class="fav-tags"><li><span class="todo">音の札（準備中）</span></li></ul>
+                  <dl class="fav-dl">
+                    <div><dt>どんな体験</dt><dd><span class="todo">準備中</span></dd></div>
+                    <div><dt>どこが好きか</dt><dd><span class="todo">準備中</span></dd></div>
+                    <div><dt>自分の作品へ</dt><dd><span class="todo">準備中</span></dd></div>
+                  </dl>
+                  <p class="fav-credit">© <span class="todo">準備中</span></p>
+                </div>
+              </li>
+              <li style="grid-area:5/3/span 2/span 2; --fc:#8A7BB8">
+                <button type="button" class="fav-tile" aria-controls="fav-detail" aria-pressed="false" aria-label="好きなゲーム体験 03（準備中）"><span class="fav-tag">03</span><span class="fav-ph" aria-hidden="true">SCREENSHOT</span></button>
+                <div class="fav-info" hidden>
+                  <h3 class="fav-title"><span class="todo">ゲーム名（準備中）</span></h3>
+                  <p class="fav-scene"><span class="todo">場面（準備中）</span></p>
+                  <ul class="fav-tags"><li><span class="todo">音の札（準備中）</span></li></ul>
+                  <dl class="fav-dl">
+                    <div><dt>どんな体験</dt><dd><span class="todo">準備中</span></dd></div>
+                    <div><dt>どこが好きか</dt><dd><span class="todo">準備中</span></dd></div>
+                    <div><dt>自分の作品へ</dt><dd><span class="todo">準備中</span></dd></div>
+                  </dl>
+                  <p class="fav-credit">© <span class="todo">準備中</span></p>
+                </div>
+              </li>
+              <li style="grid-area:1/5/span 3/span 3; --fc:#6FA287">
+                <button type="button" class="fav-tile" aria-controls="fav-detail" aria-pressed="false" aria-label="好きなゲーム体験 04（準備中）"><span class="fav-tag">04</span><span class="fav-ph" aria-hidden="true">SCREENSHOT</span></button>
+                <div class="fav-info" hidden>
+                  <h3 class="fav-title"><span class="todo">ゲーム名（準備中）</span></h3>
+                  <p class="fav-scene"><span class="todo">場面（準備中）</span></p>
+                  <ul class="fav-tags"><li><span class="todo">音の札（準備中）</span></li></ul>
+                  <dl class="fav-dl">
+                    <div><dt>どんな体験</dt><dd><span class="todo">準備中</span></dd></div>
+                    <div><dt>どこが好きか</dt><dd><span class="todo">準備中</span></dd></div>
+                    <div><dt>自分の作品へ</dt><dd><span class="todo">準備中</span></dd></div>
+                  </dl>
+                  <p class="fav-credit">© <span class="todo">準備中</span></p>
+                </div>
+              </li>
+              <li style="grid-area:4/5/span 3/span 3; --fc:#B8A05E">
+                <button type="button" class="fav-tile" aria-controls="fav-detail" aria-pressed="false" aria-label="好きなゲーム体験 05（準備中）"><span class="fav-tag">05</span><span class="fav-ph" aria-hidden="true">SCREENSHOT</span></button>
+                <div class="fav-info" hidden>
+                  <h3 class="fav-title"><span class="todo">ゲーム名（準備中）</span></h3>
+                  <p class="fav-scene"><span class="todo">場面（準備中）</span></p>
+                  <ul class="fav-tags"><li><span class="todo">音の札（準備中）</span></li></ul>
+                  <dl class="fav-dl">
+                    <div><dt>どんな体験</dt><dd><span class="todo">準備中</span></dd></div>
+                    <div><dt>どこが好きか</dt><dd><span class="todo">準備中</span></dd></div>
+                    <div><dt>自分の作品へ</dt><dd><span class="todo">準備中</span></dd></div>
+                  </dl>
+                  <p class="fav-credit">© <span class="todo">準備中</span></p>
+                </div>
+              </li>
+              <li style="grid-area:1/8/span 2/span 2; --fc:#B06A84">
+                <button type="button" class="fav-tile" aria-controls="fav-detail" aria-pressed="false" aria-label="好きなゲーム体験 06（準備中）"><span class="fav-tag">06</span><span class="fav-ph" aria-hidden="true">SCREENSHOT</span></button>
+                <div class="fav-info" hidden>
+                  <h3 class="fav-title"><span class="todo">ゲーム名（準備中）</span></h3>
+                  <p class="fav-scene"><span class="todo">場面（準備中）</span></p>
+                  <ul class="fav-tags"><li><span class="todo">音の札（準備中）</span></li></ul>
+                  <dl class="fav-dl">
+                    <div><dt>どんな体験</dt><dd><span class="todo">準備中</span></dd></div>
+                    <div><dt>どこが好きか</dt><dd><span class="todo">準備中</span></dd></div>
+                    <div><dt>自分の作品へ</dt><dd><span class="todo">準備中</span></dd></div>
+                  </dl>
+                  <p class="fav-credit">© <span class="todo">準備中</span></p>
+                </div>
+              </li>
+              <li style="grid-area:3/8/span 2/span 2; --fc:#5EA6A2">
+                <button type="button" class="fav-tile" aria-controls="fav-detail" aria-pressed="false" aria-label="好きなゲーム体験 07（準備中）"><span class="fav-tag">07</span><span class="fav-ph" aria-hidden="true">SCREENSHOT</span></button>
+                <div class="fav-info" hidden>
+                  <h3 class="fav-title"><span class="todo">ゲーム名（準備中）</span></h3>
+                  <p class="fav-scene"><span class="todo">場面（準備中）</span></p>
+                  <ul class="fav-tags"><li><span class="todo">音の札（準備中）</span></li></ul>
+                  <dl class="fav-dl">
+                    <div><dt>どんな体験</dt><dd><span class="todo">準備中</span></dd></div>
+                    <div><dt>どこが好きか</dt><dd><span class="todo">準備中</span></dd></div>
+                    <div><dt>自分の作品へ</dt><dd><span class="todo">準備中</span></dd></div>
+                  </dl>
+                  <p class="fav-credit">© <span class="todo">準備中</span></p>
+                </div>
+              </li>
+              <li style="grid-area:5/8/span 2/span 2; --fc:#9A8F7E">
+                <button type="button" class="fav-tile" aria-controls="fav-detail" aria-pressed="false" aria-label="好きなゲーム体験 08（準備中）"><span class="fav-tag">08</span><span class="fav-ph" aria-hidden="true">SCREENSHOT</span></button>
+                <div class="fav-info" hidden>
+                  <h3 class="fav-title"><span class="todo">ゲーム名（準備中）</span></h3>
+                  <p class="fav-scene"><span class="todo">場面（準備中）</span></p>
+                  <ul class="fav-tags"><li><span class="todo">音の札（準備中）</span></li></ul>
+                  <dl class="fav-dl">
+                    <div><dt>どんな体験</dt><dd><span class="todo">準備中</span></dd></div>
+                    <div><dt>どこが好きか</dt><dd><span class="todo">準備中</span></dd></div>
+                    <div><dt>自分の作品へ</dt><dd><span class="todo">準備中</span></dd></div>
+                  </dl>
+                  <p class="fav-credit">© <span class="todo">準備中</span></p>
+                </div>
+              </li>
+              <li style="grid-area:1/10/span 3/span 3; --fc:#7F96C8">
+                <button type="button" class="fav-tile" aria-controls="fav-detail" aria-pressed="false" aria-label="好きなゲーム体験 09（準備中）"><span class="fav-tag">09</span><span class="fav-ph" aria-hidden="true">SCREENSHOT</span></button>
+                <div class="fav-info" hidden>
+                  <h3 class="fav-title"><span class="todo">ゲーム名（準備中）</span></h3>
+                  <p class="fav-scene"><span class="todo">場面（準備中）</span></p>
+                  <ul class="fav-tags"><li><span class="todo">音の札（準備中）</span></li></ul>
+                  <dl class="fav-dl">
+                    <div><dt>どんな体験</dt><dd><span class="todo">準備中</span></dd></div>
+                    <div><dt>どこが好きか</dt><dd><span class="todo">準備中</span></dd></div>
+                    <div><dt>自分の作品へ</dt><dd><span class="todo">準備中</span></dd></div>
+                  </dl>
+                  <p class="fav-credit">© <span class="todo">準備中</span></p>
+                </div>
+              </li>
+              <li style="grid-area:4/10/span 3/span 3; --fc:#C08A5A">
+                <button type="button" class="fav-tile" aria-controls="fav-detail" aria-pressed="false" aria-label="好きなゲーム体験 10（準備中）"><span class="fav-tag">10</span><span class="fav-ph" aria-hidden="true">SCREENSHOT</span></button>
+                <div class="fav-info" hidden>
+                  <h3 class="fav-title"><span class="todo">ゲーム名（準備中）</span></h3>
+                  <p class="fav-scene"><span class="todo">場面（準備中）</span></p>
+                  <ul class="fav-tags"><li><span class="todo">音の札（準備中）</span></li></ul>
+                  <dl class="fav-dl">
+                    <div><dt>どんな体験</dt><dd><span class="todo">準備中</span></dd></div>
+                    <div><dt>どこが好きか</dt><dd><span class="todo">準備中</span></dd></div>
+                    <div><dt>自分の作品へ</dt><dd><span class="todo">準備中</span></dd></div>
+                  </dl>
+                  <p class="fav-credit">© <span class="todo">準備中</span></p>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <div class="fav-ctrl">
+            <button type="button" class="fav-arrow" data-dir="-1" aria-label="左へ"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <button type="button" class="fav-arrow" data-dir="1" aria-label="右へ"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <p class="fav-hint"><span class="pc">横スクロール・ドラッグで動きます。押すと右に解説</span><span class="sp">横にスワイプで動きます。押すと下に解説</span></p>
+          </div>
+        </div>
+        <div class="fav-detail" id="fav-detail">
+          <p class="fav-no">01 / 10</p>
+          <div class="fav-body" aria-live="polite"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 作品：1 作品 = 全画面 1 枚（左に画像、右に題・概要・表・MORE）。こだわりは .w-extra（MORE の窓に出る）。画像は .w-shot の中に img を入れる -->
+  <section class="panel dark p-work" id="works" aria-labelledby="w1-title" style="--wa:#7DB8D1">
+    <div class="bg"></div>
+    <div class="wrap">
+      <div class="w-grid">
+        <div class="w-head">
+          <p class="eyebrow"><span class="no">02</span>Works <span class="w-idx">01 / 05</span><span class="w-wip">制作中</span></p>
+          <h2 id="w1-title">IdReal</h2>
+        </div>
+        <div class="w-shot"><img src="img/works/idreal.jpg?v=4" width="1400" height="788" alt="IdReal のデバッグ表示（床に並んだプローブの点と、右上の耳から出る 16 本のレイで壁までの距離を測っている地図）" decoding="async"></div>
+        <div class="w-detail">
+          <dl class="w-facts"><div><dt>概要</dt><dd>自作の音響エンジンと、それを扱うゲーム側の仕組み。空間の広さや壁などの近さが、見えていなくても伝わる体験を目指して制作。</dd></div><div><dt>ゲームジャンル</dt><dd>—（音響エンジン）</dd></div><div><dt>制作規模</dt><dd>個人制作</dd></div><div><dt>担当範囲</dt><dd>すべて</dd></div><div><dt>制作期間</dt><dd>2026年7月〜制作中</dd></div><div><dt>制作環境</dt><dd>C++（Visual Studio 2022）／Unreal Engine 5.6／Wwise 2025.1</dd></div></dl>
+          <div class="w-acts">
+            <button type="button" class="w-more" aria-haspopup="dialog">MORE</button>
+            <button type="button" class="w-doc" data-pdf="docs/idreal.pdf" data-title="IdReal 詳細資料" aria-haspopup="dialog" disabled title="準備中" hidden>詳細資料</button>
+          </div>
+          <div class="w-extra" hidden>
+            <p class="dlg-h">こだわり</p>
+            <ul class="w-pts">
+                <li><span class="w-ic" aria-hidden="true">01</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
+                <li><span class="w-ic" aria-hidden="true">02</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="panel dark p-work" id="work-2" data-nav="works" aria-labelledby="w2-title" style="--wa:#E58A5E">
+    <div class="bg"></div>
+    <div class="wrap">
+      <div class="w-grid">
+        <div class="w-head">
+          <p class="eyebrow"><span class="no">02</span>Works <span class="w-idx">02 / 05</span><span class="w-wip">制作中</span></p>
+          <h2 id="w2-title">探索型ホラーゲーム</h2>
+        </div>
+        <div class="w-shot"><img src="img/works/horror.jpg" width="1400" height="788" alt="探索型ホラーゲームの画面（懐中電灯で照らした暗い部屋、隅に人形、奥に扉）" decoding="async"></div>
+        <div class="w-detail">
+          <dl class="w-facts"><div><dt>概要</dt><dd>自作の音響エンジン IdReal を使った探索型ホラー。暗い視界の中、足音や周りの音の聞こえ方を頼りに、どんな空間にいるのかを感じ取りながらキーアイテムを集めていく。</dd></div><div><dt>ゲームジャンル</dt><dd>探索型ホラー</dd></div><div><dt>制作規模</dt><dd>個人制作</dd></div><div><dt>担当範囲</dt><dd>すべて</dd></div><div><dt>制作期間</dt><dd>2026年9月〜制作中</dd></div><div><dt>制作環境</dt><dd>Unreal Engine 5.6／Wwise 2025.1／自作の音響エンジン IdReal</dd></div></dl>
+          <div class="w-acts">
+            <button type="button" class="w-more" aria-haspopup="dialog">MORE</button>
+          </div>
+          <div class="w-extra" hidden>
+            <p class="dlg-h">こだわり</p>
+            <ul class="w-pts">
+                <li><span class="w-ic" aria-hidden="true">01</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
+                <li><span class="w-ic" aria-hidden="true">02</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="panel dark p-work" id="work-3" data-nav="works" aria-labelledby="w3-title" style="--wa:#A595E0">
+    <div class="bg"></div>
+    <div class="wrap">
+      <div class="w-grid">
+        <div class="w-head">
+          <p class="eyebrow"><span class="no">02</span>Works <span class="w-idx">03 / 05</span></p>
+          <h2 id="w3-title">御墨付</h2>
+        </div>
+        <div class="w-shot"><img src="img/works/osumitsuki.jpg?v=2" width="1400" height="788" alt="御墨付のタイトル画面" decoding="async"></div>
+        <div class="w-detail">
+          <dl class="w-facts"><div><dt>概要</dt><dd>世界に色を付け、その上を歩いていく3Dアクションゲーム。</dd></div><div><dt>ゲームジャンル</dt><dd>3Dアクションゲーム</dd></div><div><dt>制作規模</dt><dd>チーム制作・11人</dd></div><div><dt>担当範囲</dt><dd>サブリーダー、プレイヤー制御、サウンド設計・実装</dd></div><div><dt>制作期間</dt><dd>3か月</dd></div><div><dt>制作環境</dt><dd>Unity 6</dd></div></dl>
+          <div class="w-acts">
+            <button type="button" class="w-more" aria-haspopup="dialog">MORE</button>
+          </div>
+          <div class="w-extra" hidden>
+            <p class="dlg-h">こだわり</p>
+            <ul class="w-pts">
+                <li><span class="w-ic" aria-hidden="true">01</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
+                <li><span class="w-ic" aria-hidden="true">02</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="panel dark p-work" id="work-4" data-nav="works" aria-labelledby="w4-title" style="--wa:#8FC7A0">
+    <div class="bg"></div>
+    <div class="wrap">
+      <div class="w-grid">
+        <div class="w-head">
+          <p class="eyebrow"><span class="no">02</span>Works <span class="w-idx">04 / 05</span></p>
+          <h2 id="w4-title">RibBond</h2>
+        </div>
+        <div class="w-shot"><img src="img/works/ribbond.jpg?v=2" width="1400" height="788" alt="RibBond のタイトル画面" decoding="async"></div>
+        <div class="w-detail">
+          <dl class="w-facts"><div><dt>概要</dt><dd>裁縫の世界で、針にリボンを引っかけたり、敵をリボンで飾ったりして先へ進んでいくワイヤーアクションゲーム。</dd></div><div><dt>ゲームジャンル</dt><dd>2D横スクロールワイヤーアクション</dd></div><div><dt>制作規模</dt><dd>チーム制作・10人</dd></div><div><dt>担当範囲</dt><dd>リードプログラマー、リーダー、全体設計、ロード制御、サウンド制御、ステージ管理</dd></div><div><dt>制作期間</dt><dd>4か月</dd></div><div><dt>制作環境</dt><dd>DirectX 11</dd></div></dl>
+          <div class="w-acts">
+            <button type="button" class="w-more" aria-haspopup="dialog">MORE</button>
+          </div>
+          <div class="w-extra" hidden>
+            <p class="dlg-h">こだわり</p>
+            <ul class="w-pts">
+                <li><span class="w-ic" aria-hidden="true">01</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
+                <li><span class="w-ic" aria-hidden="true">02</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="panel dark p-work" id="work-5" data-nav="works" aria-labelledby="w5-title" style="--wa:#E3C26B">
+    <div class="bg"></div>
+    <div class="wrap">
+      <div class="w-grid">
+        <div class="w-head">
+          <p class="eyebrow"><span class="no">02</span>Works <span class="w-idx">05 / 05</span></p>
+          <h2 id="w5-title">SoundMarker</h2>
+        </div>
+        <div class="w-shot"><img src="img/works/soundmarker.jpg?v=2" width="1400" height="789" alt="SoundMarker の画面（アニメーションのタイムラインに音を置く）" decoding="async"></div>
+        <div class="w-detail">
+          <dl class="w-facts"><div><dt>概要</dt><dd>サウンドデザイナーさんとのチーム制作で経験した、実装して検証するまでの時間や、実装後の手戻りを減らすために、サウンドデザイナーさんと話し合って制作した検証ツール。</dd></div><div><dt>ゲームジャンル</dt><dd>—（アニメーション・サウンド検証ツール）</dd></div><div><dt>制作規模</dt><dd>個人制作</dd></div><div><dt>担当範囲</dt><dd>すべて</dd></div><div><dt>制作期間</dt><dd>2週間</dd></div><div><dt>制作環境</dt><dd>DirectX 11／C++17</dd></div></dl>
+          <div class="w-acts">
+            <button type="button" class="w-more" aria-haspopup="dialog">MORE</button>
+          </div>
+          <div class="w-extra" hidden>
+            <p class="dlg-h">こだわり</p>
+            <ul class="w-pts">
+                <li><span class="w-ic" aria-hidden="true">01</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
+                <li><span class="w-ic" aria-hidden="true">02</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="panel dark p-work" id="work-6" hidden data-nav="works" aria-labelledby="w6-title" style="--wa:#E08AA8">
+    <div class="bg"></div>
+    <div class="wrap">
+      <div class="w-grid">
+        <div class="w-head">
+          <p class="eyebrow"><span class="no">02</span>Works <span class="w-idx">06 / 07</span><span class="w-wip">制作中</span></p>
+          <h2 id="w6-title">友人作品A</h2>
+        </div>
+        <div class="w-shot">画像 準備中</div>
+        <div class="w-detail">
+          <dl class="w-facts"><div><dt>概要</dt><dd><span class="todo">準備中</span></dd></div><div><dt>ゲームジャンル</dt><dd><span class="todo">準備中</span></dd></div><div><dt>制作規模</dt><dd>—</dd></div><div><dt>担当範囲</dt><dd>サウンド面で協力、<span class="todo">詳しくは準備中</span></dd></div><div><dt>制作期間</dt><dd>1か月</dd></div><div><dt>制作環境</dt><dd>DirectX 11／C++17</dd></div></dl>
+          <div class="w-acts">
+            <button type="button" class="w-more" aria-haspopup="dialog">MORE</button>
+          </div>
+          <div class="w-extra" hidden>
+            <p class="dlg-h">こだわり</p>
+            <ul class="w-pts">
+                <li><span class="w-ic" aria-hidden="true">01</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
+                <li><span class="w-ic" aria-hidden="true">02</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="panel dark p-work" id="work-7" hidden data-nav="works" aria-labelledby="w7-title" style="--wa:#6CC4C0">
+    <div class="bg"></div>
+    <div class="wrap">
+      <div class="w-grid">
+        <div class="w-head">
+          <p class="eyebrow"><span class="no">02</span>Works <span class="w-idx">07 / 07</span><span class="w-wip">制作中</span></p>
+          <h2 id="w7-title">友人作品B</h2>
+        </div>
+        <div class="w-shot">画像 準備中</div>
+        <div class="w-detail">
+          <dl class="w-facts"><div><dt>概要</dt><dd><span class="todo">準備中</span></dd></div><div><dt>ゲームジャンル</dt><dd><span class="todo">準備中</span></dd></div><div><dt>制作規模</dt><dd>—</dd></div><div><dt>担当範囲</dt><dd>サウンド面で協力、<span class="todo">詳しくは準備中</span></dd></div><div><dt>制作期間</dt><dd>1か月</dd></div><div><dt>制作環境</dt><dd>DirectX 12／C++17</dd></div></dl>
+          <div class="w-acts">
+            <button type="button" class="w-more" aria-haspopup="dialog">MORE</button>
+          </div>
+          <div class="w-extra" hidden>
+            <p class="dlg-h">こだわり</p>
+            <ul class="w-pts">
+                <li><span class="w-ic" aria-hidden="true">01</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
+                <li><span class="w-ic" aria-hidden="true">02</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 連絡先：波紋 -->
+  <section class="panel p-contact" id="contact" aria-labelledby="h-contact">
+    <div class="bg"></div>
+    <div class="wrap">
+      <div class="head">
+        <p class="eyebrow"><span class="no">03</span>Contact</p>
+        <h2 id="h-contact">連絡先</h2>
+      </div>
+      <dl class="contact">
+        <div class="c-row"><dt>電話番号</dt><dd id="c-tel">080-8475-4561</dd><button type="button" class="copy" data-copy="c-tel" disabled>コピー</button></div>
+        <div class="c-row"><dt>メールアドレス</dt><dd id="c-mail">hiroto.takeuchi1222@gmail.com</dd><button type="button" class="copy" data-copy="c-mail" disabled>コピー</button></div>
+        <div class="c-row"><dt>GitHub</dt><dd id="c-github">github.com/hiro1222</dd><button type="button" class="copy" data-copy="c-github" data-text="https://github.com/hiro1222" disabled>コピー</button></div>
+      </dl>
+      <div class="foot"><span>竹内寛登</span><span>最終更新 <time datetime="2026-11-17">2026.11.17</time></span></div>
+    </div>
+  </section>
+</main>
+
+<!-- 作品の MORE の窓（中身は各作品の .w-extra を写す。こだわりなどはそこに書く） -->
+<dialog class="dlg" id="w-dlg" aria-labelledby="w-dlg-title">
+  <div class="dlg-bar"><p class="dlg-eb"></p><div class="dlg-bar-r"><button type="button" class="dlg-x" data-close>閉じる<span aria-hidden="true">×</span></button></div></div>
+  <div class="dlg-body"><h3 id="w-dlg-title"></h3><p class="dlg-lead"></p><div class="dlg-more"></div></div>
+</dialog>
+<!-- 詳細資料（PDF）の窓。PC はページの中に表示、スマホは新しいタブで開く -->
+<dialog class="dlg dlg-pdf" id="pdf-dlg" aria-label="詳細資料">
+  <div class="dlg-bar"><p class="dlg-eb"></p><div class="dlg-bar-r"><a class="dlg-open" id="pdf-open" href="#" target="_blank" rel="noopener">新しいタブで開く</a><button type="button" class="dlg-x" data-close>閉じる<span aria-hidden="true">×</span></button></div></div>
+  <iframe id="pdf-frame" title="詳細資料（PDF）"></iframe>
+</dialog>
+
+<script>
+(function(){
+  var reduce = false;
+  try{ reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){}
+  var sections = Array.prototype.slice.call(document.querySelectorAll('main > section')).filter(function(s){ return !s.hidden; });  // 隠した節は止まる位置に入れない
+
+  // ---- 作品の画像をぼかして背景に（.w-shot の img を写す） ----
+  document.querySelectorAll('.p-work').forEach(function(sec){
+    var img = sec.querySelector('.w-shot img');
+    if (!img) return;
+    sec.style.setProperty('--shot', 'url("' + img.getAttribute('src') + '")');
+    sec.classList.add('has-shot');
+  });
+
+  // ---- スクロールの動き（ブラウザの scroll-snap の代わりに自前で動かす） ----
+  // 弱めの吸い付き：進んでいる先の止まる位置が画面の SNAP_AHEAD 以内に来た時だけ引き寄せる。
+  // 止まる位置を SNAP_BACK だけ通り過ぎたら戻す。それ以外（節の途中）は止まった所のまま
+  var SNAP_AHEAD = 0.4, SNAP_BACK = 0.1, SNAP_IDLE = 200;
+  // 動きはばね（臨界減衰）1 本。速さが途切れないので、ホイールの滑りから止まらずに吸い付きへ曲がる
+  //  W_WHEEL＝ホイールで滑る時の硬さ、W_SNAP＝吸い付く時の硬さ（小さいほどゆっくり。7.5 で約 0.22 s で半分、0.9 s で着く）
+  //  WHEEL_MUL＝マウスの目盛りを何倍進めるか、WHEEL_PAUSE＝ホイールが止まってから吸い付きを決めるまで（ms）
+  var W_WHEEL = 14, W_SNAP = 7.5, WHEEL_MUL = 1.2, WHEEL_PAUSE = 90;
+  var anim = null, lastRest = window.scrollY, touching = false, idleTimer = 0, wheelTimer = 0, wheelFrom = 0;
+  var sp = {on: false, x: 0, v: 0, tgt: 0, w: W_SNAP, last: 0};
+  function docY(el){ return el.getBoundingClientRect().top + window.scrollY; }
+  function maxY(){ return document.documentElement.scrollHeight - window.innerHeight; }
+  function easeInOut(t){ return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
+  function stopAll(){ anim = null; sp.on = false; clearTimeout(wheelTimer); wheelTimer = 0; }
+  function spStep(now){
+    if (!sp.on) return;
+    var dt = Math.min(0.034, Math.max(0.001, (now - sp.last) / 1000)), h = dt / 4, i, acc;
+    sp.last = now;
+    for (i = 0; i < 4; i++){ acc = -sp.w * sp.w * (sp.x - sp.tgt) - 2 * sp.w * sp.v; sp.v += acc * h; sp.x += sp.v * h; }
+    if (Math.abs(sp.tgt - sp.x) < 0.5 && Math.abs(sp.v) < 6){ sp.x = sp.tgt; sp.v = 0; sp.on = false; lastRest = Math.round(sp.tgt); }
+    window.scrollTo(0, sp.x);
+    if (sp.on) requestAnimationFrame(spStep);
+  }
+  // ばねの行き先を変える（動いている途中なら、今の速さのまま曲がる）
+  function springTo(y, w){
+    anim = null;
+    sp.tgt = Math.max(0, Math.min(maxY(), y));
+    sp.w = w;
+    if (!sp.on){ sp.x = window.scrollY; sp.v = 0; sp.last = performance.now(); sp.on = true; requestAnimationFrame(spStep); }
+  }
+  // 上のバーから節へ飛ぶ時の動き（長い距離なので時間を決めて動かす）
+  function animateTo(y, dur, ease){
+    y = Math.max(0, Math.min(maxY(), Math.round(y)));
+    stopAll();
+    if (reduce || Math.abs(y - window.scrollY) < 2){ window.scrollTo(0, y); lastRest = y; return; }
+    var y0 = window.scrollY, t0 = performance.now(), me = {};
+    anim = me;
+    (function step(now){
+      if (anim !== me) return;
+      var t = Math.min(1, Math.max(0, (now - t0) / dur));
+      window.scrollTo(0, y0 + (y - y0) * ease(t));
+      if (t < 1) requestAnimationFrame(step);
+      else { anim = null; lastRest = y; }
+    })(t0);
+  }
+  // 止まってよい位置：節の頭。長い節は終わり（下端が画面の下に揃う位置）も。長い節の中は自由
+  function stops(){
+    var vh = window.innerHeight, m = maxY(), list = [], free = [];
+    sections.forEach(function(s){
+      var top = docY(s), end = top + s.offsetHeight - vh;
+      list.push(top);
+      if (end > top + 2){ list.push(end); free.push([top, end]); }
+    });
+    list.push(m);
+    list = list.map(function(v){ return Math.max(0, Math.min(m, Math.round(v))); }).sort(function(a, b){ return a - b; });
+    return {list: list, free: free};
+  }
+  // y で止まりそうな時に吸い付く先（無ければ null）。dir＝動いた向き
+  function snapTarget(y, dir){
+    var vh = window.innerHeight, st = stops(), i, ahead = null, behind = null;
+    for (i = 0; i < st.free.length; i++){ if (y > st.free[i][0] + 2 && y < st.free[i][1] - 2) return null; }
+    // もう止まる位置にいるなら動かさない（長い節の頭に着いた直後に、終わりまで引っぱらないように）
+    for (i = 0; i < st.list.length; i++){ if (Math.abs(st.list[i] - y) < 3) return null; }
+    if (dir >= 0){
+      for (i = 0; i < st.list.length; i++){ if (st.list[i] > y){ ahead = st.list[i]; break; } }
+      for (i = st.list.length - 1; i >= 0; i--){ if (st.list[i] <= y){ behind = st.list[i]; break; } }
+    } else {
+      for (i = st.list.length - 1; i >= 0; i--){ if (st.list[i] < y){ ahead = st.list[i]; break; } }
+      for (i = 0; i < st.list.length; i++){ if (st.list[i] >= y){ behind = st.list[i]; break; } }
+    }
+    if (ahead !== null && Math.abs(ahead - y) <= SNAP_AHEAD * vh) return ahead;
+    if (behind !== null && Math.abs(y - behind) <= SNAP_BACK * vh) return behind;
+    return null;
+  }
+  // ブラウザ自身のスクロール（指・キー・スクロールバー）が止まった後に吸い付く
+  function settle(){
+    if (anim || sp.on || touching || reduce) return;
+    var y = window.scrollY, dir = y - lastRest;
+    if (Math.abs(dir) < 1) return;
+    var t = snapTarget(y, dir);
+    if (t === null){ lastRest = y; return; }
+    springTo(t, W_SNAP);
+  }
+  // ホイールが止まったら、滑り終わる位置で吸い付きを決める（滑っている途中のまま行き先を曲げる）
+  function decideWheel(){
+    wheelTimer = 0;
+    var y = sp.on ? sp.tgt : window.scrollY, t = snapTarget(y, y - wheelFrom);
+    if (t !== null) springTo(t, W_SNAP);
+  }
+  window.addEventListener('scroll', function(){
+    if (anim || sp.on || wheelTimer) return;
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(settle, SNAP_IDLE);
+  }, {passive: true});
+  window.addEventListener('wheel', function(e){
+    // 拡大縮小・横のスクロール・サイドバーの中・動きを減らす設定 はブラウザに任せる
+    if (reduce || e.ctrlKey || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+    if (e.target.closest && e.target.closest('#drawer, dialog')) return;
+    if (document.documentElement.classList.contains('dlg-open')) return;
+    var dy = e.deltaY * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? window.innerHeight : 1);
+    e.preventDefault();
+    if (!wheelTimer) wheelFrom = sp.on ? sp.x : window.scrollY;
+    // 滑っている途中なら行き先に足す。吸い付きの途中なら今いる所から
+    var base = sp.on ? (sp.w === W_WHEEL ? sp.tgt : sp.x) : window.scrollY;
+    // マウスの目盛り（大きい差分）は少し多めに進める。タッチパッドの細かい差分はそのまま
+    springTo(base + dy * (Math.abs(dy) >= 50 ? WHEEL_MUL : 1), W_WHEEL);
+    clearTimeout(wheelTimer);
+    wheelTimer = setTimeout(decideWheel, WHEEL_PAUSE);
+  }, {passive: false});
+  window.addEventListener('touchstart', function(){ touching = true; stopAll(); }, {passive: true});
+  window.addEventListener('touchend', function(){ touching = false; clearTimeout(idleTimer); idleTimer = setTimeout(settle, SNAP_IDLE); }, {passive: true});
+  window.addEventListener('touchcancel', function(){ touching = false; }, {passive: true});
+  window.addEventListener('keydown', function(e){
+    if (['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End', ' '].indexOf(e.key) >= 0) stopAll();
+  });
+  window.addEventListener('pointerdown', function(e){ if (e.pointerType === 'mouse') stopAll(); });
+
+  // ---- 押したらその節までスクロール ----
+  function go(id){
+    var el = document.getElementById(id);
+    if (!el) return;
+    var y = docY(el);
+    animateTo(y, Math.min(1300, 650 + Math.abs(y - window.scrollY) * 0.12), easeInOut);
+  }
+  document.querySelectorAll('[data-go]').forEach(function(a){
+    a.addEventListener('click', function(e){
+      e.preventDefault();
+      var id = a.getAttribute('data-go');
+      if (drawer.classList.contains('open')){ closeDrawer(false); setTimeout(function(){ go(id); }, 60); }
+      else go(id);
+    });
+  });
+
+  // ---- 今いる節に印 ----
+  function mark(id){
+    document.querySelectorAll('[data-go]').forEach(function(a){
+      if (a.classList.contains('cue') || a.classList.contains('logo')) return;
+      if (a.getAttribute('data-go') === id) a.setAttribute('aria-current', 'true');
+      else a.removeAttribute('aria-current');
+    });
+  }
+  if ('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){ if (en.isIntersecting) mark(en.target.dataset.nav || en.target.id); });
+    }, {rootMargin: '-45% 0px -50% 0px'});
+    sections.forEach(function(s){ io.observe(s); });
+  }
+  mark('top');
+
+  // ---- スマホのサイドバー ----
+  var btn = document.getElementById('menu-btn');
+  var drawer = document.getElementById('drawer');
+  var scrim = document.getElementById('scrim');
+  var closeBtn = document.getElementById('close-btn');
+  function openDrawer(){
+    drawer.removeAttribute('inert'); drawer.setAttribute('aria-hidden', 'false');
+    drawer.classList.add('open'); scrim.classList.add('open');
+    btn.setAttribute('aria-expanded', 'true');
+    setTimeout(function(){ closeBtn.focus(); }, 30);
+  }
+  function closeDrawer(refocus){
+    drawer.classList.remove('open'); scrim.classList.remove('open');
+    drawer.setAttribute('aria-hidden', 'true'); drawer.setAttribute('inert', '');
+    btn.setAttribute('aria-expanded', 'false');
+    if (refocus !== false) btn.focus();
+  }
+  btn.addEventListener('click', openDrawer);
+  closeBtn.addEventListener('click', function(){ closeDrawer(); });
+  scrim.addEventListener('click', function(){ closeDrawer(); });
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && drawer.classList.contains('open')) closeDrawer(); });
+  window.addEventListener('resize', function(){ if (window.innerWidth > 860 && drawer.classList.contains('open')) closeDrawer(false); });
+
+  // ---- 作品の MORE（こだわりなどを窓で）・詳細資料（PDF） ----
+  var wdlg = document.getElementById('w-dlg'), pdlg = document.getElementById('pdf-dlg'), pframe = document.getElementById('pdf-frame');
+  function openDlg(d, sec){
+    if (!d.showModal) return;
+    var wa = getComputedStyle(sec).getPropertyValue('--wa').trim();
+    if (wa) d.style.setProperty('--wa', wa);
+    stopAll();
+    document.documentElement.classList.add('dlg-open');
+    d.showModal();
+    d.scrollTop = 0;
+  }
+  [wdlg, pdlg].forEach(function(d){
+    d.addEventListener('close', function(){
+      document.documentElement.classList.remove('dlg-open');
+      if (d === pdlg) pframe.removeAttribute('src');
+    });
+    // 外側（暗い所）か「閉じる」で閉じる
+    d.addEventListener('click', function(e){ if (e.target === d || e.target.closest('[data-close]')) d.close(); });
+  });
+  document.querySelectorAll('.p-work .w-more').forEach(function(b){
+    var sec = b.closest('.p-work');
+    b.addEventListener('click', function(){
+      var ex = sec.querySelector('.w-extra'), idx = sec.querySelector('.w-idx'), lead = sec.querySelector('.w-facts dd');  // 表の 1 行目＝概要
+      wdlg.querySelector('.dlg-eb').textContent = 'Works ' + (idx ? idx.textContent : '');
+      wdlg.querySelector('h3').textContent = sec.querySelector('h2').textContent;
+      wdlg.querySelector('.dlg-lead').textContent = lead ? lead.textContent : '';
+      wdlg.querySelector('.dlg-more').innerHTML = ex ? ex.innerHTML : '';
+      openDlg(wdlg, sec);
+    });
+  });
+  var phoneQ = window.matchMedia ? window.matchMedia('(max-width: 860px), (pointer: coarse)') : null;
+  document.querySelectorAll('.w-doc[data-pdf]').forEach(function(b){
+    var url = b.getAttribute('data-pdf'), sec = b.closest('.p-work');
+    b.addEventListener('click', function(){
+      // スマホ・ページの中で PDF を出せないブラウザは、新しいタブで開く（端末の PDF 表示の方が読みやすい）
+      if (navigator.pdfViewerEnabled === false || (phoneQ && phoneQ.matches)){ window.open(url, '_blank', 'noopener'); return; }
+      pdlg.querySelector('.dlg-eb').textContent = b.getAttribute('data-title') || '詳細資料';
+      document.getElementById('pdf-open').href = url;
+      pframe.src = url;
+      openDlg(pdlg, sec);
+    });
+  });
+
+  // ---- 好きなゲーム体験：タイルを押すと右（スマホは下）に解説。帯はループする ----
+  // タイルは同じ比率で大きさ 3 つ、並べ方は 3 種類。どの作品をどの大きさにするかは開くたびにランダム。
+  // 3 種類で 1 周（38 列）、それを 3 つ並べて真ん中を見せ、端へ寄ったら 1 周ぶん戻す（同じ並びなので継ぎ目は見えない）。
+  // 真ん中の周の 1 種類目だけが元の li（読み上げ・Tab の対象）、ほかは写し。縦のホイールは今までどおり次の節へ
+  (function(){
+    var sec = document.getElementById('fav');
+    if (!sec) return;
+    var strip = document.getElementById('fav-strip'), list = strip.querySelector('.fav-tiles');
+    var items = Array.prototype.slice.call(list.children), n = items.length;
+    var noEl = sec.querySelector('.fav-no'), body = sec.querySelector('.fav-body'), arrows = sec.querySelectorAll('.fav-arrow');
+    // 大きさは 3 つ（小 2×2・中 3×3・大 4×4 マス。マスが 16:9 なのでどれも同じ比率）。6 段を 4 種類の塊で埋める：
+    //  A＝大の下に小 2 つ（4 列）／A2＝小 2 つの下に大（4 列）／B＝中を 2 つ積む（3 列）／C＝小を 3 つ積む（2 列）。[段, 列のずれ, 大きさ]
+    var BLOCKS = {
+      A:  {w: 4, cells: [[1,0,4],[5,0,2],[5,2,2]]},
+      A2: {w: 4, cells: [[1,0,2],[1,2,2],[3,0,4]]},
+      B:  {w: 3, cells: [[1,0,3],[4,0,3]]},
+      C:  {w: 2, cells: [[1,0,2],[3,0,2],[5,0,2]]}
+    };
+    // 並べ方 3 種類（どれも 10 枚）。種類の境目でも同じ塊が隣り合わない順
+    var LAYOUTS = [['A','B','C','B'], ['C','B','A2','B'], ['A2','B','A','B']];
+    var PATTERNS = [], PSTART = [], LAPCOLS = 0;   // PATTERNS の 1 枚＝[段, 列, 大きさ]
+    LAYOUTS.forEach(function(lay){
+      var cells = [], c = 1;
+      lay.forEach(function(k){ BLOCKS[k].cells.forEach(function(e){ cells.push([e[0], c + e[1], e[2]]); }); c += BLOCKS[k].w; });
+      PATTERNS.push(cells); PSTART.push(LAPCOLS); LAPCOLS += c - 1;
+    });
+    var NP = PATTERNS.length, LAPS = 3, MID = 1;
+    if (PATTERNS.some(function(pt){ return pt.length !== n; })) return;   // 本数を変えたら並べ方も作り直す（それまでは HTML の並びのまま）
+    // 作品の割り当て：種類ごとに並びを混ぜる。種類の境目の前後 3 枚に同じ作品が来ないように
+    function shuffled(){ var a = [], i, j, t; for (i = 0; i < n; i++) a.push(i); for (i = n - 1; i > 0; i--){ j = Math.floor(Math.random() * (i + 1)); t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+    var perm, tries = 0, ok;
+    do {
+      perm = []; for (var q = 0; q < NP; q++) perm.push(shuffled());
+      ok = true;
+      for (q = 0; q < NP && ok; q++){
+        var tail = perm[q].slice(-3), head = perm[(q + 1) % NP].slice(0, 3);
+        for (var z = 0; z < 3; z++){ if (head.indexOf(tail[z]) >= 0){ ok = false; break; } }
+      }
+    } while (!ok && ++tries < 200);
+    // 並べる
+    var frag = document.createDocumentFragment(), all = [], lapStart = [];
+    for (var lap = 0; lap < LAPS; lap++){
+      for (q = 0; q < NP; q++){
+        PATTERNS[q].forEach(function(cell, slot){
+          var g = perm[q][slot], li = items[g];
+          if (!(lap === MID && q === 0)){
+            li = li.cloneNode(true);
+            li.setAttribute('aria-hidden', 'true');
+            li.querySelector('.fav-tile').setAttribute('tabindex', '-1');
+            var inf = li.querySelector('.fav-info'); if (inf) inf.parentNode.removeChild(inf);
+          }
+          li.style.gridArea = cell[0] + ' / ' + (cell[1] + lap * LAPCOLS + PSTART[q]) + ' / span ' + cell[2] + ' / span ' + cell[2];
+          if (q === 0 && slot === 0) lapStart[lap] = li;
+          all.push({li: li, g: g});
+          frag.appendChild(li);
+        });
+      }
+    }
+    list.appendChild(frag);
+    var order = perm[0];   // 元の li の見た目の並び（← → キーの順）
+
+    var dragging = false, dragMoved = false, dragX = 0, dragL = 0, touching = false, glideAnim = null, idle = 0;
+    function lapW(){ return lapStart[1].offsetLeft - lapStart[0].offsetLeft; }
+    // 今の位置が lo〜hi 周の外なら 1 周ずつ戻す。戻した量を返す
+    function wrap(lo, hi){
+      var W = lapW(); if (W <= 0) return 0;
+      var x = strip.scrollLeft, d = 0;
+      while (x + d < W * lo) d += W;
+      while (x + d > W * hi) d -= W;
+      if (d) strip.scrollLeft = x + d;
+      return d;
+    }
+    function pad(k){ return (k < 10 ? '0' : '') + k; }
+    function select(i){
+      all.forEach(function(t){ t.li.querySelector('.fav-tile').setAttribute('aria-pressed', t.g === i ? 'true' : 'false'); });
+      var li = items[i], info = li.querySelector('.fav-info'), img = li.querySelector('.fav-tile img');
+      body.innerHTML = info ? info.innerHTML : '';
+      noEl.textContent = pad(i + 1) + ' / ' + pad(n);
+      sec.style.setProperty('--fc', li.style.getPropertyValue('--fc').trim() || '#7DB8D1');
+      if (img){ sec.style.setProperty('--shot', 'url("' + img.getAttribute('src') + '")'); sec.classList.add('has-shot'); }
+      else sec.classList.remove('has-shot');
+    }
+    all.forEach(function(t){
+      t.li.querySelector('.fav-tile').addEventListener('click', function(e){ if (dragMoved){ e.preventDefault(); return; } select(t.g); });
+    });
+    // ← → キーで見た目の隣の 1 本へ（端からは反対の端へ）
+    items.forEach(function(li, i){
+      li.querySelector('.fav-tile').addEventListener('keydown', function(e){
+        if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+        e.preventDefault();
+        var j = order[(order.indexOf(i) + (e.key === 'ArrowRight' ? 1 : -1) + n) % n];
+        items[j].querySelector('.fav-tile').focus();
+        select(j);
+      });
+    });
+    // ← → のボタン：0.8 画面ぶん滑らせる（途中で継ぎ目を越えたら行き先ごと 1 周戻す）
+    function glide(dist){
+      if (reduce){ strip.scrollLeft += dist; wrap(0.6, 1.4); return; }
+      var from = strip.scrollLeft, to = from + dist, t0 = performance.now(), me = {};
+      glideAnim = me;
+      (function step(now){
+        if (glideAnim !== me) return;
+        var t = Math.min(1, Math.max(0, (now - t0) / 480)), e = 1 - Math.pow(1 - t, 3);
+        strip.scrollLeft = from + (to - from) * e;
+        var d = wrap(0.3, 1.7); if (d){ from += d; to += d; }
+        if (t < 1) requestAnimationFrame(step); else glideAnim = null;
+      })(t0);
+    }
+    arrows.forEach(function(a){ a.addEventListener('click', function(){ glide(+a.dataset.dir * strip.clientWidth * 0.8); }); });
+    // 指やタッチパッドで動かした後は、止まってから真ん中の周へ戻す（動いている最中に位置を変えると慣性が止まるので）
+    strip.addEventListener('scroll', function(){
+      if (!touching && !dragging && !glideAnim) wrap(0.3, 1.7);
+      clearTimeout(idle);
+      idle = setTimeout(function(){ if (!touching && !dragging && !glideAnim) wrap(0.6, 1.4); }, 160);
+    }, {passive: true});
+    strip.addEventListener('touchstart', function(){ touching = true; glideAnim = null; }, {passive: true});
+    strip.addEventListener('touchend', function(){ touching = false; }, {passive: true});
+    strip.addEventListener('touchcancel', function(){ touching = false; }, {passive: true});
+    // マウスはつかんで横に動かせる（6 px 以上動いたらドラッグ扱い、その時は押した扱いにしない）
+    strip.addEventListener('pointerdown', function(e){
+      if (e.pointerType !== 'mouse' || e.button !== 0) return;
+      glideAnim = null; dragging = true; dragMoved = false; dragX = e.clientX; dragL = strip.scrollLeft;
+    });
+    window.addEventListener('pointermove', function(e){
+      if (!dragging) return;
+      var dx = e.clientX - dragX;
+      if (!dragMoved && Math.abs(dx) > 6){ dragMoved = true; strip.classList.add('dragging'); }
+      if (!dragMoved) return;
+      strip.scrollLeft = dragL - dx;
+      dragL += wrap(0.3, 1.7);
+    });
+    window.addEventListener('pointerup', function(){
+      if (!dragging) return;
+      dragging = false; strip.classList.remove('dragging');
+      setTimeout(function(){ dragMoved = false; }, 0);
+    });
+    // 画面の大きさが変わったら、周の中の同じ所を保つ
+    var lastW = lapW();
+    window.addEventListener('resize', function(){
+      var W = lapW(); if (W <= 0 || lastW <= 0){ lastW = W; return; }
+      strip.scrollLeft = strip.scrollLeft / lastW * W; lastW = W; wrap(0.6, 1.4);
+    });
+    strip.scrollLeft = lapW() * MID;
+    select(order[0]);   // 最初に見えている左上の 1 本
+  })();
+
+  // ---- 開いた時に #名前 があればそこへ ----
+  var h = (location.hash || '').slice(1);
+  if (h && document.getElementById(h)) setTimeout(function(){ var y = docY(document.getElementById(h)); window.scrollTo(0, y); lastRest = y; }, 50);
+
+  // ---- 連絡先のコピー（中身が入っている時だけ） ----
+  document.querySelectorAll('.copy').forEach(function(b){
+    var target = document.getElementById(b.dataset.copy);
+    if (target && !target.querySelector('.todo')) b.disabled = false;
+    b.addEventListener('click', function(){
+      var text = b.dataset.text || target.textContent.trim();
+      function done(){ var o = b.textContent; b.textContent = 'コピーしました'; setTimeout(function(){ b.textContent = o; }, 1500); }
+      // 書き込みを断られたら、選んでから古い方法でもう一度。それもだめなら選んだまま（長押しでコピーできる）
+      function fallback(){
+        var s = window.getSelection(), rg = document.createRange(); rg.selectNodeContents(target); s.removeAllRanges(); s.addRange(rg);
+        var ok = false; try{ ok = document.execCommand('copy'); }catch(e){}
+        if (ok){ s.removeAllRanges(); done(); }
+      }
+      try{ navigator.clipboard.writeText(text).then(done, fallback); }catch(e){ fallback(); }
+    });
+  });
+})();
+</script>
+<script>
+/* 01 ホーム：ミニマップ。十字キーで歩くと、いる部屋の響きで足音が鳴る（音は Web Audio でその場で作る） */
+(function(){
+  'use strict';
+  var root = document.getElementById('smap');
+  if (!root) return;
+  var cv = root.querySelector('canvas'), g = cv.getContext('2d');
+  var hud = root.querySelector('.sm-room'), hudName = root.querySelector('.sm-rn'), hudRt = root.querySelector('.sm-rt');
+  var pad = root.querySelector('.sm-dpad'), btnA = root.querySelector('.sm-a'), btnB = root.querySelector('.sm-b'), muteBtn = root.querySelector('.sm-mute');
+  var reduce = false;
+  try{ reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){}
+
+  // 地図（20×20 マス、1 マス 8 px）。# 壁・T 柱・D 戸口・H 大広間・S 小部屋・C 廊下・O 外（広場）
+  var MAP = ["##################OO", "#HHHHHHHHHH#SSSSS#OO", "#HHHHHHHHHHDSSSSS#OT", "#HHHHHHHHHHDSSSSS#OO", "#HHHHHHHHHH##DD###OO", "#HHHHHHHHHH##CC#OOOO", "#HHHHHHHHHH##CC#OTOO", "#HHHHHHHHHH##CC#OOOO", "#HHHHHHHHHH##CC#OOTO", "#HHHHHHHHHH##CC#OOOO", "#HHHHHHHHHH##CC#OOOO", "#####DD######CC#OOOO", "OOOOOOOOOOOO#CC#OOOO", "OOOOOOOOOOOO#DD#OOOO", "OOOOOOOOOOOOOOOOOOOO", "OOTOOOOOOOOOOOOOOOTO", "OOOOOOOOOOOOOOOOOOOO", "OOOOOOOTOOOOOOOOOOOO", "OOOOOOOOOOOOOOTOOOOO", "OOOOOOOOOOOOOOOOOOOO"];
+  var TS = 8, MW = 20, MH = 20;
+  // 部屋ごとの響き。rt＝響きの長さ（秒）、pre＝響きが始まるまで、wet＝響きの量、lp＝響きの高い音の上限、
+  // taps＝壁からの最初の跳ね返り [秒, 左, 右]、flutter＝向かい合う壁の往復 [間隔, 回数, 大きさ, 減り]、box＝部屋の範囲（マス）
+  var ROOMS = {
+    H: {name: '大広間', rt: 2.4, pre: .012, wet: 1.0, lp: 5200, hf: 7000, surf: 'concrete', box: [1, 1, 10, 10],
+        taps: [[.018, .30, .12], [.029, .10, .30], [.043, .22, .08], [.061, .08, .20]]},
+    S: {name: '小部屋', rt: .5, pre: .002, wet: .55, lp: 3800, hf: 5000, surf: 'concrete', box: [12, 1, 16, 3],
+        taps: [[.0028, .30, .16], [.0046, .14, .30], [.0072, .20, .18]]},
+    C: {name: '廊下', rt: 1.2, pre: .004, wet: .8, lp: 6000, hf: 7500, surf: 'concrete', box: [13, 5, 14, 12],
+        flutter: [.0115, 14, .38, .82]},
+    O: {name: '外', rt: 0, surf: 'concrete', box: null}
+  };
+
+  // ---------- 音 ----------
+  var AC = window.AudioContext || window.webkitAudioContext;
+  var muted = false, ac = null, rig = null;
+  try{ muted = localStorage.getItem('smap-mute') === '1'; }catch(e){}
+
+  // 響きの形（雑音を指数で減らす。高い音ほど早く消える）＋最初の跳ね返り
+  function makeIR(ctx, R){
+    var sr = ctx.sampleRate, pre = Math.round(R.pre * sr), len = pre + Math.ceil(R.rt * 1.15 * sr);
+    var b = ctx.createBuffer(2, len, sr), ch, i, k = 0, lp, e, v, t, d, sc;
+    for (ch = 0; ch < 2; ch++){
+      d = b.getChannelData(ch); lp = 0; e = 0;
+      for (i = pre; i < len; i++){
+        t = (i - pre) / sr;
+        if (((i - pre) & 63) === 0) k = 1 - Math.exp(-2 * Math.PI * (R.hf * Math.exp(-2.5 * t / R.rt) + 600) / sr);
+        lp += (Math.random() * 2 - 1 - lp) * k;
+        v = lp * Math.exp(-6.91 * t / R.rt) * Math.min(1, t / .006 + .3);
+        d[i] = v; e += v * v;
+      }
+      sc = 1 / Math.sqrt(e || 1);
+      for (i = pre; i < len; i++) d[i] *= sc;
+      (R.taps || []).forEach(function(p){ var j = Math.round(p[0] * sr); if (j < len) d[j] += p[ch + 1]; });
+      if (R.flutter){
+        var f = R.flutter, a = f[2], m, j2;
+        for (m = 1; m <= f[1]; m++){ j2 = Math.round(f[0] * m * sr) + (ch ? 7 : 0); if (j2 < len) d[j2] += (m % 2 === ch ? a : a * .6); a *= f[3]; }
+      }
+    }
+    return b;
+  }
+  // 出口：そのまま＋部屋ごとの響き（足音は鳴った時にいた部屋の響きへ送る。部屋を出ても響きは残る）
+  function makeRig(ctx){
+    var r = {ctx: ctx, send: {}}, comp = ctx.createDynamicsCompressor(), n = ctx.sampleRate, nb = ctx.createBuffer(1, n, n), d = nb.getChannelData(0), i;
+    comp.threshold.value = -12; comp.knee.value = 8; comp.ratio.value = 6; comp.attack.value = .003; comp.release.value = .2;
+    r.out = ctx.createGain(); r.out.gain.value = .9; r.out.connect(comp); comp.connect(ctx.destination);
+    r.dry = ctx.createGain(); r.dry.gain.value = .9; r.dry.connect(r.out);
+    for (i = 0; i < n; i++) d[i] = Math.random() * 2 - 1;
+    r.noise = nb;
+    Object.keys(ROOMS).forEach(function(key){
+      var R = ROOMS[key];
+      if (!R.rt) return;
+      var s = ctx.createGain(), c = ctx.createConvolver(), f = ctx.createBiquadFilter();
+      s.gain.value = R.wet; c.normalize = false; c.buffer = makeIR(ctx, R);
+      f.type = 'lowpass'; f.frequency.value = R.lp; f.Q.value = .5;
+      s.connect(c); c.connect(f); f.connect(r.out);
+      r.send[key] = s;
+    });
+    return r;
+  }
+  // 雑音を短く鳴らす
+  function burst(r, bus, at, type, f, q, a, dec){
+    var c = r.ctx, s = c.createBufferSource(), fl = c.createBiquadFilter(), gn = c.createGain();
+    s.buffer = r.noise; fl.type = type; fl.frequency.value = f; fl.Q.value = q;
+    gn.gain.setValueAtTime(0, at); gn.gain.linearRampToValueAtTime(a, at + .002); gn.gain.exponentialRampToValueAtTime(.0005, at + dec);
+    s.connect(fl); fl.connect(gn); gn.connect(bus);
+    s.start(at, Math.random() * .8, dec + .02);
+  }
+  // 低い「どん」
+  function thump(r, bus, at, f, a, dec){
+    var c = r.ctx, o = c.createOscillator(), gn = c.createGain();
+    o.frequency.setValueAtTime(f * 1.6, at); o.frequency.exponentialRampToValueAtTime(f, at + .03);
+    gn.gain.setValueAtTime(0, at); gn.gain.linearRampToValueAtTime(a, at + .003); gn.gain.exponentialRampToValueAtTime(.0005, at + dec);
+    o.connect(gn); gn.connect(bus); o.start(at); o.stop(at + dec + .02);
+  }
+  function voice(r, room, pan){
+    var c = r.ctx, bus = c.createGain(), out = bus;
+    if (c.createStereoPanner){ var p = c.createStereoPanner(); p.pan.value = pan; bus.connect(p); out = p; }
+    out.connect(r.dry);
+    if (r.send[room]) out.connect(r.send[room]);
+    return bus;
+  }
+  // 足音（床はぜんぶ同じコンクリート。場所で変わるのは響きだけ）
+  function stepSound(r, room, surf, at, foot){
+    var bus = voice(r, room, foot ? .12 : -.12), v = .85 + Math.random() * .3, j = 1 + (Math.random() - .5) * .12;
+    burst(r, bus, at, 'bandpass', 2600 * j, 1.0, .5 * v, .025); burst(r, bus, at + .002, 'lowpass', 480 * j, .7, .45 * v, .055); thump(r, bus, at, 75, .32 * v, .05);
+  }
+  // 手をたたく（響きが一番分かりやすい音）
+  function clapSound(r, room, at){
+    var bus = voice(r, room, 0), i;
+    for (i = 0; i < 3; i++) burst(r, bus, at + i * .009, 'bandpass', 1300 + Math.random() * 300, 1.4, .9, .012);
+    burst(r, bus, at + .027, 'bandpass', 1200, 1.1, 1.0, .09);
+  }
+  // 音は押した時に初めて作る（ブラウザは押す前に音を出させない）
+  function ensureAudio(){
+    if (muted || !AC) return null;
+    if (!ac){
+      try{ if (navigator.audioSession) navigator.audioSession.type = 'playback'; }catch(e){}
+      try{ ac = new AC({latencyHint: 'interactive'}); }catch(e){ try{ ac = new AC(); }catch(e2){ return null; } }
+      rig = makeRig(ac);
+    }
+    if (ac.state === 'suspended') ac.resume();
+    if (idrOn()) idrInit();
+    return rig;
+  }
+
+  // ---------- Idreal で焼いた足音（data-sound="idreal" の時） ----------
+  // マスごとに「そこに立って足もとで足音を鳴らした時の、素の音＋響き」を Idreal で前もって計算した mp3
+  // （C:\dev\Idreal\Projects\tools\portfolio_bake の bake_footmap → encode_footmap）。外は素の足音（dry）
+  var IDR_BASE = 'audio/idreal-steps/', idr = {map: null, loading: false, byTile: {}, buf: {}, lastId: ''};
+  function idrOn(){ return root.getAttribute('data-sound') === 'idreal'; }
+  function idrLoad(id){
+    if (idr.buf[id] || !ac) return;
+    idr.buf[id] = 'loading';
+    fetch(IDR_BASE + id + '.mp3').then(function(r){ if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); })
+      .then(function(a){ return new Promise(function(ok, ng){ ac.decodeAudioData(a, ok, ng); }); })
+      .then(function(b){ idr.buf[id] = b; }, function(){ delete idr.buf[id]; });
+  }
+  function idrInit(){
+    if (idr.map || idr.loading) return;
+    idr.loading = true;
+    fetch(IDR_BASE + 'map.json').then(function(r){ return r.json(); }).then(function(m){
+      idr.map = m;
+      m.points.forEach(function(q){ idr.byTile[q.tx + ',' + q.ty] = q.id; });
+      idrLoad('dry'); idrNear();
+    }, function(){ idr.loading = false; });
+  }
+  // 今いる部屋のマス（戸口に立っている時は、部屋の中のいちばん近いマス）
+  function idrId(tx, ty){
+    var R = ROOMS[room];
+    if (!R.box) return 'dry';
+    tx = Math.max(R.box[0], Math.min(R.box[2], tx)); ty = Math.max(R.box[1], Math.min(R.box[3], ty));
+    return idr.byTile[tx + ',' + ty] || 'dry';
+  }
+  // まわり 2 マスを先に取っておく（戸口の向こうの部屋のマスも。入った最初の 1 歩に間に合うように）
+  function idrNear(){
+    var tx = Math.floor(me.x), ty = Math.floor(me.y), dx, dy, id;
+    for (dy = -2; dy <= 2; dy++) for (dx = -2; dx <= 2; dx++){
+      idrLoad(idrId(tx + dx, ty + dy));
+      id = idr.byTile[(tx + dx) + ',' + (ty + dy)];
+      if (id) idrLoad(id);
+    }
+  }
+  function idrStep(foot){
+    var id = idrId(Math.floor(me.x), Math.floor(me.y)), b = idr.buf[id];
+    idrNear();
+    if (!b || typeof b === 'string'){ id = 'dry'; b = idr.buf.dry; }  // まだ届いていない時は素の足音
+    if (!b || typeof b === 'string') return;
+    var c = rig.ctx, src = c.createBufferSource(), gn = c.createGain(), out = gn;
+    src.buffer = b;
+    if (src.detune) src.detune.value = (Math.random() - .5) * 60;
+    gn.gain.value = .85 + Math.random() * .2;
+    src.connect(gn);
+    if (c.createStereoPanner){ var pn = c.createStereoPanner(); pn.pan.value = foot ? .08 : -.08; gn.connect(pn); out = pn; }
+    out.connect(rig.out);
+    src.start(c.currentTime + .005);
+    idr.lastId = id;
+  }
+  // 確かめ用：部屋 key で足音か手拍子を 1 回、音を出さずに作る（SoundMap.render('H').then(...)）
+  window.SoundMap = {rooms: ROOMS, idreal: idr, render: function(key, what){
+    var OC = window.OfflineAudioContext || window.webkitOfflineAudioContext, c = new OC(2, 48000 * 3.5, 48000), r = makeRig(c);
+    if (what === 'clap') clapSound(r, key, .05); else stepSound(r, key, ROOMS[key].surf, .05, 0);
+    return c.startRendering();
+  }};
+
+  // ---------- 地図を描く（動かない所は 1 回だけ） ----------
+  var seed = 7;
+  function rnd(){ seed = (seed * 16807) % 2147483647; return seed / 2147483647; }
+  function at(x, y){ return (x < 0 || y < 0 || x >= MW || y >= MH) ? '#' : MAP[y][x]; }
+  function floorOf(x, y){
+    var c = at(x, y);
+    if (c !== 'D') return c;
+    var n = [at(x - 1, y), at(x + 1, y), at(x, y - 1), at(x, y + 1)].filter(function(q){ return ROOMS[q]; });
+    return n[0] || 'O';
+  }
+  var bg = document.createElement('canvas');
+  bg.width = bg.height = MW * TS;
+  (function(){
+    var b = bg.getContext('2d'), x, y, c, px, py, i;
+    function R(x0, y0, w, h, col){ b.fillStyle = col; b.fillRect(x0, y0, w, h); }
+    for (y = 0; y < MH; y++) for (x = 0; x < MW; x++){
+      c = at(x, y); px = x * TS; py = y * TS;
+      var f = (c === 'T') ? 'O' : floorOf(x, y);
+      if (c === '#'){
+        // 打ちっぱなしの壁（上の面は灰、手前の面は少し暗く）
+        R(px, py, TS, TS, '#9C9EA0');
+        if (rnd() < .25) R(px + (rnd() * 7 | 0), py + (rnd() * 4 | 0), 1, 1, '#ABADAF');
+        if (at(x, y + 1) !== '#'){ R(px, py + 5, TS, 3, '#7E8184'); R(px, py + 5, TS, 1, '#B4B6B8'); }
+        continue;
+      }
+      // 床はぜんぶ同じコンクリート。目地の間隔だけ変える（外の広場は大きな板）
+      var J = f === 'O' ? 4 : f === 'H' ? 3 : 2, base = f === 'O' ? '#D6D4CF' : '#E6E5E1', joint = f === 'O' ? '#C2C0BA' : '#D2D0CB';
+      R(px, py, TS, TS, base);
+      if (x % J === 0) R(px, py, 1, TS, joint);
+      if (y % J === 0) R(px, py, TS, 1, joint);
+      for (i = 0; i < 2; i++) if (rnd() < .6) R(px + 1 + (rnd() * 6 | 0), py + 1 + (rnd() * 6 | 0), 1, 1, rnd() < .5 ? '#DCDAD5' : '#EFEEEB');
+      if (c === 'D'){ R(px, py, TS, TS, 'rgba(120,124,128,.16)'); }
+    }
+    // 柱は最後に（影を少し右下へ）
+    for (y = 0; y < MH; y++) for (x = 0; x < MW; x++) if (at(x, y) === 'T'){
+      px = x * TS; py = y * TS;
+      R(px + 2, py + 2, 7, 7, 'rgba(0,0,0,.14)');
+      R(px + 1, py + 1, 6, 6, '#A7A9AB'); R(px + 1, py + 1, 6, 1, '#C4C6C8'); R(px + 1, py + 6, 6, 1, '#888B8E');
+    }
+  })();
+
+  // ---------- 人 ----------
+  var SPR = {"down0":["..kkkkkk..",".kppppppk.",".khhhhhhk.","pkhhhhhhkp","pksssssskp","pksesseskp",".kssssssk.","..kkkkkk..",".kooooook.","ksooooooks",".kOOOOOOk.","..knnnnk..","..knkknk..","..bb..bb.."],"up0":["..kkkkkk..",".kppppppk.",".khhhhhhk.","pkhhhhhhkp","pkhhhhhhkp","pkhhhhhhkp",".khhhhhhk.","..kkkkkk..",".kooooook.","ksooooooks",".kOOOOOOk.","..knnnnk..","..knkknk..","..bb..bb.."],"right0":["..kkkkkk..",".kppppppk.",".khhhhhhk.",".khpphssk.",".khpphssk.",".khpphsek.","..khhssk..","..kkkkkk..","..kooook..","..koosok..","..kOOOOk..","..knnnnk..","..knnnnk..","...bbbbb.."],"left0":["..kkkkkk..",".kppppppk.",".khhhhhhk.",".ksshpphk.",".ksshpphk.",".keshpphk.","..ksshhk..","..kkkkkk..","..kooook..","..kosook..","..kOOOOk..","..knnnnk..","..knnnnk..","..bbbbb..."],"down1":["..kkkkkk..",".kppppppk.",".khhhhhhk.","pkhhhhhhkp","pksssssskp","pksesseskp",".kssssssk.","..kkkkkk..",".kooooook.","ksooooooks",".kOOOOOOk.","..knnnnk..","..knkkbb..","..bb......"],"up1":["..kkkkkk..",".kppppppk.",".khhhhhhk.","pkhhhhhhkp","pkhhhhhhkp","pkhhhhhhkp",".khhhhhhk.","..kkkkkk..",".kooooook.","ksooooooks",".kOOOOOOk.","..knnnnk..","..knkkbb..","..bb......"],"right1":["..kkkkkk..",".kppppppk.",".khhhhhhk.",".khpphssk.",".khpphssk.",".khpphsek.","..khhssk..","..kkkkkk..","..kooook..","..koosok..","..kOOOOk..","..knnnnk..","..kn..nk..",".bb....bb."],"left1":["..kkkkkk..",".kppppppk.",".khhhhhhk.",".ksshpphk.",".ksshpphk.",".keshpphk.","..ksshhk..","..kkkkkk..","..kooook..","..kosook..","..kOOOOk..","..knnnnk..","..kn..nk..",".bb....bb."],"down2":["..kkkkkk..",".kppppppk.",".khhhhhhk.","pkhhhhhhkp","pksssssskp","pksesseskp",".kssssssk.","..kkkkkk..",".kooooook.","ksooooooks",".kOOOOOOk.","..knnnnk..","..bbkknk..","......bb.."],"up2":["..kkkkkk..",".kppppppk.",".khhhhhhk.","pkhhhhhhkp","pkhhhhhhkp","pkhhhhhhkp",".khhhhhhk.","..kkkkkk..",".kooooook.","ksooooooks",".kOOOOOOk.","..knnnnk..","..bbkknk..","......bb.."],"right2":["..kkkkkk..",".kppppppk.",".khhhhhhk.",".khpphssk.",".khpphssk.",".khpphsek.","..khhssk..","..kkkkkk..","..kooook..","..koosok..","..kOOOOk..","..knnnnk..","..knnnnk..","...bbbbb.."],"left2":["..kkkkkk..",".kppppppk.",".khhhhhhk.",".ksshpphk.",".ksshpphk.",".keshpphk.","..ksshhk..","..kkkkkk..","..kooook..","..kosook..","..kOOOOk..","..knnnnk..","..knnnnk..","..bbbbb..."]};
+  var PAL = {"k": "#0B1116", "h": "#3A3F4B", "s": "#F1C9A5", "e": "#0B1116", "p": "#7DB8D1", "o": "#D9774C", "O": "#A9552F", "n": "#2C3E57", "b": "#161B21"};
+  var me = {x: 5.5, y: 8.6, face: 'down', frame: 0, ft: 0, moving: false, foot: 0};
+  var room = 'H', held = [], run = false, stepT = .05, rings = [], clapT = 0, last = 0, rafOn = false;
+  var DIRS = {up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0]};
+  function solid(x, y){ var c = at(x, y); return c === '#' || c === 'T'; }
+  function hits(x, y){
+    var hw = .3, hh = .2;
+    return solid(Math.floor(x - hw), Math.floor(y - hh)) || solid(Math.floor(x + hw), Math.floor(y - hh)) ||
+           solid(Math.floor(x - hw), Math.floor(y + hh)) || solid(Math.floor(x + hw), Math.floor(y + hh));
+  }
+  function move(dt){
+    var key = held[held.length - 1], d = DIRS[key];
+    if (!d){ me.moving = false; return; }
+    me.face = key;
+    var sp = (run ? 4.6 : 2.7) * dt, nx = me.x + d[0] * sp, ny = me.y + d[1] * sp, s, c0;
+    if (!hits(nx, ny)){ me.x = nx; me.y = ny; me.moving = true; }
+    else {
+      // 戸口の角に引っかかったら、通れる方へ少しずらす
+      me.moving = false;
+      if (d[0] === 0){ c0 = Math.floor(me.x); if (!solid(c0, Math.floor(me.y + d[1] * .6))){ s = c0 + .5 - me.x; s = Math.sign(s) * Math.min(Math.abs(s), sp); if (s && !hits(me.x + s, me.y)){ me.x += s; me.moving = true; } } }
+      else { c0 = Math.floor(me.y); if (!solid(Math.floor(me.x + d[0] * .6), c0)){ s = c0 + .5 - me.y; s = Math.sign(s) * Math.min(Math.abs(s), sp); if (s && !hits(me.x, me.y + s)){ me.y += s; me.moving = true; } } }
+    }
+    var here = at(Math.floor(me.x), Math.floor(me.y));
+    if (ROOMS[here] && here !== room){ room = here; showRoom(true); }
+    if (me.moving){
+      me.ft += dt;
+      var fi = run ? .09 : .14;
+      if (me.ft >= fi){ me.ft -= fi; me.frame = me.frame === 1 ? 2 : 1; }
+      stepT -= dt;
+      if (stepT <= 0){ stepT += run ? .26 : .40; step(); }
+    }
+  }
+  function step(){
+    me.foot ^= 1;
+    var here = at(Math.floor(me.x), Math.floor(me.y)), surf = (ROOMS[here] || ROOMS[room]).surf;
+    if (rig && !muted){
+      if (idrOn()){ idrInit(); if (idr.map) idrStep(me.foot); }
+      else stepSound(rig, room, surf, rig.ctx.currentTime + .005, me.foot);
+    }
+    ring(.6, 1);
+  }
+  function clap(){
+    if (rig && !muted) clapSound(rig, room, rig.ctx.currentTime + .005);
+    ring(.9, 2); clapT = .25;
+    btnA.classList.add('on'); setTimeout(function(){ btnA.classList.remove('on'); }, 120);
+    kick();
+  }
+  function ring(a, w){ if (!reduce){ rings.push({x: me.x * TS, y: me.y * TS + 1, t: 0, a: a, w: w, room: room}); if (rings.length > 24) rings.shift(); } }
+
+  function draw(){
+    g.drawImage(bg, 0, 0);
+    // 響き：輪は音の広がり、部屋のうっすらした光は響きの残り（長い部屋ほど長く残る）
+    rings = rings.filter(function(r){
+      var R = ROOMS[r.room], life = R.rt || .3, al = r.a * Math.exp(-6.91 * r.t / life);
+      if (al < .02) return false;
+      g.save();
+      if (R.box){
+        var bx = R.box[0] * TS, by = R.box[1] * TS, bw = (R.box[2] - R.box[0] + 1) * TS, bh = (R.box[3] - R.box[1] + 1) * TS;
+        g.beginPath(); g.rect(bx, by, bw, bh); g.clip();
+        g.fillStyle = 'rgba(29,92,120,' + (al * .10).toFixed(3) + ')'; g.fillRect(bx, by, bw, bh);
+      }
+      g.strokeStyle = 'rgba(29,92,120,' + Math.min(1, al * 1.1).toFixed(3) + ')'; g.lineWidth = r.w;
+      g.beginPath(); g.arc(r.x, r.y, 2 + r.t * (R.box ? 75 : 40), 0, 6.2832); g.stroke();
+      g.restore();
+      return true;
+    });
+    // 人（足の真ん中が me の位置）
+    var spr = SPR[me.face + (me.moving ? me.frame : 0)], X = Math.round(me.x * TS) - 5, Y = Math.round(me.y * TS) - 12 - (me.moving && me.frame === 1 ? 1 : 0), x, y, c, row;
+    g.fillStyle = 'rgba(0,0,0,.18)'; g.fillRect(Math.round(me.x * TS) - 4, Math.round(me.y * TS) + 1, 8, 2);
+    for (y = 0; y < spr.length; y++){ row = spr[y]; for (x = 0; x < row.length; x++){ c = row[x]; if (c !== '.'){ g.fillStyle = PAL[c]; g.fillRect(X + x, Y + y, 1, 1); } } }
+    if (clapT > 0){ g.fillStyle = '#1D5C78'; g.fillRect(X - 2, Y + 1, 1, 1); g.fillRect(X + 11, Y + 1, 1, 1); g.fillRect(X - 1, Y - 1, 1, 1); g.fillRect(X + 10, Y - 1, 1, 1); }
+  }
+  function tick(now){
+    var dt = Math.min(.05, Math.max(0, (now - last) / 1000));
+    last = now;
+    move(dt);
+    rings.forEach(function(r){ r.t += dt; });
+    clapT -= dt;
+    draw();
+    if (held.length || rings.length || clapT > 0) requestAnimationFrame(tick);
+    else { rafOn = false; me.moving = false; me.frame = 0; draw(); }
+  }
+  function kick(){ if (!rafOn){ rafOn = true; last = performance.now(); requestAnimationFrame(tick); } }
+  function showRoom(flash){
+    var R = ROOMS[room];
+    hudName.textContent = R.name;
+    hudRt.textContent = R.rt ? '響き ' + R.rt.toFixed(1) + ' 秒' : '響きなし';
+    if (flash){ hud.classList.remove('flash'); void hud.offsetWidth; hud.classList.add('flash'); }
+  }
+
+  // ---------- 操作 ----------
+  function press(d){ var i = held.indexOf(d); if (i >= 0) held.splice(i, 1); held.push(d); if (held.length === 1) stepT = .05; kick(); }
+  function release(d){ var i = held.indexOf(d); if (i >= 0) held.splice(i, 1); }
+  function releaseAll(){ held.length = 0; setPad(null); padId = null; run = false; btnB.classList.remove('on'); }
+  // 十字キー：押した所から真ん中への向きで決める（指を滑らせても向きが変わる）
+  var padDir = null, padId = null;
+  function padAt(e){
+    var r = pad.getBoundingClientRect(), dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2);
+    if (dx * dx + dy * dy < 49) return padDir;
+    return Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'right' : 'left') : (dy > 0 ? 'down' : 'up');
+  }
+  function setPad(d){ if (d === padDir) return; if (padDir) release(padDir); padDir = d; if (d) press(d); pad.setAttribute('data-on', d || ''); }
+  pad.addEventListener('pointerdown', function(e){
+    e.preventDefault(); ensureAudio(); padId = e.pointerId;
+    try{ pad.setPointerCapture(e.pointerId); }catch(err){}
+    setPad(padAt(e));
+  });
+  pad.addEventListener('pointermove', function(e){ if (e.pointerId === padId) setPad(padAt(e)); });
+  ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(function(t){ pad.addEventListener(t, function(e){ if (e.pointerId === padId){ padId = null; setPad(null); } }); });
+  btnA.addEventListener('pointerdown', function(e){ e.preventDefault(); ensureAudio(); clap(); });
+  btnB.addEventListener('pointerdown', function(e){ e.preventDefault(); ensureAudio(); run = true; btnB.classList.add('on'); try{ btnB.setPointerCapture(e.pointerId); }catch(err){} });
+  ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(function(t){ btnB.addEventListener(t, function(){ run = false; btnB.classList.remove('on'); }); });
+  root.addEventListener('contextmenu', function(e){ if (e.target.closest('.sm-pad')) e.preventDefault(); });
+  // キーボード：地図（かボタン）を選んでいる時だけ。矢印・WASD で歩く、Z・Space で手をたたく、X・Shift で走る
+  var KEYS = {ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right', w: 'up', s: 'down', a: 'left', d: 'right'};
+  root.addEventListener('keydown', function(e){
+    if (e.ctrlKey || e.metaKey || e.altKey || e.target === muteBtn) return;
+    var k = e.key.length === 1 ? e.key.toLowerCase() : e.key, d = KEYS[k];
+    if (d){ e.preventDefault(); if (!e.repeat){ ensureAudio(); press(d); } }
+    else if (k === 'z' || k === ' ' || k === 'Enter'){ e.preventDefault(); if (!e.repeat){ ensureAudio(); clap(); } }
+    else if (k === 'x' || k === 'Shift'){ if (!e.repeat){ ensureAudio(); run = true; btnB.classList.add('on'); } }
+  });
+  root.addEventListener('keyup', function(e){
+    var k = e.key.length === 1 ? e.key.toLowerCase() : e.key, d = KEYS[k];
+    if (d) release(d);
+    if (k === 'x' || k === 'Shift'){ run = false; btnB.classList.remove('on'); }
+  });
+  root.addEventListener('focusout', function(e){ if (!root.contains(e.relatedTarget)) releaseAll(); });
+  window.addEventListener('blur', releaseAll);
+  document.addEventListener('visibilitychange', function(){ if (document.hidden) releaseAll(); });
+  // 音を消す（この端末で覚えておく）
+  function setMute(m){
+    muted = m;
+    muteBtn.setAttribute('aria-pressed', m ? 'true' : 'false');
+    muteBtn.querySelector('.t').textContent = m ? 'OFF' : 'ON';
+    if (rig) rig.out.gain.setTargetAtTime(m ? 0 : .9, rig.ctx.currentTime, .02);
+    try{ localStorage.setItem('smap-mute', m ? '1' : '0'); }catch(e){}
+  }
+  muteBtn.addEventListener('click', function(){ setMute(!muted); if (!muted) ensureAudio(); });
+  setMute(muted);
+  showRoom(false);
+  draw();
+})();
+</script>
+<!-- DEV-ONLY: 調整確認用のページだけに出す（tools/site.py publish で消える） -->
+<style>
+.devbar{position:fixed; left:12px; bottom:12px; z-index:60; display:flex; flex-wrap:wrap; align-items:center; gap:6px 8px; max-width:calc(100% - 24px); padding:6px 10px; border-radius:8px; background:#D9774C; color:#0D1620; font:600 12px/1.4 var(--f-body); box-shadow:0 6px 20px rgba(0,0,0,.35)}
+.devbar b{letter-spacing:.06em}
+.devbar button{padding:3px 8px; border:1px solid rgba(13,22,32,.45); border-radius:5px; background:rgba(255,255,255,.35); color:inherit; font:inherit; cursor:pointer}
+.devbar button[aria-pressed="true"]{background:#0D1620; color:#FFFFFF}
+</style>
+<div class="devbar" role="region" aria-label="調整確認用"><b>調整確認用</b><span>ミニマップの足音:</span><button type="button" data-snd="synth">合成</button><button type="button" data-snd="idreal">IdReal</button></div>
+<script>
+// 確認用：ミニマップの足音を 合成／IdReal で焼いた音 で切り替える（この端末で覚える）
+(function(){
+  var sm = document.getElementById('smap'), bs = document.querySelectorAll('.devbar [data-snd]');
+  if (!sm) return;
+  function set(v){
+    sm.setAttribute('data-sound', v);
+    bs.forEach(function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-snd') === v ? 'true' : 'false'); });
+    try{ localStorage.setItem('dev-snd', v); }catch(e){}
+  }
+  bs.forEach(function(b){ b.addEventListener('click', function(){ set(b.getAttribute('data-snd')); }); });
+  var v = sm.getAttribute('data-sound') || 'synth';
+  try{ v = localStorage.getItem('dev-snd') || v; }catch(e){}
+  set(v);
+})();
+</script>
+<!-- /DEV-ONLY -->
+</body>
+</html>
