@@ -583,11 +583,11 @@ html[data-works="jacket"] .w-stage .w-more:hover{background:var(--wa-ink); color
 /* 右下の札（番号と題）。下からのぞいている時はここが見える */
 .w-jlab{display:none}
 html[data-works="jacket"] .w-jlab{display:block; position:absolute; right:18px; bottom:9px; font-family:var(--f-mono); font-size:12px; letter-spacing:.08em; color:var(--wa-ink); white-space:nowrap}
-/* 盤：ジャケットの右から少し出て回る（PC だけ）。切り替えの間はジャケットの中にしまって（ほかのカードに重なって欠けて見えないように）、
-   カードが止まってから横へすべり出る。出る長さはカードの横の余白まで（画面の端で切れないように） */
+/* 盤：今のページ（カード）にくっついて、右から半分ほど出て回る（PC だけ）。次へ進むと盤は抜けていくカードと一緒に去り、
+   来たカードの盤はジャケットの中から横へすべり出る（下でのぞいているカードの盤はしまったまま）。出る長さはカードの横の余白まで */
 .w-jdisc{display:none}
 @media (min-width:861px){
-  html[data-works="jacket"] .w-jdisc{--jp:clamp(32px, calc(max((100vw - 1080px) / 2, 48px) - 16px), 110px); display:block; position:absolute; z-index:-2; top:18%; right:calc(-1 * var(--jp)); height:64%; aspect-ratio:1 / 1;
+  html[data-works="jacket"] .w-jdisc{--jp:clamp(32px, calc(max((100vw - 1080px) / 2, 48px) - 16px), 110px); display:block; position:absolute; z-index:-2; top:24%; right:calc(-1 * var(--jp)); height:52%; aspect-ratio:1 / 1;
     transform:translateX(calc(-1 * var(--jp))); opacity:0; transition:transform .45s cubic-bezier(.22,1,.36,1), opacity .15s linear}
   html[data-works="jacket"] .w-stage > .w-slide.jsettled .w-jdisc{transform:none; opacity:1; transition:transform .55s cubic-bezier(.22,1,.36,1), opacity .2s linear}
 }
@@ -616,18 +616,6 @@ html[data-works="jacket"] .w-stage .w-play{color:var(--wa-ink)}
 .w-shot{position:relative}
 .w-shot video{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; background:#000; cursor:pointer}
 .w-wave canvas{cursor:pointer}
-/* /DEV-ONLY */
-/* DEV-ONLY: 舞台の盤（確認用だけ） */
-/* 盤は舞台に 1 枚だけ。重なりは 下のカード（次の作品）→ 盤 → 今のカード で、今のカードの右からのぞいて回る（盤は今の作品の物に見えるように）。切り替えの間も出たまま
-   （カードごとに盤を持つと、ほかのカードに重なって欠けて見えた）。ラベルの色は今の作品の色 */
-.w-sdisc{display:none}
-@media (min-width:861px){
-  html[data-works="jacket"] .w-sdisc{display:block; position:absolute; z-index:2; left:0; top:0; width:300px; height:300px; pointer-events:none}
-  html[data-works="jacket"] .w-sdisc .w-disc-in{animation:w-spin 4.5s linear infinite}
-  html[data-works="jacket"] .w-sdisc::after{content:""; position:absolute; inset:0; border-radius:50%; background:conic-gradient(from 200deg, transparent 0 8%, rgba(255,255,255,.08) 13%, transparent 19% 58%, rgba(255,255,255,.06) 63%, transparent 69%)}
-}
-html[data-works="jacket"] .w-jdisc{display:none!important}
-@media (prefers-reduced-motion: reduce){ html[data-works="jacket"] .w-sdisc .w-disc-in{animation:none} }
 /* /DEV-ONLY */
 /* DEV-ONLY: ミニゲームの丸い操作（確認用だけ） */
 /* PC は地図の下に丸い棒（倒した向きに一番近い上下左右へ歩く、端まで倒すと走る）と A。スマホは横の操作を無くして地図を大きくし、
@@ -2218,11 +2206,6 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
   stage.className = 'w-stage';
   secs[0].parentNode.insertBefore(pin, secs[0]);
   pin.appendChild(stage);
-  var sdisc = document.createElement('div');
-  sdisc.className = 'w-sdisc';
-  sdisc.setAttribute('aria-hidden', 'true');
-  sdisc.innerHTML = '<div class="w-disc-in"></div>';
-  stage.appendChild(sdisc);
   var slides0 = 0, H = 0, VW = 0;
   pin.style.setProperty('--n', secs.length);
   // 舞台の高さ＝アドレスバーが出ている時の画面の高さ（100svh）と今の高さの小さい方。どの時でも MORE まで見えるように
@@ -2330,7 +2313,6 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
     else { leave(slides[cur], dir); come(slides[i], dir); }
     cur = i;
     lastShow = performance.now();
-    setTimeout(placeDisc, 260);
   }
   // ジャケット：次へ＝上のカードが左上へ抜け、下からのぞいていたカードが持ち上がる。新しく次のカードが下に入る。
   // 前へ＝前のカードが左上から戻ってきて重なり、今のカードは下へ回ってのぞく側になる
@@ -2345,20 +2327,20 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
     slides.forEach(function(sl){
       kill(sl);
       sl.style.zIndex = '';
-      sl.classList.remove('jsettled');
+      if (!(dir > 0 && sl === a)) sl.classList.remove('jsettled');
       if (sl !== a && sl !== b && sl !== oldPeek && sl !== newPeek) sl.classList.remove('on', 'is-on', 'peek');
     });
     clearTimeout(settleT);
-    settleT = setTimeout(function(){ if (slides[cur] === b) b.classList.add('jsettled'); }, reduce ? 0 : 720);
+    settleT = setTimeout(function(){ if (slides[cur] === b) b.classList.add('jsettled'); }, reduce ? 0 : 600);
     if (reduce){
       a.classList.remove('on', 'is-on', 'peek'); if (oldPeek) oldPeek.classList.remove('peek');
       b.classList.remove('peek'); b.classList.add('on', 'is-on'); if (newPeek) newPeek.classList.add('peek');
       return;
     }
     if (dir > 0){
-      a.classList.remove('peek'); a.classList.add('on'); a.classList.remove('is-on'); a.style.zIndex = 5;
+      a.classList.remove('peek'); a.classList.add('on'); a.style.zIndex = 5;
       add(a, anim(a, [{transform: 'none', opacity: 1}, {transform: OUT, opacity: 1, offset: .85}, {transform: OUT, opacity: 0}], {duration: 560, easing: EI, fill: 'forwards'}));
-      a._t = setTimeout(function(){ kill(a); a.classList.remove('on'); a.style.zIndex = ''; }, 580);
+      a._t = setTimeout(function(){ kill(a); a.classList.remove('on', 'is-on', 'jsettled'); a.style.zIndex = ''; }, 580);
       b.classList.remove('peek'); b.classList.add('on', 'is-on'); b.style.zIndex = 4;
       add(b, anim(b, [{transform: P, filter: 'brightness(.55)'}, {transform: 'none', filter: 'brightness(1)'}], {duration: 500, delay: 140, easing: EO, fill: 'backwards'}));
       if (oldPeek && oldPeek !== b) fadeAway(oldPeek);
@@ -2463,31 +2445,16 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
       sc = maxH > avail && avail > 0 ? avail / maxH : 1;
     }
     ws.forEach(function(w){ w.style.minHeight = maxH + 'px'; if (sc < 1) w.style.transform = 'scale(' + sc.toFixed(3) + ')'; });
-    lastSc = sc;
-    placeDisc();
-    // ジャケットの盤の出る長さ：縮めた後の見た目で、カードの横の余白まで（盤の幅の 32% を上限に）
+    // ジャケットの盤の出る長さ：縮めた後の見た目で、カードの横の余白まで（盤の幅の 52% を上限に。ラベルが見える）
     var vw = stage.clientWidth;
     slides.forEach(function(sl){
       var w = sl.querySelector('.wrap'), d = sl.querySelector('.w-jdisc');
       if (!w || !d || !d.offsetWidth) return;
-      var margin = (vw - w.offsetWidth * sc) / 2, jp = Math.max(0, Math.min(margin - 16, d.offsetWidth * sc * .32));
+      var margin = (vw - w.offsetWidth * sc) / 2, jp = Math.max(0, Math.min(margin - 16, d.offsetWidth * sc * .52));
       d.style.setProperty('--jp', (jp / sc).toFixed(1) + 'px');
     });
   }
   window.addEventListener('resize', function(){ if (measure(false)){ fit(); update(); } });
-  // 舞台の盤：今のカードの見た目の右に、盤の幅の 52% まで（カードの横の余白まで）出す。ラベルは今の作品の色
-  var lastSc = 1;
-  function placeDisc(){
-    if (cur < 0 || !slides[cur]) return;
-    var w = slides[cur].querySelector('.wrap');
-    if (!w) return;
-    var vwid = w.offsetWidth * lastSc, vh = w.offsetHeight * lastSc, vl = w.offsetLeft + (w.offsetWidth - vwid) / 2, vt = w.offsetTop + (w.offsetHeight - vh) / 2;
-    var size = vh * .52, margin = stage.clientWidth - (vl + vwid), jp = Math.max(0, Math.min(margin - 16, size * .52));
-    sdisc.style.width = sdisc.style.height = size.toFixed(1) + 'px';
-    sdisc.style.left = (vl + vwid + jp - size).toFixed(1) + 'px';
-    sdisc.style.top = (vt + vh * .22).toFixed(1) + 'px';
-    sdisc.style.setProperty('--wa', getComputedStyle(slides[cur]).getPropertyValue('--wa').trim());
-  }
   window.addEventListener('load', fit);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
   // MORE：もとの仕組みはもとの節を見ているので、舞台の作品から窓を開く形に差し替える
