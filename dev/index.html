@@ -558,9 +558,9 @@ html[data-works="film"] .w-flash{display:block; position:absolute; inset:0; z-in
 /* DEV-ONLY: ジャケット風のカード（確認用だけ） */
 /* 作品 1 つ＝生成りの紙のジャケット 1 枚。次の作品のカードが右下からのぞき、切り替えると上のカードが左上へ抜けて下のカードが持ち上がる */
 html[data-works="jacket"] .w-stage{background:#121C25}
-html[data-works="jacket"] .w-stage > .w-slide{background:none; padding-bottom:64px}
+html[data-works="jacket"] .w-stage > .w-slide{background:none; padding-top:calc(env(safe-area-inset-top, 0px) + var(--bar) + 20px); padding-bottom:56px}
 html[data-works="jacket"] .w-stage > .w-slide > .bg{display:none}
-html[data-works="jacket"] .w-stage > .w-slide > .wrap{position:relative; isolation:isolate; width:min(1080px, calc(100% - 96px)); max-width:none; margin:0 auto; padding:26px 32px 30px; color:#2B2620; --wa-ink:color-mix(in srgb, var(--wa) 58%, #1E1A16)}
+html[data-works="jacket"] .w-stage > .w-slide > .wrap{position:relative; isolation:isolate; width:min(1080px, calc(100% - 96px)); max-width:none; margin:0 auto; padding:22px 28px 28px; color:#2B2620; --wa-ink:color-mix(in srgb, var(--wa) 58%, #1E1A16)}
 html[data-works="jacket"] .w-stage > .w-slide > .wrap::before{content:""; position:absolute; inset:0; z-index:-1; border-radius:10px; background:#ECE6DA; box-shadow:0 26px 60px rgba(0,0,0,.5), inset 0 0 0 1px rgba(255,255,255,.5)}
 html[data-works="jacket"] .w-stage > .w-slide.on{z-index:3}
 html[data-works="jacket"] .w-stage > .w-slide.peek{visibility:visible; z-index:1; transform:translate(24px, 38px) rotate(2deg); filter:brightness(.55)}
@@ -2244,17 +2244,18 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
     }
     if (dir > 0){
       a.classList.remove('peek'); a.classList.add('on'); a.classList.remove('is-on'); a.style.zIndex = 5;
-      add(a, anim(a, [{transform: 'none', opacity: 1}, {transform: OUT, opacity: 0}], {duration: 520, easing: EI, fill: 'forwards'}));
-      a._t = setTimeout(function(){ kill(a); a.classList.remove('on'); a.style.zIndex = ''; }, 540);
+      add(a, anim(a, [{transform: 'none', opacity: 1}, {transform: OUT, opacity: 1, offset: .85}, {transform: OUT, opacity: 0}], {duration: 560, easing: EI, fill: 'forwards'}));
+      a._t = setTimeout(function(){ kill(a); a.classList.remove('on'); a.style.zIndex = ''; }, 580);
       b.classList.remove('peek'); b.classList.add('on', 'is-on'); b.style.zIndex = 4;
       add(b, anim(b, [{transform: P, filter: 'brightness(.55)'}, {transform: 'none', filter: 'brightness(1)'}], {duration: 500, delay: 140, easing: EO, fill: 'backwards'}));
       if (oldPeek && oldPeek !== b) fadeAway(oldPeek);
     } else {
       b.classList.remove('peek'); b.classList.add('on', 'is-on'); b.style.zIndex = 5;
-      add(b, anim(b, [{transform: OUT, opacity: 0}, {transform: 'none', opacity: 1}], {duration: 560, easing: EO, fill: 'backwards'}));
+      add(b, anim(b, [{transform: OUT, opacity: 0}, {transform: OUT, opacity: 1, offset: .12}, {transform: 'none', opacity: 1}], {duration: 600, easing: EO, fill: 'backwards'}));
       if (newPeek === a){
         a.classList.remove('on', 'is-on'); a.classList.add('peek'); a.style.zIndex = 2;
         add(a, anim(a, [{transform: 'none', filter: 'brightness(1)'}, {transform: P, filter: 'brightness(.55)'}], {duration: 480, delay: 120, easing: EO, fill: 'backwards'}));
+        a._t = setTimeout(function(){ a.style.zIndex = ''; }, 640);
       } else {
         a.classList.remove('is-on'); fadeAway(a);
       }
