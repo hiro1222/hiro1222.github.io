@@ -197,6 +197,9 @@ button{font:inherit}
 @media (min-width:861px) and (pointer:fine){ .sm-kb{display:block} }
 @media (min-width:861px) and (max-height:760px){ .sm-kb{display:none!important} .sm-body{row-gap:10px} .sm-top{margin-bottom:8px} }  /* 低い画面では 1 ページに収める */
 .sm-hint .nw{display:inline-block}
+.sm-credit{margin-top:6px; max-width:calc(var(--map) + 124px); padding:0 2px; font-size:10.5px; line-height:1.55; color:var(--night-muted); opacity:.85}
+.sm-credit a{color:inherit; text-decoration:underline; text-underline-offset:2px}
+@media (min-width:861px){ .sm-credit{max-width:calc(var(--map) + 12px)} }
 /* /DEV-ONLY */
 .cue{
   position:absolute; left:50%; bottom:calc(18px + env(safe-area-inset-bottom, 0px)); transform:translateX(-50%);
@@ -739,6 +742,7 @@ html[data-works="jacket"] .w-stage .w-play{color:var(--wa-ink)}
           </div>
         </div>
         <p class="sm-hint"><span class="sm-tp">地図をなぞって歩く・タップで手をたたく<span class="nw">（音が出ます）</span></span><span class="sm-pcn">足音はどこも同じ。変わるのは場所の響きだけ<span class="nw">（音が出ます）</span></span><span class="sm-kb">キーボード：地図をクリックして 矢印キー・Z・X</span></p>
+        <p class="sm-credit">足音：<a href="https://freesound.org/people/swuing/sounds/38873/" target="_blank" rel="noopener">footstep-concrete.wav</a>（swuing）を元にした素材、<a href="https://creativecommons.org/licenses/by/3.0/" target="_blank" rel="noopener">CC BY 3.0</a>。Idreal の響きを足して使っています</p>
       </div>
       <!-- /DEV-ONLY -->
     </div>
@@ -1842,18 +1846,21 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
   // 焼いた音は響きだけ（wetOnly）。素の音（dry.mp3）はここで鳴らす。足音は踏んだ足の側へ少し振る（Unreal は足音を踏んだ足の位置から鳴らす）
   // 耳の向き 4 つ（u 地図の上・r 右・d 下・l 左）で焼いてあり、三角の向きに一番近い物を鳴らす（響きの左右が向きで変わる）
   // 向き 4 つは同じ倍率で焼いた（足音 −6.0 dB・手拍子 −2.2 dB）。手拍子は CLAP_VOL で合成の時と同じ大きさの比に戻す
-  var IDR = {step: 'audio/idreal-steps/', clap: 'audio/idreal-claps/'}, CLAP_VOL = .55, FACES = ['u', 'r', 'd', 'l'], KEEP = 48;
+  var IDR = {step: 'audio/idreal-steps/', clap: 'audio/idreal-claps/'}, CLAP_VOL = .55, FACES = ['u', 'r', 'd', 'l'], KEEP = 60;
+  // 素の足音は 9 本（本人が渡した素材のコンクリート、swuing の footstep-concrete.wav から・CC BY 3.0）から毎歩ランダム。響きは 0 番で焼いた
+  var STEP_DRY = ['dry0', 'dry1', 'dry2', 'dry3', 'dry4', 'dry5', 'dry6', 'dry7', 'dry8'];
+  function isDry(id){ return id.indexOf('dry') === 0; }
   var FACE_A = {r: 0, d: Math.PI / 2, l: Math.PI, u: -Math.PI / 2};
   var idr = {map: null, loading: false, byTile: {}, raw: {}, buf: {}, used: {}, tick: 0, lastId: ''};
   function idrOn(){ return root.getAttribute('data-sound') === 'idreal'; }
   function adiff(a, b){ var d = a - b; return Math.abs(Math.atan2(Math.sin(d), Math.cos(d))); }
   // 焼いた向きを、今向いている向きに近い順に
   function faces(){ return FACES.slice().sort(function(a, b){ return adiff(me.ang, FACE_A[a]) - adiff(me.ang, FACE_A[b]); }); }
-  function keyOf(kind, face, id){ return kind + ':' + (id === 'dry' ? '' : face) + ':' + id; }
+  function keyOf(kind, face, id){ return kind + ':' + (isDry(id) ? '' : face) + ':' + id; }
   // mp3 の中身を取る（音の器ができる前から取っておける）。素の音は向きによらないので u のを使う
   function idrFetch(kind, face, id){
     var key = keyOf(kind, face, id);
-    if (!idr.raw[key]) idr.raw[key] = fetch(IDR[kind] + (id === 'dry' ? 'u' : face) + '/' + id + '.mp3').then(function(r){ if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); });
+    if (!idr.raw[key]) idr.raw[key] = fetch(IDR[kind] + (isDry(id) ? 'u' : face) + '/' + id + '.mp3').then(function(r){ if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); });
     return idr.raw[key];
   }
   // 音にする（できあがるまでは Promise が入っている）
@@ -1889,9 +1896,9 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
   // 器ができる前（ページを開いた時）は、一番近い向きのまわり 1 マスの中身だけ
   function idrNear(){
     if (!idr.map) return;
-    var tx = Math.floor(me.x), ty = Math.floor(me.y), fs = faces(), here = idrId(tx, ty) || 'dry';
+    var tx = Math.floor(me.x), ty = Math.floor(me.y), fs = faces(), here = idrId(tx, ty);
     function around(rad, fn){
-      var ids = ['dry'], dx, dy, id;
+      var ids = [], dx, dy, id;
       for (dy = -rad; dy <= rad; dy++) for (dx = -rad; dx <= rad; dx++){
         id = idrId(tx + dx, ty + dy);
         if (id) ids.push(id);
@@ -1899,16 +1906,19 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
       ids.forEach(fn);
     }
     function get(fn, f){ return function(q){ fn('step', f, q); fn('clap', f, q); }; }
+    // 素の音（足音 9 本・手拍子 1 本）はいつも
+    STEP_DRY.forEach(function(q){ (ac ? idrLoad : idrFetch)('step', '', q); });
+    (ac ? idrLoad : idrFetch)('clap', '', 'dry');
     if (!ac){ around(1, get(idrFetch, fs[0])); return; }
     around(2, get(idrFetch, fs[0]));
     around(1, get(idrFetch, fs[1])); around(1, get(idrFetch, fs[2])); around(1, get(idrFetch, fs[3]));
     around(1, get(idrLoad, fs[0]));
-    get(idrLoad, fs[1])(here);
+    if (here) get(idrLoad, fs[1])(here);
   }
   // 鳴らす: 素の音（pan で左右へ少し振る）と、そのマス・その向きの響きを同時に。響きの無いマスは素の音だけ
   // 一番近い向きがまだ音になっていなければ同じマスの次に近い向き。それも無ければ、足音は 0.12 秒・手拍子は 0.3 秒まで待って一緒に鳴らす（間に合わなければその時に素の音だけ）
   function idrPlay(kind, pan, vol){
-    var id = idrId(Math.floor(me.x), Math.floor(me.y)), fs = faces(), dry = idrLoad(kind, '', 'dry'), wet = null, wid = '', i, b;
+    var id = idrId(Math.floor(me.x), Math.floor(me.y)), fs = faces(), dry = idrLoad(kind, '', kind === 'step' ? STEP_DRY[Math.random() * STEP_DRY.length | 0] : 'dry'), wet = null, wid = '', i, b;
     idrNear();
     if (id) for (i = 0; i < fs.length && !wet; i++){
       b = i ? idr.buf[keyOf(kind, fs[i], id)] : idrLoad(kind, fs[0], id);
