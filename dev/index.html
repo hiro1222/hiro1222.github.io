@@ -501,8 +501,10 @@ html.dlg-open{overflow:hidden}
 /* /DEV-ONLY */
 /* DEV-ONLY: 作品の切り替え（レコード／フィルム、確認用だけ） */
 /* 作品は画面に止めた舞台（.w-stage）の上で入れ替わる。もとの節（.w-spacer）は空の場所取りで、スクロールの止まる位置と上のバーの印のために残す */
-.w-pin{position:relative}
-.w-stage{position:sticky; top:0; z-index:1; height:100vh; height:100svh; margin-bottom:-100vh; margin-bottom:-100svh; overflow:hidden; background:var(--black)}
+/* 舞台の範囲＝作品の数×画面の高さ。舞台はその中だけ止まり、最後の作品の所で一緒に流れて連絡先が出る（場所取りは中に重ねて置く） */
+.w-pin{position:relative; height:calc(var(--n, 5) * 100vh); height:calc(var(--n, 5) * 100svh)}
+.w-stage{position:sticky; top:0; z-index:1; height:100vh; height:100svh; overflow:hidden; background:var(--black)}
+.w-pin > .w-spacer{position:absolute; left:0; right:0; top:calc(var(--k, 0) * 100vh); top:calc(var(--k, 0) * 100svh); height:100vh; height:100svh; min-height:0}
 .w-stage > .w-slide{position:absolute; inset:0; min-height:0; height:100%; visibility:hidden}
 .w-stage > .w-slide.on{visibility:visible}
 .w-stage > .w-slide > .wrap{transform-origin:50% 50%}
@@ -2076,6 +2078,8 @@ html[data-works="film"] .w-flash{display:block; position:absolute; inset:0; z-in
   stage.className = 'w-stage';
   secs[0].parentNode.insertBefore(pin, secs[0]);
   pin.appendChild(stage);
+  var slides0 = 0;
+  pin.style.setProperty('--n', secs.length);
   var slides = secs.map(function(sec){
     var sl = document.createElement('div');
     pin.appendChild(sec);
@@ -2085,6 +2089,7 @@ html[data-works="film"] .w-flash{display:block; position:absolute; inset:0; z-in
     sl.setAttribute('aria-labelledby', sec.getAttribute('aria-labelledby') || '');
     while (sec.firstChild) sl.appendChild(sec.firstChild);
     sec.classList.add('w-spacer');
+    sec.style.setProperty('--k', slides0++);
     stage.appendChild(sl);
     return sl;
   });
