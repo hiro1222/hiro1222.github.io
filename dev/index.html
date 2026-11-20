@@ -766,7 +766,7 @@ html[data-works="jacket"] .w-stage .w-play{color:var(--wa-ink)}
               <article class="pr-card">
                 <p class="pr-lab">強み</p>
                 <h4>知らないことは、<wbr>まず調べてみる</h4>
-                <p>昔から細かな物事への好奇心が強く、「少しでも知ってみたい」「知らないことをなくしたい」と考えてきました。自分が興味を持つ分野はもちろん、それ以外でも少しでも気になったこと、興味のある物事に関わっていそうなことは、まず調べてみるところから始めます。</p>
+                <p>昔から細かな物事への好奇心が強く、「少しでも知ってみたい」「知らないことをなくしたい」と考えてきました。自分が興味を持つ分野はもちろん、それ以外でも少しでも気になったこと、興味のある物事に関わっていそうなことは、まず調べる事から始めるようにしています。</p>
                 <p>就職作品でも、授業ではサウンドを学ぶ機会がほとんどなかったため、必要なことはすべて自力で調べました。授業で学んだグラフィックスの分野も「ここはサウンドに応用できるのではないか？」と考え、<mark>まず知ってみる</mark>ことを信条にしています。</p>
               </article>
               <article class="pr-card">
@@ -856,6 +856,7 @@ html[data-works="jacket"] .w-stage .w-play{color:var(--wa-ink)}
   </section>
 
   <!-- 02 の続き：プログラマーとして意識していること（暗い背景）。中身が入るまで hidden で隠している（2026-11-18 本人「一旦なくしておこう」） -->
+  <!-- DEV-ONLY: 意識していること（中身が準備中なので確認用だけ。公開用のソースにも出さない） -->
   <section class="panel dark p-pr" id="pr" data-nav="profile" aria-label="プログラマーとして意識していること" hidden>
     <div class="bg">
       <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
@@ -884,10 +885,12 @@ html[data-works="jacket"] .w-stage .w-play{color:var(--wa-ink)}
       </div>
     </div>
   </section>
+  <!-- /DEV-ONLY -->
 
   <!-- 02 の続き：好きなゲーム体験。左にスクショのモザイク（横に流す、ループする。並べ方 3 種類・大きさは開くたびにランダム）、押すと右（スマホは下）に解説。
        1 本 = li 1 つ。場所は JS が決める（style の grid-area は JS が無い時の並び、6 段）、色は --fc。
        画像は .fav-tile の中に img（自分で撮ったスクショ）、解説は .fav-info の中（押すと右の欄へ写す） -->
+  <!-- DEV-ONLY: 好きなゲーム体験（中身が準備中なので確認用だけ。公開用のソースにも出さない） -->
   <section class="panel dark p-fav" id="fav" data-nav="profile" aria-labelledby="h-fav" hidden>
     <div class="bg"></div>
     <div class="wrap">
@@ -1054,6 +1057,7 @@ html[data-works="jacket"] .w-stage .w-play{color:var(--wa-ink)}
       </div>
     </div>
   </section>
+  <!-- /DEV-ONLY -->
 
   <!-- 03 作品：1 作品 = 全画面 1 枚（左に画像、右に題・概要・表・MORE）。こだわりは .w-extra（MORE の窓に出る）。画像は .w-shot の中に img を入れる -->
   <section class="panel dark p-work" id="works" aria-labelledby="w1-title" style="--wa:#7DB8D1">
@@ -1192,6 +1196,7 @@ html[data-works="jacket"] .w-stage .w-play{color:var(--wa-ink)}
       </div>
     </div>
   </section>
+  <!-- DEV-ONLY: 友人作品 A・B（中身が準備中なので確認用だけ。公開用のソースにも出さない） -->
   <section class="panel dark p-work" id="work-6" hidden data-nav="works" aria-labelledby="w6-title" style="--wa:#E08AA8">
     <div class="bg"></div>
     <div class="wrap">
@@ -1203,7 +1208,6 @@ html[data-works="jacket"] .w-stage .w-play{color:var(--wa-ink)}
         <div class="w-shot">画像 準備中</div>
         <div class="w-detail">
           <dl class="w-facts"><div><dt>概要</dt><dd><span class="todo">準備中</span></dd></div><div><dt>ゲームジャンル</dt><dd><span class="todo">準備中</span></dd></div><div><dt>制作規模</dt><dd>—</dd></div><div><dt>担当範囲</dt><dd>サウンド面で協力、<span class="todo">詳しくは準備中</span></dd></div><div><dt>制作期間</dt><dd>1か月</dd></div><div><dt>制作環境</dt><dd>DirectX 11／C++17</dd></div></dl>
-          <!-- DEV-ONLY: MORE（確認用だけ） -->
           <div class="w-acts">
             <button type="button" class="w-more" aria-haspopup="dialog">MORE</button>
           </div>
@@ -1214,7 +1218,6 @@ html[data-works="jacket"] .w-stage .w-play{color:var(--wa-ink)}
                 <li><span class="w-ic" aria-hidden="true">02</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
             </ul>
           </div>
-          <!-- /DEV-ONLY -->
         </div>
       </div>
     </div>
@@ -1230,7 +1233,6 @@ html[data-works="jacket"] .w-stage .w-play{color:var(--wa-ink)}
         <div class="w-shot">画像 準備中</div>
         <div class="w-detail">
           <dl class="w-facts"><div><dt>概要</dt><dd><span class="todo">準備中</span></dd></div><div><dt>ゲームジャンル</dt><dd><span class="todo">準備中</span></dd></div><div><dt>制作規模</dt><dd>—</dd></div><div><dt>担当範囲</dt><dd>サウンド面で協力、<span class="todo">詳しくは準備中</span></dd></div><div><dt>制作期間</dt><dd>1か月</dd></div><div><dt>制作環境</dt><dd>DirectX 12／C++17</dd></div></dl>
-          <!-- DEV-ONLY: MORE（確認用だけ） -->
           <div class="w-acts">
             <button type="button" class="w-more" aria-haspopup="dialog">MORE</button>
           </div>
@@ -1241,11 +1243,11 @@ html[data-works="jacket"] .w-stage .w-play{color:var(--wa-ink)}
                 <li><span class="w-ic" aria-hidden="true">02</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
             </ul>
           </div>
-          <!-- /DEV-ONLY -->
         </div>
       </div>
     </div>
   </section>
+  <!-- /DEV-ONLY -->
 
   <!-- 04 連絡先：波紋 -->
   <section class="panel p-contact" id="contact" aria-labelledby="h-contact">

@@ -57,6 +57,10 @@ DEV_ONLY = re.compile(r'[ \t]*(?:<!--|/\*) DEV-ONLY.*?(?:<!--|/\*) /DEV-ONLY (?:
 
 def publish():
     s = read(os.path.join(DEV, 'index.html'))
+    # 印の入れ子は消し方がずれるので止める（始まりと終わりが交互になっているか）
+    seq = ['E' if m.group(1) else 'S' for m in re.finditer(r'(?:<!--|/\*) (/)?DEV-ONLY', s)]
+    bad = [i for i in range(len(seq) - 1) if seq[i] == seq[i + 1]]
+    assert not bad and (not seq or (seq[0] == 'S' and seq[-1] == 'E')), '確認用だけの印が入れ子か、閉じていない所がある（%d 番目あたり）' % (bad[0] + 1 if bad else 0)
     n = len(DEV_ONLY.findall(s))
     s = DEV_ONLY.sub('', s)
     assert 'DEV-ONLY' not in s and 'devbar' not in s
