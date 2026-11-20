@@ -490,6 +490,15 @@ html.dlg-open{overflow:hidden}
   html{scroll-behavior:auto}
   .drawer,.scrim{transition:none}
 }
+/* DEV-ONLY: 作品のトラック風の波形（確認用だけ） */
+/* 作品をアルバムの曲のように：画像の下に TRACK 番号と作品の色の波形（音は出さない） */
+.w-media{grid-area:shot; align-self:center; min-width:0}
+.w-wave{display:flex; align-items:center; gap:14px; margin-top:12px; padding:8px 14px 8px 12px; border:1px solid var(--night-line); border-radius:8px; background:rgba(8,12,16,.45); -webkit-user-select:none; user-select:none}
+.w-wave-lab{flex:none; display:flex; flex-direction:column; align-items:flex-start; line-height:1.15; color:var(--wa)}
+.w-wave-lab small{font-family:var(--f-label); font-size:10px; letter-spacing:.26em}
+.w-wave-lab b{font-family:var(--f-mono); font-size:20px; font-weight:600; letter-spacing:.04em}
+.w-wave canvas{flex:1; min-width:0; height:40px; display:block; cursor:crosshair; touch-action:pan-y}
+/* /DEV-ONLY */
 </style>
 </head>
 <body>
@@ -1888,6 +1897,94 @@ html.dlg-open{overflow:hidden}
   setMute(muted);
   showRoom(false);
   draw();
+})();
+</script>
+<!-- /DEV-ONLY -->
+<!-- DEV-ONLY: 作品のトラック風の波形（確認用だけ） -->
+<script>
+// 作品の画像の下に、作品ごとに形の違う波形を描く。ページに入ると左から色が付き（再生の見立て）、乗せた所の近くが持ち上がる。音は出さない
+(function(){
+  var reduce = false, tracks = [];
+  try{ reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){}
+  document.querySelectorAll('.p-work').forEach(function(sec){
+    var shot = sec.querySelector('.w-shot');
+    if (!shot) return;
+    // 画像と波形をひとまとめにして、画像のあった場所に置く
+    var media = document.createElement('div'), wave = document.createElement('div'), idx = sec.querySelector('.w-idx');
+    media.className = 'w-media';
+    shot.parentNode.insertBefore(media, shot);
+    media.appendChild(shot);
+    wave.className = 'w-wave';
+    wave.setAttribute('aria-hidden', 'true');
+    wave.innerHTML = '<span class="w-wave-lab"><small>TRACK</small><b>' + (idx ? idx.textContent.split('/')[0].trim() : '') + '</b></span><canvas></canvas>';
+    media.appendChild(wave);
+    // 形は作品の id から決まる（開くたびに同じ）。ときどき大きく立ち上がって、だんだん減る
+    var seed = 7, id = sec.id || 'w', i, env = .3, base = [];
+    for (i = 0; i < id.length; i++) seed = (seed * 31 + id.charCodeAt(i)) >>> 0;
+    function rnd(){ seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }
+    for (i = 0; i < 96; i++){
+      if (rnd() < .11) env = .6 + rnd() * .4;
+      env = Math.max(.18 + rnd() * .12, env * .9);
+      base.push(Math.min(1, env * (.62 + rnd() * .45)));
+    }
+    tracks.push({sec: sec, cv: wave.querySelector('canvas'), base: base, play: reduce ? 1 : 0, hover: -1, run: 0});
+  });
+  function draw(t){
+    var cv = t.cv, w = cv.clientWidth, h = cv.clientHeight, dpr = Math.min(2, window.devicePixelRatio || 1);
+    if (!w || !h) return;
+    if (cv.width !== Math.round(w * dpr) || cv.height !== Math.round(h * dpr)){ cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); }
+    var g = cv.getContext('2d'), col = getComputedStyle(t.sec).getPropertyValue('--wa').trim() || '#7DB8D1';
+    var bw = 3, gap = 2, n = Math.max(8, Math.floor((w + gap) / (bw + gap))), upto = t.hover >= 0 ? t.hover : t.play * w, k, f, a, v, x, d, bh;
+    g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    g.clearRect(0, 0, w, h);
+    g.fillStyle = col;
+    for (k = 0; k < n; k++){
+      f = k / (n - 1) * (t.base.length - 1); a = Math.floor(f);
+      v = t.base[a] + (t.base[Math.min(t.base.length - 1, a + 1)] - t.base[a]) * (f - a);
+      x = k * (bw + gap);
+      if (t.hover >= 0){ d = (x - t.hover) / 34; v = Math.min(1, v * (1 + .75 * Math.exp(-d * d))); }
+      bh = Math.max(2, v * (h - 2));
+      g.globalAlpha = x + bw <= upto ? 1 : .26;
+      g.fillRect(x, (h - bh) / 2, bw, bh);
+    }
+    g.globalAlpha = 1;
+    if (t.hover >= 0){ g.fillStyle = '#E3E9EE'; g.fillRect(Math.round(t.hover), 0, 1, h); }
+  }
+  // 入った時に左から右へ 2.6 秒で色を付ける（出たら戻す。次に入った時にもう一度）
+  function sweep(t){
+    if (reduce) return;
+    var t0 = performance.now(), my = ++t.run;
+    (function f(now){
+      if (t.run !== my) return;
+      var q = Math.min(1, Math.max(0, (now - t0) / 2600));
+      t.play = 1 - Math.pow(1 - q, 3);
+      draw(t);
+      if (q < 1) requestAnimationFrame(f);
+    })(t0);
+  }
+  if ('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        tracks.forEach(function(t){
+          if (t.sec !== e.target) return;
+          if (e.isIntersecting) sweep(t);
+          else if (!reduce){ t.run++; t.play = 0; draw(t); }
+        });
+      });
+    }, {threshold: .5});
+    tracks.forEach(function(t){ io.observe(t.sec); });
+  } else tracks.forEach(function(t){ t.play = 1; });
+  tracks.forEach(function(t){
+    function at(e){ var r = t.cv.getBoundingClientRect(); t.hover = Math.max(0, Math.min(r.width, e.clientX - r.left)); draw(t); }
+    function off(){ t.hover = -1; draw(t); }
+    t.cv.addEventListener('pointermove', at);
+    t.cv.addEventListener('pointerdown', at);
+    t.cv.addEventListener('pointerleave', off);
+    t.cv.addEventListener('pointercancel', off);
+    t.cv.addEventListener('pointerup', function(e){ if (e.pointerType !== 'mouse') off(); });
+  });
+  window.addEventListener('resize', function(){ tracks.forEach(draw); });
+  tracks.forEach(draw);
 })();
 </script>
 <!-- /DEV-ONLY -->
