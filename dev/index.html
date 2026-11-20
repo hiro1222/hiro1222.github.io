@@ -2158,7 +2158,17 @@ html[data-works="film"] .w-flash{display:block; position:absolute; inset:0; z-in
     cur = i;
     lastShow = performance.now();
   }
-  window.addEventListener('scroll', function(){ if (ticking) return; ticking = true; requestAnimationFrame(function(){ ticking = false; update(); }); }, {passive: true});
+  window.addEventListener('scroll', function(){
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function(){
+      ticking = false;
+      update();
+      var pn = pinned();
+      if (pn && !wasPinned){ arrived = performance.now(); locked = true; }
+      wasPinned = pn;
+    });
+  }, {passive: true});
   // 上のプロフィールから・下の連絡先から入ってきた時にも、来る動きを 1 回
   if ('IntersectionObserver' in window){
     var ends = [secs[0], secs[secs.length - 1]], inside = false;
@@ -2179,25 +2189,25 @@ html[data-works="film"] .w-flash{display:block; position:absolute; inset:0; z-in
     try{ window.scrollTo({top: y, left: 0, behavior: 'instant'}); }catch(e){ window.scrollTo(0, y); }
     update();
   }
-  var lastWheel = 0, acc = 0, locked = false;
+  // 新しい操作か、慣性の続きかを見分ける：間が 250 ms 空いた・前より強くなった・マウスの 1 目盛り（50 以上）で動きが終わっている、のどれかなら新しい操作
+  // 動きの間（0.7 s）と、舞台に着いた直後（0.6 s。プロフィール・連絡先から回したホイールの残りで飛ばさない）は飲み込む
+  var lastWheel = 0, lastAbs = 0, acc = 0, locked = false, lastGo = 0, arrived = 0, wasPinned = false;
   window.addEventListener('wheel', function(e){
     if (reduce || e.ctrlKey || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
     if (e.target.closest && e.target.closest('#drawer, dialog, .devbar')) return;
     if (html.classList.contains('dlg-open')) return;
-    var now = performance.now();
-    if (locked){
-      if (now - lastWheel < 300 || now - lastShow < 650){ lastWheel = now; e.preventDefault(); e.stopImmediatePropagation(); return; }
-      locked = false; acc = 0;
-    }
-    if (!pinned() || cur < 0) return;
+    var now = performance.now(), ad = Math.abs(e.deltaY) * (e.deltaMode === 1 ? 16 : 1);
+    var fresh = now - lastWheel > 250 || ad > lastAbs * 1.4 + 4 || (ad >= 50 && now - lastGo > 750);
+    lastWheel = now; lastAbs = ad;
+    if (!pinned() || cur < 0){ acc = 0; return; }
+    if (now - lastGo < 700 || now - arrived < 600 || (locked && !fresh)){ acc = 0; e.preventDefault(); e.stopImmediatePropagation(); return; }
+    locked = false;
     var dir = e.deltaY > 0 ? 1 : -1, i = cur + dir;
     if (i < 0 || i >= slides.length) return;
     e.preventDefault(); e.stopImmediatePropagation();
-    if (now - lastWheel > 300) acc = 0;
-    lastWheel = now;
-    acc += Math.abs(e.deltaY) * (e.deltaMode === 1 ? 16 : 1);
+    acc += ad;
     if (acc < 30) return;
-    acc = 0; locked = true;
+    acc = 0; locked = true; lastGo = now;
     go(i);
   }, {capture: true, passive: false});
   window.addEventListener('keydown', function(e){
@@ -2210,6 +2220,7 @@ html[data-works="film"] .w-flash{display:block; position:absolute; inset:0; z-in
     if (i < 0 || i >= slides.length) return;
     e.preventDefault(); e.stopImmediatePropagation();
     if (performance.now() - lastShow < 450) return;
+    lastGo = performance.now();
     go(i);
   }, true);
   // 1 枚に収まらない時は、中身を縮める（ノート PC の低い画面・スマホ）
