@@ -13,32 +13,8 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEV = os.path.join(ROOT, 'dev')
 ASSETS = ['img', 'audio']
 TITLE_DEV = '【確認用】'
-DEV_BLOCK = '''<!-- DEV-ONLY: 調整確認用のページだけに出す（tools/site.py publish で消える） -->
-<style>
-.devbar{position:fixed; left:12px; bottom:12px; z-index:60; display:flex; flex-wrap:wrap; align-items:center; gap:6px 8px; max-width:calc(100% - 24px); padding:6px 10px; border-radius:8px; background:#D9774C; color:#0D1620; font:600 12px/1.4 var(--f-body); box-shadow:0 6px 20px rgba(0,0,0,.35)}
-.devbar b{letter-spacing:.06em}
-.devbar button{padding:3px 8px; border:1px solid rgba(13,22,32,.45); border-radius:5px; background:rgba(255,255,255,.35); color:inherit; font:inherit; cursor:pointer}
-.devbar button[aria-pressed="true"]{background:#0D1620; color:#FFFFFF}
-</style>
-<div class="devbar" role="region" aria-label="調整確認用"><b>調整確認用</b><span>ミニマップの足音:</span><button type="button" data-snd="synth">合成</button><button type="button" data-snd="idreal">IdReal</button></div>
-<script>
-// 確認用：ミニマップの足音を 合成／IdReal で焼いた音 で切り替える（この端末で覚える）
-(function(){
-  var sm = document.getElementById('smap'), bs = document.querySelectorAll('.devbar [data-snd]');
-  if (!sm) return;
-  function set(v){
-    sm.setAttribute('data-sound', v);
-    bs.forEach(function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-snd') === v ? 'true' : 'false'); });
-    try{ localStorage.setItem('dev-snd', v); }catch(e){}
-  }
-  bs.forEach(function(b){ b.addEventListener('click', function(){ set(b.getAttribute('data-snd')); }); });
-  var v = sm.getAttribute('data-sound') || 'synth';
-  try{ v = localStorage.getItem('dev-snd') || v; }catch(e){}
-  set(v);
-})();
-</script>
-<!-- /DEV-ONLY -->
-'''
+# 確認用だけに足す帯（2026-11-20 本人「確認用の下のタブ消して」で無しに。確認用だと分かるのはタイトルの【確認用】だけ）
+DEV_BLOCK = ''
 
 
 def read(p):
@@ -97,7 +73,8 @@ def reset_dev():
     nl = '\r\n' if '\r\n' in s else '\n'
     assert s.count('</body>') == 1 and s.count('<title>') == 1
     s = s.replace('<title>', '<title>' + TITLE_DEV)
-    s = s.replace('</body>', DEV_BLOCK.replace('\n', nl) + '</body>')
+    if DEV_BLOCK:
+        s = s.replace('</body>', DEV_BLOCK.replace('\n', nl) + '</body>')
     os.makedirs(DEV, exist_ok=True)
     write(os.path.join(DEV, 'index.html'), s)
     print('dev/index.html を公開用から作り直した')

@@ -2041,31 +2041,6 @@ html[data-works="film"] .w-flash{display:block; position:absolute; inset:0; z-in
 })();
 </script>
 <!-- /DEV-ONLY -->
-<!-- DEV-ONLY: 調整確認用のページだけに出す（tools/site.py publish で消える） -->
-<style>
-.devbar{position:fixed; left:12px; bottom:12px; z-index:60; display:flex; flex-wrap:wrap; align-items:center; gap:6px 8px; max-width:calc(100% - 24px); padding:6px 10px; border-radius:8px; background:#D9774C; color:#0D1620; font:600 12px/1.4 var(--f-body); box-shadow:0 6px 20px rgba(0,0,0,.35)}
-.devbar b{letter-spacing:.06em}
-.devbar button{padding:3px 8px; border:1px solid rgba(13,22,32,.45); border-radius:5px; background:rgba(255,255,255,.35); color:inherit; font:inherit; cursor:pointer}
-.devbar button[aria-pressed="true"]{background:#0D1620; color:#FFFFFF}
-</style>
-<div class="devbar" role="region" aria-label="調整確認用"><b>調整確認用</b><span>ミニマップの足音:</span><button type="button" data-snd="synth">合成</button><button type="button" data-snd="idreal">IdReal</button></div>
-<script>
-// 確認用：ミニマップの足音を 合成／IdReal で焼いた音 で切り替える（この端末で覚える）
-(function(){
-  var sm = document.getElementById('smap'), bs = document.querySelectorAll('.devbar [data-snd]');
-  if (!sm) return;
-  function set(v){
-    sm.setAttribute('data-sound', v);
-    bs.forEach(function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-snd') === v ? 'true' : 'false'); });
-    try{ localStorage.setItem('dev-snd', v); }catch(e){}
-  }
-  bs.forEach(function(b){ b.addEventListener('click', function(){ set(b.getAttribute('data-snd')); }); });
-  var v = sm.getAttribute('data-sound') || 'synth';
-  try{ v = localStorage.getItem('dev-snd') || v; }catch(e){}
-  set(v);
-})();
-</script>
-<!-- /DEV-ONLY -->
 <!-- DEV-ONLY: 作品の切り替え（レコード／フィルム、確認用だけ） -->
 <script>
 // 作品を画面に止めた舞台の上で入れ替える。スクロールは今までどおり（ホイール・キー・指）で、作品の場所の半分を過ぎたら次の作品が「来る」。プロフィール・連絡先との行き来は普通のスクロール（切り替えの動きは作品どうしの間だけ）。
@@ -2118,9 +2093,7 @@ html[data-works="film"] .w-flash{display:block; position:absolute; inset:0; z-in
     return sl;
   });
   function mode(){ return html.getAttribute('data-works') || 'record'; }
-  var m0 = 'record';
-  try{ m0 = localStorage.getItem(KEY) || m0; }catch(e){}
-  html.setAttribute('data-works', m0);
+  html.setAttribute('data-works', 'record');  // 切り替えの動きはレコード（フィルムは data-works="film"、重ねるだけは "none"）
   // 確認用の帯に 切り替えのボタン
   var bar = document.querySelector('.devbar');
   if (bar){
