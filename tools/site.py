@@ -11,7 +11,7 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEV = os.path.join(ROOT, 'dev')
-ASSETS = ['img', 'audio', 'video']
+ASSETS = ['img', 'audio', 'video', 'docs']
 TITLE_DEV = '【確認用】'
 # 確認用だけに足す帯（2026-11-20 本人「確認用の下のタブ消して」で無しに。確認用だと分かるのはタイトルの【確認用】だけ）
 DEV_BLOCK = ''

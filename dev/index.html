@@ -328,13 +328,17 @@ button{font:inherit}
 .w-pts h4{font-size:14.5px; font-weight:700; line-height:1.45; word-break:keep-all}
 .w-pts p{font-size:13px; color:var(--night-muted); line-height:1.7; margin-top:2px}
 /* DEV-ONLY: MORE と窓（確認用だけ） */
-/* MORE と 詳細資料（右の列の真ん中に並べる） */
+/* MORE と 作品資料（右の列の真ん中に並べる） */
 .w-acts{display:flex; justify-content:center; align-items:center; flex-wrap:wrap; gap:12px; margin-top:28px}
 .w-more{display:inline-block; margin:0; padding:9px 36px; border:1px solid var(--wa); border-radius:3px; background:none; color:var(--wa); font-family:var(--f-label); font-size:13px; letter-spacing:.22em; text-decoration:none; cursor:pointer; transition:background .2s ease, color .2s ease}
 .w-more:hover{background:var(--wa); color:#0D1620}
 .w-doc{display:inline-block; margin:0; padding:9px 24px; border:1px solid var(--wa); border-radius:3px; background:var(--wa); color:#0D1620; font-family:var(--f-body); font-weight:700; font-size:13.5px; letter-spacing:.14em; cursor:pointer; transition:filter .2s ease}
 .w-doc:hover{filter:brightness(1.12)}
 .w-doc:disabled{opacity:.4; cursor:default; filter:none}
+/* 作品資料（今は IdReal だけ）。PDF（docs/<名前>.pdf）が無い間は薄く「準備中」 */
+.w-doc-s{margin-left:8px; font-size:11px; font-weight:400; letter-spacing:.08em}
+.w-doc:not(:disabled) .w-doc-s{display:none}
+html[data-works="jacket"] .w-stage .w-doc{border-color:var(--wa-ink); background:var(--wa-ink); color:#ECE6DA}
 .w-more:focus-visible, .w-doc:focus-visible{outline:2px solid var(--wa); outline-offset:3px}
 /* 作品の MORE・詳細資料の窓（<dialog>）。開いている間は後ろのページを止める */
 html{scrollbar-gutter:stable}
@@ -1094,7 +1098,7 @@ html[data-works="jacket"] .w-stage .w-play{color:var(--wa-ink)}
           <!-- DEV-ONLY: MORE（確認用だけ） -->
           <div class="w-acts">
             <button type="button" class="w-more" aria-haspopup="dialog">MORE</button>
-            <button type="button" class="w-doc" data-pdf="docs/idreal.pdf" data-title="IdReal 詳細資料" aria-haspopup="dialog" disabled title="準備中" hidden>詳細資料</button>
+            <button type="button" class="w-doc" data-pdf="docs/idreal.pdf" data-title="IdReal 作品資料" aria-haspopup="dialog" disabled><span class="w-doc-t">作品資料</span><small class="w-doc-s">準備中</small></button>
           </div>
           <div class="w-extra" hidden>
             <p class="dlg-h">こだわり</p>
@@ -1299,10 +1303,10 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
   <div class="dlg-bar"><p class="dlg-eb"></p><div class="dlg-bar-r"><button type="button" class="dlg-x" data-close>閉じる<span aria-hidden="true">×</span></button></div></div>
   <div class="dlg-body"><h3 id="w-dlg-title"></h3><p class="dlg-lead"></p><div class="dlg-more"></div></div>
 </dialog>
-<!-- 詳細資料（PDF）の窓。PC はページの中に表示、スマホは新しいタブで開く -->
-<dialog class="dlg dlg-pdf" id="pdf-dlg" aria-label="詳細資料">
+<!-- 作品資料（PDF）の窓。PC はページの中に表示、スマホは新しいタブで開く -->
+<dialog class="dlg dlg-pdf" id="pdf-dlg" aria-label="作品資料">
   <div class="dlg-bar"><p class="dlg-eb"></p><div class="dlg-bar-r"><a class="dlg-open" id="pdf-open" href="#" target="_blank" rel="noopener">新しいタブで開く</a><button type="button" class="dlg-x" data-close>閉じる<span aria-hidden="true">×</span></button></div></div>
-  <iframe id="pdf-frame" title="詳細資料（PDF）"></iframe>
+  <iframe id="pdf-frame" title="作品資料（PDF）"></iframe>
 </dialog>
 <!-- /DEV-ONLY -->
 
@@ -1529,11 +1533,13 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
     b.addEventListener('click', function(){
       // スマホ・ページの中で PDF を出せないブラウザは、新しいタブで開く（端末の PDF 表示の方が読みやすい）
       if (navigator.pdfViewerEnabled === false || (phoneQ && phoneQ.matches)){ window.open(url, '_blank', 'noopener'); return; }
-      pdlg.querySelector('.dlg-eb').textContent = b.getAttribute('data-title') || '詳細資料';
+      pdlg.querySelector('.dlg-eb').textContent = b.getAttribute('data-title') || '作品資料';
       document.getElementById('pdf-open').href = url;
       pframe.src = url;
       openDlg(pdlg, sec);
     });
+    // 資料の PDF を置けば押せるようになる（無い間は薄く「準備中」）
+    if (window.fetch) fetch(url, {method: 'HEAD', cache: 'no-store'}).then(function(r){ if (r.ok) b.disabled = false; })['catch'](function(){});
   });
   /* /DEV-ONLY */
 
