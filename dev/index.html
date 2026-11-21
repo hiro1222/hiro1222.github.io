@@ -2473,7 +2473,7 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
       if (sl !== a && sl !== b && sl !== oldPeek && sl !== newPeek) sl.classList.remove('on', 'is-on', 'peek');
     });
     clearTimeout(settleT);
-    settleT = setTimeout(function(){ if (slides[cur] === b) b.classList.add('jsettled'); }, reduce ? 0 : 600);
+    settleT = setTimeout(function(){ if (slides[cur] === b) b.classList.add('jsettled'); }, reduce ? 0 : 280);  // 盤はカードが持ち上がる途中から出す（11-22 本人「レコード出るタイミング早めて」、前は 600）
     if (reduce){
       a.classList.remove('on', 'is-on', 'peek'); if (oldPeek) oldPeek.classList.remove('peek');
       b.classList.remove('peek'); b.classList.add('on', 'is-on'); if (newPeek) newPeek.classList.add('peek');
