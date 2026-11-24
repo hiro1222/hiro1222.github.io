@@ -138,61 +138,94 @@ button{font:inherit}
 .hero-name .role{margin-top:4px; font-size:14px; color:#C9D3DA}
 .hero .lead{margin-top:18px; max-width:29em; font-size:14.5px; color:#AEBAC3}
 /* DEV-ONLY: ミニマップ（確認用だけ） */
-/* 01 ホーム右：ミニマップ（十字キーで歩くと、部屋ごとに足音の響きが変わる）。PC は地図の下に十字キー、スマホは地図の右 */
+/* 01 ホーム右：ミニゲーム。携帯ゲーム機の形（11-24 本人「見た目ゲームボーイを参考に」）。名前やロゴは入れない。
+   上の切り替えで音の ON/OFF（ランプが点く）、緑の画面に地図、十字キーで歩く、A で手をたたく、B を押しているあいだ走る */
 .top-grid{display:grid; grid-template-columns:minmax(0,1fr); row-gap:28px; align-items:center}
-.smap{--map:clamp(150px, calc(100vw - 190px), 250px); justify-self:start; width:fit-content; max-width:100%; padding:12px 12px 14px; border:1px solid var(--night-line); border-radius:14px; background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02)); box-shadow:0 18px 50px rgba(0,0,0,.35); -webkit-user-select:none; user-select:none; -webkit-touch-callout:none}
-.sm-top{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:10px; padding:0 2px}
-.sm-lab{font-family:var(--f-label); font-weight:500; font-size:12px; letter-spacing:.18em; color:var(--accent-hi)}
-.sm-mute{display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border:1px solid var(--night-line); border-radius:999px; background:none; color:var(--night-muted); font-family:var(--f-label); font-weight:500; font-size:11px; letter-spacing:.1em; line-height:1.4; cursor:pointer}
-.sm-mute svg{width:14px; height:14px}
-.sm-mute:hover{color:var(--night-ink); border-color:var(--night-muted)}
-.sm-mute[aria-pressed="true"] .w{display:none}
-.sm-body{display:grid; grid-template-columns:auto auto; column-gap:14px; align-items:center}
-.sm-screen{width:calc(var(--map) + 12px); padding:6px; background:#CFCDC8; border:1px solid #B9B7B1; border-radius:6px; outline:none}
-.sm-screen:focus-visible{outline:2px solid var(--accent-hi); outline-offset:2px}
-.sm-screen canvas{display:block; width:100%; aspect-ratio:1 / 1; height:auto; border-radius:2px; cursor:pointer}
-.sm-room{display:flex; justify-content:space-between; gap:8px; margin-top:6px; padding:0 2px; font-family:var(--f-mono); font-size:11.5px; line-height:1.5; color:#2B3238}
-.sm-room .sm-rt{color:var(--accent)}
-.sm-room.flash .sm-rn{animation:sm-flash .7s ease-out}
-@keyframes sm-flash{from{color:var(--accent); text-shadow:0 0 8px rgba(29,92,120,.45)}}
-.sm-pad{display:flex; flex-direction:column; align-items:center; gap:14px}
-/* 十字キー（押した所から真ん中への向きで決める。指を滑らせてもよい） */
-.sm-dpad{position:relative; width:96px; height:96px; touch-action:none; cursor:pointer; filter:drop-shadow(0 2px 0 #05080B)}
-.sm-dpad span{position:absolute; background:#22303A}
-.sm-up, .sm-down{left:32px; width:32px; height:33px}
-.sm-left, .sm-right{top:32px; width:33px; height:32px}
-.sm-up{top:0; border-radius:5px 5px 0 0}
-.sm-down{bottom:0; border-radius:0 0 5px 5px}
-.sm-left{left:0; border-radius:5px 0 0 5px}
-.sm-right{right:0; border-radius:0 5px 5px 0}
-.sm-mid{left:32px; top:32px; width:32px; height:32px}
-.sm-dpad span:not(.sm-mid)::after{content:""; position:absolute; left:50%; top:50%; width:0; height:0; border:5px solid transparent; transform:translate(-50%, -50%)}
-.sm-up::after{border-bottom-color:#5E7381!important; margin-top:-3px}
-.sm-down::after{border-top-color:#5E7381!important; margin-top:3px}
-.sm-left::after{border-right-color:#5E7381!important; margin-left:-3px}
-.sm-right::after{border-left-color:#5E7381!important; margin-left:3px}
-.sm-dpad[data-on="up"] .sm-up, .sm-dpad[data-on="down"] .sm-down, .sm-dpad[data-on="left"] .sm-left, .sm-dpad[data-on="right"] .sm-right{background:#30434F}
-.sm-dpad[data-on="up"] .sm-up::after{border-bottom-color:var(--accent-hi)!important}
-.sm-dpad[data-on="down"] .sm-down::after{border-top-color:var(--accent-hi)!important}
-.sm-dpad[data-on="left"] .sm-left::after{border-right-color:var(--accent-hi)!important}
-.sm-dpad[data-on="right"] .sm-right::after{border-left-color:var(--accent-hi)!important}
-/* 丸ボタン（A＝手をたたく、B＝押しながら走る） */
-.sm-ab{display:flex; gap:12px; align-items:center}
-.sm-ab button{width:42px; height:42px; padding:0; border:0; border-radius:50%; font-family:var(--f-label); font-weight:600; font-size:15px; letter-spacing:0; cursor:pointer; touch-action:none; box-shadow:0 3px 0 #05080B; transition:transform .06s ease, box-shadow .06s ease, filter .06s ease}
-.sm-a{background:var(--accent-hi); color:#0D1620}
-.sm-b{background:#2B3A45; color:var(--night-ink)}
-.sm-ab button.on{transform:translateY(2px); box-shadow:0 1px 0 #05080B; filter:brightness(1.18)}
+.sm-wrap{--map:clamp(190px, min(calc(100vw - 130px), calc(100svh - 612px)), 260px); justify-self:stretch; min-width:0}  /* 地図の大きさ（枠の幅と、外のクレジットの幅もこれで決める） */
+.smap{
+  --gb-ink:#57534D; --gb-groove:#AEAAA2; --gb-bezel:#4F5563; --gb-bezel-ink:#C9CFD8;
+  --lcd0:#C6D3A0; --lcd3:#22392C; --gb-btn:#9B2D5A; --gb-btn-lo:#5E1736; --gb-pad:#2C2E35;
+  position:relative; width:calc(var(--map) + 96px); max-width:100%; margin:0 auto; padding:10px 16px 38px;
+  background:linear-gradient(180deg, #D4D1CA, #C9C6BF 26%, #C1BDB5);
+  border-radius:12px 12px 54px 12px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.6), inset 0 -3px 0 rgba(0,0,0,.08), 0 18px 50px rgba(0,0,0,.45);
+  -webkit-user-select:none; user-select:none; -webkit-touch-callout:none
+}
+/* 上の縁：音の切り替え（OFF・ON）と溝 */
+.sm-top{display:flex; align-items:center; height:16px; margin:0 -16px 12px; padding:0 18px 6px; border-bottom:1px solid var(--gb-groove); box-shadow:0 1px 0 rgba(255,255,255,.45)}
+.sm-mute{display:inline-flex; align-items:center; gap:6px; padding:2px 0; border:0; background:none; font-family:var(--f-label); font-weight:600; font-size:9px; letter-spacing:.16em; line-height:1; color:var(--gb-ink); cursor:pointer}
+.sm-mute .sw{position:relative; width:24px; height:8px; border-radius:4px; background:#A9A59D; box-shadow:inset 0 1px 2px rgba(0,0,0,.35)}
+.sm-mute .sw::after{content:""; position:absolute; top:-2px; left:12px; width:12px; height:12px; border-radius:3px; background:#8F8B83; box-shadow:0 1px 0 rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.35); transition:left .12s ease}
+.sm-mute[aria-pressed="true"] .sw::after{left:0}
+.sm-mute .o{opacity:.55}
+.sm-mute[aria-pressed="true"] .o{opacity:1}
+.sm-mute[aria-pressed="true"] .i{opacity:.55}
+.sm-mute:focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:3px}
+/* 画面のまわり（濃い枠・上に線と名前・左にランプ） */
+.sm-bezel{position:relative; padding:20px 26px 14px; background:var(--gb-bezel); border-radius:8px 8px 30px 8px; box-shadow:inset 0 2px 5px rgba(0,0,0,.35)}
+.sm-lab{position:absolute; left:10px; right:12px; top:7px; display:flex; align-items:center; gap:8px; font-family:var(--f-label); font-weight:600; font-size:8.5px; letter-spacing:.22em; line-height:1; white-space:nowrap; color:var(--gb-bezel-ink)}
+.sm-lab::before, .sm-lab::after{content:""; height:4px; background:linear-gradient(var(--gb-btn) 0 1.5px, transparent 1.5px 2.5px, var(--accent-hi) 2.5px 4px); opacity:.85}
+.sm-lab::before{flex:0 0 14px}
+.sm-lab::after{flex:1}
+.sm-led{position:absolute; left:9px; top:calc(20px + var(--map) * .32); width:8px; height:8px; border-radius:50%; background:#3A2B30; box-shadow:inset 0 1px 1px rgba(0,0,0,.5); transition:background .15s, box-shadow .15s}
+.smap.on .sm-led{background:#E8423F; box-shadow:0 0 6px 1px rgba(232,66,63,.6), inset 0 -1px 1px rgba(0,0,0,.25)}
+/* 緑の画面（地図と、いる部屋の名前・響きの長さ） */
+.sm-screen{position:relative; width:calc(var(--map) + 12px); padding:6px 6px 0; background:var(--lcd0); border-radius:3px; box-shadow:inset 0 0 0 1px rgba(0,0,0,.28), inset 0 2px 6px rgba(34,57,44,.35); outline:none}
+.sm-screen:focus-visible{outline:2px solid var(--accent-hi); outline-offset:3px}
+.sm-screen canvas{display:block; width:100%; aspect-ratio:1 / 1; height:auto; cursor:pointer; touch-action:none}
+.sm-room{display:flex; justify-content:space-between; gap:8px; padding:4px 1px 5px; font-family:var(--f-mono); font-size:11.5px; line-height:1.4; color:var(--lcd3)}
+.sm-room span{padding:0 2px}
+.sm-room.flash .sm-rn{animation:sm-flash .7s steps(4, end)}
+@keyframes sm-flash{from{background:var(--lcd3); color:var(--lcd0)}}
+/* 地図をなぞった時の丸 */
+.sm-float{position:absolute; left:0; top:0; z-index:2; width:84px; height:84px; margin:-42px 0 0 -42px; border-radius:50%; border:2px solid rgba(34,57,44,.55); background:rgba(34,57,44,.10); pointer-events:none; display:none}
+.sm-float.on{display:block}
+.sm-float i{position:absolute; left:50%; top:50%; width:34px; height:34px; margin:-17px 0 0 -17px; border-radius:50%; background:rgba(34,57,44,.6)}
+/* 十字キー（左）と A・B（右、斜めに並ぶ） */
+.sm-pad{display:flex; align-items:center; justify-content:space-between; margin-top:20px; padding:0 2px}
+.sm-dpad{position:relative; flex:none; width:90px; height:90px; touch-action:none; cursor:pointer}
+.sm-dpad::before{content:""; position:absolute; inset:-7px; border-radius:50%; background:radial-gradient(circle, rgba(0,0,0,.11), rgba(0,0,0,.03) 68%, transparent 70%)}
+.sm-cross{position:absolute; inset:0; filter:drop-shadow(0 3px 0 rgba(0,0,0,.32)); transition:transform .06s ease-out}
+.sm-cross span{position:absolute; background:var(--gb-pad)}
+.sm-up, .sm-down{left:30px; width:30px; height:31px}
+.sm-left, .sm-right{top:30px; width:31px; height:30px}
+.sm-up{top:0; border-radius:4px 4px 0 0}
+.sm-down{bottom:0; border-radius:0 0 4px 4px}
+.sm-left{left:0; border-radius:4px 0 0 4px}
+.sm-right{right:0; border-radius:0 4px 4px 0}
+.sm-mid{left:30px; top:30px; width:30px; height:30px}
+.sm-mid::after{content:""; position:absolute; inset:8px; border-radius:50%; background:radial-gradient(circle at 40% 35%, #3A3D45, #1F2126)}
+.sm-cross span:not(.sm-mid)::after{content:""; position:absolute; left:50%; top:50%; width:0; height:0; border:5px solid transparent; transform:translate(-50%, -50%)}
+.sm-up::after{border-bottom-color:#4A4E58!important; margin-top:-3px}
+.sm-down::after{border-top-color:#4A4E58!important; margin-top:3px}
+.sm-left::after{border-right-color:#4A4E58!important; margin-left:-3px}
+.sm-right::after{border-left-color:#4A4E58!important; margin-left:3px}
+.sm-dpad.u .sm-up, .sm-dpad.d .sm-down, .sm-dpad.l .sm-left, .sm-dpad.r .sm-right{background:#212328}
+.sm-dpad.u .sm-up::after{border-bottom-color:#8A909C!important}
+.sm-dpad.d .sm-down::after{border-top-color:#8A909C!important}
+.sm-dpad.l .sm-left::after{border-right-color:#8A909C!important}
+.sm-dpad.r .sm-right::after{border-left-color:#8A909C!important}
+.sm-ab{display:flex; gap:12px; padding:7px 8px 4px; margin:-16px 2px 0 0; border-radius:30px; background:rgba(0,0,0,.06); box-shadow:inset 0 1px 2px rgba(0,0,0,.12); transform:rotate(-25deg)}
+.sm-key{display:flex; flex-direction:column; align-items:center; gap:3px}
+.sm-key b{font-family:var(--f-label); font-weight:700; font-size:11px; letter-spacing:.04em; line-height:1; color:var(--gb-ink)}
+.sm-ab button{width:40px; height:40px; padding:0; border:0; border-radius:50%; background:radial-gradient(circle at 38% 30%, #B23E6E, var(--gb-btn) 60%); cursor:pointer; touch-action:none; box-shadow:0 3px 0 var(--gb-btn-lo), 0 4px 6px rgba(0,0,0,.18); transition:transform .06s ease, box-shadow .06s ease}
+.sm-ab button.on{transform:translateY(2px); box-shadow:0 1px 0 var(--gb-btn-lo), 0 1px 2px rgba(0,0,0,.18)}
+.sm-ab button:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+/* 右下のスピーカーの穴（飾り） */
+.sm-spk{position:absolute; right:24px; bottom:12px; display:flex; gap:5px; transform:rotate(-30deg); pointer-events:none}
+.sm-spk i{width:5px; height:30px; border-radius:3px; background:#A6A29A; box-shadow:inset 0 1px 2px rgba(0,0,0,.4)}
+/* 足音のクレジットは枠の外（11-24 本人「下の足音素材は枠外に説明を置く」） */
+.sm-credit{width:calc(var(--map) + 96px); max-width:100%; margin:12px auto 0; padding:0 4px; font-size:10.5px; line-height:1.55; color:var(--night-muted); opacity:.85}
+.sm-credit a{color:inherit; text-decoration:underline; text-underline-offset:2px}
 @media (min-width:861px){
   .top-grid{grid-template-columns:minmax(0,1fr) auto; column-gap:40px}
   .hero h1{font-size:clamp(28px, min(8.2vh, calc((100vw - 470px) / 10.4)), 68px)}  /* 右にミニマップが入る分だけ小さく */
-  .smap{--map:clamp(180px, calc(100vh - 470px), 300px); justify-self:end; padding:14px 16px 16px}
-  .sm-body{grid-template-columns:auto; row-gap:14px}
-  .sm-pad{flex-direction:row; justify-content:space-between; width:100%; padding:0 8px}
+  .sm-wrap{--map:clamp(170px, calc(100vh - 520px), 290px); justify-self:end}
 }
-@media (min-width:861px) and (max-height:760px){ .sm-body{row-gap:10px} .sm-top{margin-bottom:8px} }  /* 低い画面では 1 ページに収める */
-.sm-credit{margin-top:6px; max-width:calc(var(--map) + 124px); padding:0 2px; font-size:10.5px; line-height:1.55; color:var(--night-muted); opacity:.85}
-.sm-credit a{color:inherit; text-decoration:underline; text-underline-offset:2px}
-@media (min-width:861px){ .sm-credit{max-width:calc(var(--map) + 12px)} }
+@media (min-width:861px) and (max-height:760px){ .sm-pad{margin-top:14px} .sm-top{margin-bottom:9px} }  /* 低い画面では 1 ページに収める */
+@media (max-width:860px){
+  .p-top .cue{display:none}  /* スマホは SCROLL を出さない（ミニマップと重なるので） */
+}
 /* /DEV-ONLY */
 .cue{
   position:absolute; left:50%; bottom:calc(18px + env(safe-area-inset-bottom, 0px)); transform:translateX(-50%);
@@ -644,25 +677,6 @@ html[data-works="jacket"] .w-stage .w-play{color:var(--wa-ink)}
 .w-shot video{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; background:#000; cursor:pointer}
 .w-wave canvas{cursor:pointer}
 /* /DEV-ONLY */
-/* DEV-ONLY: ミニゲームの丸い操作（確認用だけ） */
-/* PC もスマホも地図の下に丸い棒（倒した向きへそのまま歩く、端まで倒すと走る）と A（11-24 本人「スマホ版でも操作 Controller は表示」）。
-   地図に触れた所にも丸が出て、なぞった向きへ歩く（タップで手をたたく）。斜めも自由に歩ける。人は丸で、向いている方に三角の視界が出る */
-.sm-screen{position:relative}
-.sm-screen canvas{touch-action:none}
-.sm-float{position:absolute; left:0; top:0; z-index:2; width:84px; height:84px; margin:-42px 0 0 -42px; border-radius:50%; border:2px solid rgba(29,92,120,.6); background:rgba(29,92,120,.12); pointer-events:none; display:none}
-.sm-float.on{display:block}
-.sm-float i{position:absolute; left:50%; top:50%; width:34px; height:34px; margin:-17px 0 0 -17px; border-radius:50%; background:rgba(29,92,120,.72)}
-.sm-stick{position:relative; flex:none; width:96px; height:96px; border-radius:50%; background:#1B2731; box-shadow:inset 0 0 0 2px #2C3B46, 0 2px 0 #05080B; touch-action:none; cursor:pointer}
-.sm-knob{position:absolute; left:50%; top:50%; width:42px; height:42px; margin:-21px 0 0 -21px; border-radius:50%; background:#3A4E5C; box-shadow:0 2px 0 #05080B, inset 0 0 0 2px #4C6475; transition:transform .1s ease-out}
-.sm-stick.on .sm-knob{background:var(--accent-hi); transition:none}
-@media (max-width:860px){
-  .smap{--map:clamp(190px, min(calc(100vw - 80px), calc(100svh - 575px)), 290px); justify-self:stretch; width:auto}  /* 枠は横いっぱい、地図は下の操作まで 1 ページ目に収まる大きさまで */
-  .sm-body{grid-template-columns:auto; justify-content:center; row-gap:12px}
-  .sm-pad{flex-direction:row; justify-content:space-between; width:100%; padding:0 8px}
-  .sm-credit{max-width:none}
-  .p-top .cue{display:none}  /* スマホは SCROLL を出さない（ミニマップと重なるので） */
-}
-/* /DEV-ONLY */
 </style>
 </head>
 <body>
@@ -713,22 +727,27 @@ html[data-works="jacket"] .w-stage .w-play{color:var(--wa-ink)}
       <!-- DEV-ONLY: ミニマップ（確認用だけ） -->
       <!-- ミニマップ：歩くと、いる部屋の響きで足音が鳴る（中身は下の script）。
            data-sound="idreal"：Idreal で前もって計算した足音と手拍子の響き（audio/idreal-steps/・audio/idreal-claps/ の 向き u・r・d・l、部屋を戸口でつないで焼いた）。"synth" にすると前の合成の足音と響き -->
-      <div class="smap" id="smap" data-sound="idreal" role="group" aria-label="ミニマップ：歩くと、部屋ごとに足音の響きが変わります">
-        <div class="sm-top">
-          <p class="sm-lab">SOUND MAP</p>
-          <button type="button" class="sm-mute" aria-pressed="false" aria-label="音を消す"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 6h3l4-3v10l-4-3H2z" fill="currentColor"/><path class="w" d="M11 5.5a3.5 3.5 0 0 1 0 5M12.8 3.8a6 6 0 0 1 0 8.4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><span class="t">ON</span></button>
-        </div>
-        <div class="sm-body">
-          <div class="sm-screen" tabindex="0" aria-label="地図（矢印キーで歩く・Z で手をたたく・X を押しながら走る）">
-            <canvas width="160" height="160" role="img" aria-label="上から見た地図。白いコンクリートの建物で、大広間・小部屋・廊下と外の広場があり、丸い人が 1 人いて、向いている方に三角の視界が出る"></canvas>
-            <p class="sm-room" aria-live="polite"><span class="sm-rn">大広間</span><span class="sm-rt">響き 2.4 秒</span></p>
+      <div class="sm-wrap">
+        <div class="smap on" id="smap" data-sound="idreal" role="group" aria-label="ミニゲーム：歩くと、部屋ごとに足音の響きが変わります">
+          <div class="sm-top">
+            <button type="button" class="sm-mute" aria-pressed="false" aria-label="音を消す"><span class="o">OFF</span><span class="sw" aria-hidden="true"></span><span class="i">ON</span></button>
           </div>
-          <div class="sm-pad">
-            <div class="sm-stick" aria-hidden="true"><span class="sm-knob"></span></div>
-            <div class="sm-ab">
-              <button type="button" class="sm-a" aria-label="A：手をたたく">A</button>
+          <div class="sm-bezel">
+            <p class="sm-lab" aria-hidden="true">SOUND MAP</p>
+            <span class="sm-led" aria-hidden="true"></span>
+            <div class="sm-screen" tabindex="0" aria-label="地図（矢印キーで歩く・Z で手をたたく・X を押しながら走る）">
+              <canvas width="160" height="160" role="img" aria-label="緑の画面に上から見た地図。大広間・小部屋・廊下と外の広場があり、丸い人が 1 人いて、向いている方に三角の視界が出る"></canvas>
+              <p class="sm-room" aria-live="polite"><span class="sm-rn">大広間</span><span class="sm-rt">響き 2.4 秒</span></p>
             </div>
           </div>
+          <div class="sm-pad">
+            <div class="sm-dpad" aria-hidden="true"><div class="sm-cross"><span class="sm-up"></span><span class="sm-down"></span><span class="sm-left"></span><span class="sm-right"></span><span class="sm-mid"></span></div></div>
+            <div class="sm-ab">
+              <div class="sm-key"><button type="button" class="sm-b" aria-label="B：押しているあいだ走る"></button><b aria-hidden="true">B</b></div>
+              <div class="sm-key"><button type="button" class="sm-a" aria-label="A：手をたたく"></button><b aria-hidden="true">A</b></div>
+            </div>
+          </div>
+          <span class="sm-spk" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>
         </div>
         <p class="sm-credit">足音：<a href="https://freesound.org/people/swuing/sounds/38873/" target="_blank" rel="noopener">footstep-concrete.wav</a>（swuing）を元にした素材、<a href="https://creativecommons.org/licenses/by/3.0/" target="_blank" rel="noopener">CC BY 3.0</a>。Idreal の響きを足して使っています</p>
       </div>
@@ -1960,6 +1979,10 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
     var n = [at(x - 1, y), at(x + 1, y), at(x, y - 1), at(x, y + 1)].filter(function(q){ return ROOMS[q]; });
     return n[0] || 'O';
   }
+  // 画面の色：緑の液晶の濃淡だけ（11-24 携帯ゲーム機の形に。前は白いコンクリート）
+  var PAL = {floor: '#C6D3A0', dotLo: '#BDCB96', dotHi: '#CFDAAC', joint: '#B4C48E', out: '#B9C792', outJoint: '#A8B984',
+             wall: '#5E7A57', wallDot: '#67835F', wallFace: '#3F5A44', wallEdge: '#7C9670', door: 'rgba(34,57,44,.10)', shadow: 'rgba(34,57,44,.22)',
+             ink: '34,57,44', me: '#22392C', me2: '#5E7A57', meLine: '#C6D3A0'};
   var bg = document.createElement('canvas');
   bg.width = bg.height = MW * TS;
   (function(){
@@ -1970,24 +1993,24 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
       var f = (c === 'T') ? 'O' : floorOf(x, y);
       if (c === '#'){
         // 打ちっぱなしの壁（上の面は灰、手前の面は少し暗く）
-        R(px, py, TS, TS, '#9C9EA0');
-        if (rnd() < .25) R(px + (rnd() * 7 | 0), py + (rnd() * 4 | 0), 1, 1, '#ABADAF');
-        if (at(x, y + 1) !== '#'){ R(px, py + 5, TS, 3, '#7E8184'); R(px, py + 5, TS, 1, '#B4B6B8'); }
+        R(px, py, TS, TS, PAL.wall);
+        if (rnd() < .25) R(px + (rnd() * 7 | 0), py + (rnd() * 4 | 0), 1, 1, PAL.wallDot);
+        if (at(x, y + 1) !== '#'){ R(px, py + 5, TS, 3, PAL.wallFace); R(px, py + 5, TS, 1, PAL.wallEdge); }
         continue;
       }
       // 床はぜんぶ同じコンクリート。目地の間隔だけ変える（外の広場は大きな板）
-      var J = f === 'O' ? 4 : f === 'H' ? 3 : 2, base = f === 'O' ? '#D6D4CF' : '#E6E5E1', joint = f === 'O' ? '#C2C0BA' : '#D2D0CB';
+      var J = f === 'O' ? 4 : f === 'H' ? 3 : 2, base = f === 'O' ? PAL.out : PAL.floor, joint = f === 'O' ? PAL.outJoint : PAL.joint;
       R(px, py, TS, TS, base);
       if (x % J === 0) R(px, py, 1, TS, joint);
       if (y % J === 0) R(px, py, TS, 1, joint);
-      for (i = 0; i < 2; i++) if (rnd() < .6) R(px + 1 + (rnd() * 6 | 0), py + 1 + (rnd() * 6 | 0), 1, 1, rnd() < .5 ? '#DCDAD5' : '#EFEEEB');
-      if (c === 'D'){ R(px, py, TS, TS, 'rgba(120,124,128,.16)'); }
+      for (i = 0; i < 2; i++) if (rnd() < .6) R(px + 1 + (rnd() * 6 | 0), py + 1 + (rnd() * 6 | 0), 1, 1, rnd() < .5 ? PAL.dotLo : PAL.dotHi);
+      if (c === 'D'){ R(px, py, TS, TS, PAL.door); }
     }
     // 柱は最後に（影を少し右下へ）
     for (y = 0; y < MH; y++) for (x = 0; x < MW; x++) if (at(x, y) === 'T'){
       px = x * TS; py = y * TS;
-      R(px + 2, py + 2, 7, 7, 'rgba(0,0,0,.14)');
-      R(px + 1, py + 1, 6, 6, '#A7A9AB'); R(px + 1, py + 1, 6, 1, '#C4C6C8'); R(px + 1, py + 6, 6, 1, '#888B8E');
+      R(px + 2, py + 2, 7, 7, PAL.shadow);
+      R(px + 1, py + 1, 6, 6, PAL.wall); R(px + 1, py + 1, 6, 1, PAL.wallEdge); R(px + 1, py + 6, 6, 1, PAL.wallFace);
     }
   })();
 
@@ -2065,12 +2088,12 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
       pts.push(X + Math.cos(c) * t * TS, Y + Math.sin(c) * t * TS);
     }
     var gr = g.createLinearGradient(X, Y, X + Math.cos(a0) * VIEW_L * TS, Y + Math.sin(a0) * VIEW_L * TS);
-    gr.addColorStop(0, 'rgba(217,119,76,.45)'); gr.addColorStop(1, 'rgba(217,119,76,.07)');
+    gr.addColorStop(0, 'rgba(' + PAL.ink + ',.42)'); gr.addColorStop(1, 'rgba(' + PAL.ink + ',.04)');
     g.beginPath(); g.moveTo(X, Y);
     for (i = 0; i < pts.length; i += 2) g.lineTo(pts[i], pts[i + 1]);
     g.closePath();
     g.fillStyle = gr; g.fill();
-    g.lineJoin = 'round'; g.lineWidth = .5; g.strokeStyle = 'rgba(169,85,47,.55)'; g.stroke();
+    g.lineJoin = 'round'; g.lineWidth = .5; g.strokeStyle = 'rgba(' + PAL.ink + ',.55)'; g.stroke();
   }
   // 描く細かさ：表示の大きさ×画面の密度に合わせる（地図の絵は 160 px の点のまま拡大、丸と三角はなめらかに）
   var S = 1;
@@ -2111,19 +2134,19 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
       if (R.box){
         var bx = R.box[0] * TS, by = R.box[1] * TS, bw = (R.box[2] - R.box[0] + 1) * TS, bh = (R.box[3] - R.box[1] + 1) * TS;
         g.beginPath(); g.rect(bx, by, bw, bh); g.clip();
-        g.fillStyle = 'rgba(29,92,120,' + (al * .10).toFixed(3) + ')'; g.fillRect(bx, by, bw, bh);
+        g.fillStyle = 'rgba(' + PAL.ink + ',' + (al * .10).toFixed(3) + ')'; g.fillRect(bx, by, bw, bh);
       }
-      g.strokeStyle = 'rgba(29,92,120,' + Math.min(1, al * 1.1).toFixed(3) + ')'; g.lineWidth = r.w;
+      g.strokeStyle = 'rgba(' + PAL.ink + ',' + Math.min(1, al * 1.1).toFixed(3) + ')'; g.lineWidth = r.w;
       g.beginPath(); g.arc(r.x, r.y, 2 + r.t * (R.box ? 75 : 40), 0, 6.2832); g.stroke();
       g.restore();
       return true;
     });
     // 人（丸。真ん中が me の位置。手をたたいた時は少し明るく）
     var X = me.x * TS, Y = me.y * TS, r = BODY_R * TS;
-    g.fillStyle = 'rgba(0,0,0,.18)'; g.beginPath(); g.arc(X + .7, Y + .9, r, 0, 6.2832); g.fill();
+    g.fillStyle = PAL.shadow; g.beginPath(); g.arc(X + .7, Y + .9, r, 0, 6.2832); g.fill();
     g.beginPath(); g.arc(X, Y, r, 0, 6.2832);
-    g.fillStyle = clapT > 0 ? '#F2A57F' : '#D9774C'; g.fill();
-    g.lineWidth = .8; g.strokeStyle = '#0B1116'; g.stroke();
+    g.fillStyle = clapT > 0 ? PAL.me2 : PAL.me; g.fill();
+    g.lineWidth = .7; g.strokeStyle = PAL.meLine; g.stroke();
   }
   function tick(now){
     var dt = Math.min(.05, Math.max(0, (now - last) / 1000));
@@ -2146,24 +2169,33 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
 
   // ---------- 操作 ----------
   function active(){ return stick.on || held.length > 0; }
-  function press(d){ var was = active(), i = held.indexOf(d); if (i >= 0) held.splice(i, 1); held.push(d); if (!was) stepT = .05; kick(); }
-  function release(d){ var i = held.indexOf(d); if (i >= 0) held.splice(i, 1); }
+  function press(d){ var was = active(), i = held.indexOf(d); if (i >= 0) held.splice(i, 1); held.push(d); if (!was) stepT = .05; kick(); keysLook(); }
+  function release(d){ var i = held.indexOf(d); if (i >= 0) held.splice(i, 1); keysLook(); }
   function setStick(x, y){ var was = active(); stick.x = x; stick.y = y; if (!stick.on){ stick.on = true; if (!was) stepT = .05; } kick(); }
   function endStick(){ stick.on = false; stick.x = stick.y = 0; }
-  function releaseAll(){ held.length = 0; endStick(); knob(0, 0); fl.classList.remove('on'); stickEl && stickEl.classList.remove('on'); run = false; }
-  // 丸い棒（PC）：真ん中からの向きと長さで歩く。端まで倒すと走る
-  var stickEl = root.querySelector('.sm-stick'), knobEl = stickEl && stickEl.querySelector('.sm-knob'), stId = null;
-  function knob(x, y){ if (knobEl) knobEl.style.transform = 'translate(' + (x * 27).toFixed(1) + 'px, ' + (y * 27).toFixed(1) + 'px)'; }
-  function stickAt(e){
-    var r = stickEl.getBoundingClientRect(), x = (e.clientX - (r.left + r.width / 2)) / (r.width * .32), y = (e.clientY - (r.top + r.height / 2)) / (r.height * .32), m = Math.sqrt(x * x + y * y);
-    if (m > 1){ x /= m; y /= m; }
-    knob(x, y); setStick(x, y);
+  function releaseAll(){ held.length = 0; endStick(); padLook(0, 0); fl.classList.remove('on'); setRun(false); }
+  // 十字キー：押した所の、真ん中からの向きへ歩く（斜めも、指を滑らせてもよい）。走るのは B
+  var padEl = root.querySelector('.sm-dpad'), crossEl = padEl.querySelector('.sm-cross'), padId = null;
+  function padLook(x, y){
+    var m = Math.sqrt(x * x + y * y), a = Math.atan2(y, x), on = m > .2;
+    crossEl.style.transform = on ? 'perspective(260px) rotateX(' + (-y / m * 12).toFixed(1) + 'deg) rotateY(' + (x / m * 12).toFixed(1) + 'deg)' : '';
+    // 向きに近い腕を押した色に（斜めは 2 本）
+    ['r', 'd', 'l', 'u'].forEach(function(k, n){ var d = a - n * Math.PI / 2; padEl.classList.toggle(k, on && Math.abs(Math.atan2(Math.sin(d), Math.cos(d))) < 1.18); });
   }
-  if (stickEl){
-    stickEl.addEventListener('pointerdown', function(e){ e.preventDefault(); ensureAudio(); stId = e.pointerId; try{ stickEl.setPointerCapture(e.pointerId); }catch(err){} stickEl.classList.add('on'); stickAt(e); });
-    stickEl.addEventListener('pointermove', function(e){ if (e.pointerId === stId) stickAt(e); });
-    ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(function(t){ stickEl.addEventListener(t, function(e){ if (e.pointerId === stId){ stId = null; stickEl.classList.remove('on'); knob(0, 0); endStick(); } }); });
+  function padAt(e){
+    var r = padEl.getBoundingClientRect(), x = e.clientX - (r.left + r.width / 2), y = e.clientY - (r.top + r.height / 2), m = Math.sqrt(x * x + y * y);
+    if (m < r.width * .1){ x = y = 0; } else { x = x / m * .8; y = y / m * .8; }  // 長さは一定（端まで押しても走らない）
+    padLook(x, y); setStick(x, y);
   }
+  function keysLook(){ if (padId === null && !stick.on){ var v = vec(); padLook(v.x, v.y); } }
+  padEl.addEventListener('pointerdown', function(e){ e.preventDefault(); ensureAudio(); padId = e.pointerId; try{ padEl.setPointerCapture(e.pointerId); }catch(err){} padAt(e); });
+  padEl.addEventListener('pointermove', function(e){ if (e.pointerId === padId) padAt(e); });
+  ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(function(t){ padEl.addEventListener(t, function(e){ if (e.pointerId === padId){ padId = null; padLook(0, 0); endStick(); keysLook(); } }); });
+  // B：押しているあいだ走る
+  var btnB = root.querySelector('.sm-b');
+  function setRun(on){ run = on; btnB.classList.toggle('on', on); }
+  btnB.addEventListener('pointerdown', function(e){ e.preventDefault(); ensureAudio(); try{ btnB.setPointerCapture(e.pointerId); }catch(err){} setRun(true); });
+  ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(function(t){ btnB.addEventListener(t, function(){ setRun(false); }); });
   // 地図をなぞる：触れた所に丸が出て、なぞった向きへ歩く（離すと止まる）。動かさずに離したら手をたたく
   var scr = root.querySelector('.sm-screen'), fl = document.createElement('div'), flId = null, fl0 = null;
   fl.className = 'sm-float';
@@ -2202,12 +2234,12 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
     var k = e.key.length === 1 ? e.key.toLowerCase() : e.key, d = KEYS[k];
     if (d){ e.preventDefault(); if (!e.repeat){ ensureAudio(); press(d); } }
     else if (k === 'z' || k === ' ' || k === 'Enter'){ e.preventDefault(); if (!e.repeat){ ensureAudio(); clap(); } }
-    else if (k === 'x' || k === 'Shift'){ if (!e.repeat){ ensureAudio(); run = true; } }
+    else if (k === 'x' || k === 'Shift'){ if (!e.repeat){ ensureAudio(); setRun(true); } }
   });
   root.addEventListener('keyup', function(e){
     var k = e.key.length === 1 ? e.key.toLowerCase() : e.key, d = KEYS[k];
     if (d) release(d);
-    if (k === 'x' || k === 'Shift'){ run = false; }
+    if (k === 'x' || k === 'Shift'){ setRun(false); }
   });
   root.addEventListener('focusout', function(e){ if (!root.contains(e.relatedTarget)) releaseAll(); });
   window.addEventListener('blur', releaseAll);
@@ -2216,7 +2248,7 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
   function setMute(m){
     muted = m;
     muteBtn.setAttribute('aria-pressed', m ? 'true' : 'false');
-    muteBtn.querySelector('.t').textContent = m ? 'OFF' : 'ON';
+    root.classList.toggle('on', !m);  // 画面の左のランプ
     if (rig) rig.out.gain.setTargetAtTime(m ? 0 : .9, rig.ctx.currentTime, .02);
     try{ localStorage.setItem('smap-mute', m ? '1' : '0'); }catch(e){}
   }
