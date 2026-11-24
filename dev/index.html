@@ -175,6 +175,13 @@ button{font:inherit}
 .sm-room span{padding:0 2px}
 .sm-room.flash .sm-rn{animation:sm-flash .7s steps(4, end)}
 @keyframes sm-flash{from{background:var(--lcd3); color:var(--lcd0)}}
+/* スタート画面（A で始める。始めるまでは歩かない・鳴らない、ランプも消えている。11-24 本人「最初っからならないようにスタート画面」） */
+.sm-start{position:absolute; inset:0; z-index:3; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; border-radius:3px; background:rgba(211,222,227,.9); color:var(--lcd3)}
+.sm-start b{font-family:var(--f-label); font-weight:700; font-size:20px; letter-spacing:.22em; padding-left:.22em; line-height:1}
+.sm-start span{font-family:var(--f-mono); font-size:12px; font-weight:600; letter-spacing:.26em; padding-left:.26em; line-height:1; color:var(--accent); animation:sm-blink 1.1s steps(1, end) infinite}
+@keyframes sm-blink{50%{opacity:0}}
+@media (prefers-reduced-motion:reduce){ .sm-start span{animation:none} }
+.smap.go .sm-start{display:none}
 /* 地図をなぞった時の丸 */
 .sm-float{position:absolute; left:0; top:0; z-index:2; width:84px; height:84px; margin:-42px 0 0 -42px; border-radius:50%; border:2px solid rgba(29,92,120,.6); background:rgba(29,92,120,.12); pointer-events:none; display:none}
 .sm-float.on{display:block}
@@ -719,16 +726,17 @@ html[data-works="jacket"] .w-stage .w-play{color:var(--wa-ink)}
       <!-- ミニマップ：歩くと、いる部屋の響きで足音が鳴る（中身は下の script）。
            data-sound="idreal"：Idreal で前もって計算した足音と手拍子の響き（audio/idreal-steps/・audio/idreal-claps/ の 向き u・r・d・l、部屋を戸口でつないで焼いた）。"synth" にすると前の合成の足音と響き -->
       <div class="sm-wrap">
-        <div class="smap on" id="smap" data-sound="idreal" role="group" aria-label="ミニゲーム：歩くと、部屋ごとに足音の響きが変わります">
+        <div class="smap" id="smap" data-sound="idreal" role="group" aria-label="ミニゲーム：歩くと、部屋ごとに足音の響きが変わります">
           <div class="sm-top">
             <button type="button" class="sm-mute" aria-pressed="false" aria-label="音を消す"><svg class="sp" viewBox="0 0 16 16" aria-hidden="true"><path d="M2 6h3l4-3v10l-4-3H2z" fill="currentColor"/><path class="w" d="M11 5.5a3.5 3.5 0 0 1 0 5M12.8 3.8a6 6 0 0 1 0 8.4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><span class="o">OFF</span><span class="sw" aria-hidden="true"></span><span class="i">ON</span></button>
           </div>
           <div class="sm-bezel">
             <p class="sm-lab" aria-hidden="true">SOUND MAP</p>
             <span class="sm-led" aria-hidden="true"></span>
-            <div class="sm-screen" tabindex="0" aria-label="地図（矢印キーで歩く・Z で手をたたく・X を押しながら走る）">
+            <div class="sm-screen" tabindex="0" aria-label="地図（Z で始める。矢印キーで歩く・Z で手をたたく・X を押しながら走る）">
               <canvas width="160" height="160" role="img" aria-label="緑の画面に上から見た地図。大広間・小部屋・廊下と外の広場があり、丸い人が 1 人いて、向いている方に三角の視界が出る"></canvas>
               <p class="sm-room" aria-live="polite"><span class="sm-rn">大広間</span><span class="sm-rt">響き 2.4 秒</span></p>
+              <div class="sm-start" aria-hidden="true"><b>SOUND MAP</b><span>PRESS A</span></div>
             </div>
           </div>
           <div class="sm-pad">
@@ -2100,6 +2108,7 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
     ring(.6, 1);
   }
   function clap(){
+    if (!started){ start(); return; }  // 最初の A は始めるだけ
     if (rig && !muted){
       if (idrOn()){ idrInit(); if (idr.map) idrPlay('clap', 0, CLAP_VOL); }
       else clapSound(rig, room, rig.ctx.currentTime + .005);
@@ -2158,9 +2167,9 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
 
   // ---------- 操作 ----------
   function active(){ return stick.on || held.length > 0; }
-  function press(d){ var was = active(), i = held.indexOf(d); if (i >= 0) held.splice(i, 1); held.push(d); if (!was) stepT = .05; kick(); keysLook(); }
+  function press(d){ if (!started) return; var was = active(), i = held.indexOf(d); if (i >= 0) held.splice(i, 1); held.push(d); if (!was) stepT = .05; kick(); keysLook(); }
   function release(d){ var i = held.indexOf(d); if (i >= 0) held.splice(i, 1); keysLook(); }
-  function setStick(x, y){ var was = active(); stick.x = x; stick.y = y; if (!stick.on){ stick.on = true; if (!was) stepT = .05; } kick(); }
+  function setStick(x, y){ if (!started) return; var was = active(); stick.x = x; stick.y = y; if (!stick.on){ stick.on = true; if (!was) stepT = .05; } kick(); }
   function endStick(){ stick.on = false; stick.x = stick.y = 0; }
   function releaseAll(){ held.length = 0; endStick(); padLook(0, 0); fl.classList.remove('on'); setRun(false); }
   // 十字キー：押した所の、真ん中からの向きへ歩く（斜めも、指を滑らせてもよい）。走るのはキーボードの X
@@ -2233,11 +2242,19 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
   function setMute(m){
     muted = m;
     muteBtn.setAttribute('aria-pressed', m ? 'true' : 'false');
-    root.classList.toggle('on', !m);  // 画面の左のランプ
+    root.classList.toggle('on', !m && started);  // 画面の左のランプ（始めてから）
     if (rig) rig.out.gain.setTargetAtTime(m ? 0 : .9, rig.ctx.currentTime, .02);
     try{ localStorage.setItem('smap-mute', m ? '1' : '0'); }catch(e){}
   }
   muteBtn.addEventListener('click', function(){ setMute(!muted); if (!muted) ensureAudio(); });
+  // スタート画面：A（Z・Space・Enter）で始める
+  var started = false;
+  function start(){
+    started = true; ensureAudio();
+    root.classList.add('go'); root.classList.toggle('on', !muted);
+    btnA.classList.add('on'); setTimeout(function(){ btnA.classList.remove('on'); }, 120);
+    showRoom(true); kick();
+  }
   setMute(muted);
   showRoom(false);
   if (idrOn()) idrInit();  // 地図と、立っているまわりの音の中身を先に取っておく
