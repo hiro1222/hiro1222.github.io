@@ -2033,10 +2033,10 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
   var room = 'H', held = [], stick = {x: 0, y: 0, on: false}, run = false, stepT = .05, rings = [], clapT = 0, last = 0, rafOn = false, turning = false;
   var DIRS = {up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0]};
   // 扉：大広間と小部屋の間の戸口（x=11 の y=2・3）。上の端が蝶番で、小部屋の側へ開く。A を扉の前で押すと開け閉め（11-24 本人「ドアも用意」）
-  // open は開き具合 0〜1（0.35 秒で動く）。通れるのは 6 割より開いた時、見通せる（音も抜ける）のは 15% より開いた時
-  var DOOR = {x: 11, y0: 2, y1: 3, hx: 11.5, hy: 2, cx: 11.5, cy: 3, open: 0, target: 0, sec: .35};
+  // open は開き具合 0〜1（角度は ×90°）。通れるのは 6 割より開いた時、見通せる（音も抜ける）のは 15% より開いた時
+  var DOOR = {x: 11, y0: 2, y1: 3, hx: 11.5, hy: 2, cx: 11.5, cy: 3, open: 0, target: 0, sec: .9};  // 90° を 0.9 秒（Unreal の扉は 45°/秒）
   // オルゴール：扉の向こう（小部屋の右寄り）で鳴り続ける。上に乗れない
-  var MB = {x: 15.5, y: 2.5, url: 'audio/musicbox.mp3', loop0: .5, loopLen: 751304 / 48000, vol: .6};
+  var MB = {x: 15.5, y: 2.5, url: 'audio/musicbox.mp3', loop0: .5, loopLen: 751304 / 48000, vol: 1.6};  // 音量は仮（耳で決める）
   function onDoor(x, y){ return x === DOOR.x && y >= DOOR.y0 && y <= DOOR.y1; }
   function solid(x, y){ var c = at(x, y); return c === '#' || c === 'T' || (onDoor(x, y) && DOOR.open < .6); }
   function sightSolid(x, y){ var c = at(x, y); return c === '#' || c === 'T' || (onDoor(x, y) && DOOR.open < .15); }
@@ -2177,57 +2177,160 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
     g.fillStyle = PAL.knob; g.fillRect(X + 3, Y - .4, 1, 1);
   }
 
-  // ---------- 扉の向こうのオルゴール（聞こえ方は仮：11-24、次に Idreal で焼いた値に置き換える） ----------
-  // 直接の音：見えていれば素直に、隠れていれば「閉じた扉を抜けた分（こもる）」と「開いた戸口から回り込んだ分」を開き具合で混ぜる
-  // 響き：小部屋の響き（耳が小部屋にいれば全部、外からは戸口の開き具合で増える）と、開いた時に大広間の響きにも少し
-  var mb = null;
+  // ---------- 扉の向こうのオルゴール（11-24 Idreal で焼いた形。前は Web Audio の仮） ----------
+  // 直接の音は Unreal と同じくゲームの側が決める（値は Unreal の設定そのまま）:
+  //   扉の角度の音量 DoorVolume・こもり DoorMuffle の曲線、耳→音源の 5 本のレイで隠れている割合（こもり +14 dB・音量 −1 dB、0.15 秒でならす）、
+  //   距離の減衰は Wwise の IDR_Distance の曲線。こもり m dB は Wwise の IDR_Eq と同じ形（全体 −m/2・250 Hz の低い棚 +m/2・2 kHz の高い棚 −m/2・低域通過）
+  //   扉の無い口越し（廊下）と口の無い所（外）は、Unreal ではエンジンの値を使う所。ここは近い形で（下の口越しは −7 dB×隠れた割合、外は −24 dB）
+  // 響きは Idreal で焼いたインパルス応答（Idreal\Projects\tools\portfolio_bake の bake_musicbox → encode_musicbox、マス×耳の向き 4×扉の閉・開）を畳み込む
+  //   閉じた扉の向こうへは響きが抜けない（エンジンの決まり）。扉が動いている間は、閉と開を自由端と枠の弦（2 sin(角度/2)、60° で 1）で混ぜる
+  var MBR = {dir: 'audio/idreal-musicbox/', map: null, loading: false, byTile: {}, raw: {}, buf: {}, used: {}, tick: 0, irGain: Math.pow(10, -18 / 20)};
+  var DOOR_VOL = [[0, -19], [6, -19], [8, -9], [10, -8], [20, -7], [30, -5], [45, -2], [60, 0], [110, 0]];  // Unreal の DefaultGame.ini
+  var DOOR_MUF = [[0, 4], [6, 4], [8, 2], [30, 1], [60, 0], [110, 0]];  // Unreal の IdrSettings の既定
+  var DIST_DB = [[0, 0], [1, 0], [2, -6], [4, -12], [8, -18], [16, -24], [30, -29.5]];  // Wwise の IDR_Distance（m）
+  var LP_HZ = [[-24, 300], [-12, 500], [-9, 700], [-7, 1000], [-5, 1600], [-2.5, 3500], [-1, 8000], [0, 20000]];  // Wwise の IDR_EqHigh → 低域通過の切れる高さ
+  var HIDE_MUF = 14, HIDE_LV = -1, HIDE_SEC = .15, SRC_R = .3;
+  function curve(pts, x){
+    if (x <= pts[0][0]) return pts[0][1];
+    for (var i = 1; i < pts.length; i++) if (x <= pts[i][0]){ var a = pts[i - 1], b = pts[i]; return a[1] + (b[1] - a[1]) * (x - a[0]) / (b[0] - a[0]); }
+    return pts[pts.length - 1][1];
+  }
+  function db(v){ return Math.pow(10, v / 20); }
+  function dist(ax, ay, bx, by){ var dx = bx - ax, dy = by - ay; return Math.sqrt(dx * dx + dy * dy); }
+  function doorDeg(){ return DOOR.open * 90; }
+  // 扉の板（蝶番から長さ 2 マス）とぶつかるか
+  function hitPanel(ax, ay, bx, by){
+    var a = Math.PI / 2 * (1 - DOOR.open), px = DOOR.hx, py = DOOR.hy, qx = px + Math.cos(a) * 2, qy = py + Math.sin(a) * 2;
+    var d = (bx - ax) * (qy - py) - (by - ay) * (qx - px);
+    if (Math.abs(d) < 1e-9) return false;
+    var t = ((px - ax) * (qy - py) - (py - ay) * (qx - px)) / d, u = ((px - ax) * (by - ay) - (py - ay) * (bx - ax)) / d;
+    return t > 0 && t < 1 && u >= 0 && u <= 1;
+  }
+  // 壁・柱か扉の板に遮られるか（戸口のマスは板で見る）
+  function blocked(ax, ay, bx, by){
+    var n = Math.max(1, Math.ceil(dist(ax, ay, bx, by) / .1)), i, x, y, c;
+    for (i = 1; i < n; i++){
+      x = Math.floor(ax + (bx - ax) * i / n); y = Math.floor(ay + (by - ay) * i / n); c = at(x, y);
+      if (c === '#' || c === 'T') return true;
+    }
+    return hitPanel(ax, ay, bx, by);
+  }
+  // 隠れている割合: 耳→音源の球の 5 本（真ん中・横の輪。上から見た地図なので上下の 2 本は真ん中と同じ）
+  function hiddenNow(){
+    var dx = MB.x - me.x, dy = MB.y - me.y, l = Math.sqrt(dx * dx + dy * dy) || 1, nx = -dy / l * SRC_R, ny = dx / l * SRC_R;
+    var c = blocked(me.x, me.y, MB.x, MB.y) ? 1 : 0, a = blocked(me.x, me.y, MB.x + nx, MB.y + ny) ? 1 : 0, b = blocked(me.x, me.y, MB.x - nx, MB.y - ny) ? 1 : 0;
+    return (3 * c + a + b) / 5;
+  }
+  var mb = null, hideSmooth = 1;
   function mbStart(){
     if (mb || !rig || !started) return;
     var c = rig.ctx;
     mb = {loading: true};
+    mbrInit();
     fetch(MB.url).then(function(r){ if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); })
       .then(function(a){ return new Promise(function(ok, ng){ c.decodeAudioData(a, ok, ng); }); })
       .then(function(b){
-        var src = c.createBufferSource(), lp = c.createBiquadFilter(), gn = c.createGain(), pan = c.createStereoPanner ? c.createStereoPanner() : null, sS = c.createGain(), sH = c.createGain();
+        var src = c.createBufferSource(), g = c.createGain(), lo = c.createBiquadFilter(), hi = c.createBiquadFilter(), lp = c.createBiquadFilter(), pan = c.createStereoPanner ? c.createStereoPanner() : null;
         src.buffer = b; src.loop = true; src.loopStart = MB.loop0; src.loopEnd = MB.loop0 + MB.loopLen;
-        lp.type = 'lowpass'; lp.Q.value = .5; lp.frequency.value = 600;
-        gn.gain.value = 0; sS.gain.value = 0; sH.gain.value = 0;
-        src.connect(lp); lp.connect(gn);
-        if (pan){ gn.connect(pan); pan.connect(rig.out); } else gn.connect(rig.out);
-        src.connect(sS); if (rig.send.S) sS.connect(rig.send.S);
-        src.connect(sH); if (rig.send.H) sH.connect(rig.send.H);
+        lo.type = 'lowshelf'; lo.frequency.value = 250; hi.type = 'highshelf'; hi.frequency.value = 2000; lp.type = 'lowpass'; lp.Q.value = .71; lp.frequency.value = 20000;
+        g.gain.value = 0;
+        src.connect(g); g.connect(lo); lo.connect(hi); hi.connect(lp);
+        if (pan){ lp.connect(pan); pan.connect(rig.out); } else lp.connect(rig.out);
+        // 響き：畳み込み 2 つ（閉と開を混ぜる・マスが変わる時に入れ替える）
+        var slots = [0, 1].map(function(){ var cv = c.createConvolver(), gn = c.createGain(); cv.normalize = false; gn.gain.value = 0; src.connect(cv); cv.connect(gn); gn.connect(rig.out); return {cv: cv, g: gn, key: '', w: 0, freeAt: 0}; });
         src.start(c.currentTime + .05, MB.loop0);
-        mb = {src: src, lp: lp, g: gn, pan: pan, sS: sS, sH: sH};
+        mb = {src: src, g: g, lo: lo, hi: hi, lp: lp, pan: pan, slots: slots, want: ''};
         mbUpdate(true);
       }, function(){ mb = null; });
   }
-  function dist(ax, ay, bx, by){ var dx = bx - ax, dy = by - ay; return Math.sqrt(dx * dx + dy * dy); }
-  function seeLine(ax, ay, bx, by){
-    var n = Math.max(1, Math.ceil(dist(ax, ay, bx, by) / .1)), i;
-    for (i = 1; i < n; i++) if (sightSolid(Math.floor(ax + (bx - ax) * i / n), Math.floor(ay + (by - ay) * i / n))) return false;
-    return true;
+  // 焼いた響きの表と中身（足音の idr と同じ取り方：まわりを先に取り、音にした物は 60 個まで）
+  function mbrInit(){
+    if (MBR.map || MBR.loading) return;
+    MBR.loading = true;
+    fetch(MBR.dir + 'map.json').then(function(r){ return r.json(); }).then(function(m){
+      MBR.map = m;
+      m.points.forEach(function(q){ MBR.byTile[q.tx + ',' + q.ty] = q; });
+      mbUpdate(false);
+    }, function(){ MBR.loading = false; });
   }
-  function fall(d){ return 1 / (1 + .35 * d); }  // 距離で下げる（ゆるめ）
+  function mbrKey(face, st, id){ return face + '/' + st + id; }
+  function mbrLoad(key){
+    MBR.used[key] = ++MBR.tick;
+    if (MBR.buf[key] || !rig) return MBR.buf[key];
+    var c = rig.ctx;
+    MBR.buf[key] = fetch(MBR.dir + key + '.mp3').then(function(r){ if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); })
+      .then(function(a){ return new Promise(function(ok, ng){ c.decodeAudioData(a, ok, ng); }); })
+      .then(function(b){
+        MBR.buf[key] = b;
+        var ks = Object.keys(MBR.buf).filter(function(k){ return ready(MBR.buf[k]); });
+        if (ks.length > 60){ ks.sort(function(p, q){ return (MBR.used[p] || 0) - (MBR.used[q] || 0); }); ks.slice(0, ks.length - 60).forEach(function(k){ delete MBR.buf[k]; }); }
+        mbUpdate(false);
+        return b;
+      }, function(){ delete MBR.buf[key]; return null; });
+    return MBR.buf[key];
+  }
+  // 今のマス・一番近い耳の向き・扉の空き具合で、鳴らしたい響き（[鍵, 重み]）。響きの無い物（閉じた扉の向こう）は鍵なし
+  function mbrWant(w){
+    var q = MBR.map && MBR.byTile[Math.floor(me.x) + ',' + Math.floor(me.y)], f = faces()[0], out = [];
+    if (!q) return out;
+    if (w < .999 && q.c[f]) out.push([mbrKey(f, 'c', q.id), 1 - w]);
+    if (w > .001 && q.o[f]) out.push([mbrKey(f, 'o', q.id), w]);
+    // まわり 1 マスの今の扉の形を先に取る
+    for (var dy = -1; dy <= 1; dy++) for (var dx = -1; dx <= 1; dx++){
+      var n = MBR.byTile[(Math.floor(me.x) + dx) + ',' + (Math.floor(me.y) + dy)];
+      if (n && (dx || dy)){ if (w < .5 && n.c[f]) mbrLoad(mbrKey(f, 'c', n.id)); if (w >= .5 && n.o[f]) mbrLoad(mbrKey(f, 'o', n.id)); }
+    }
+    if (q.c[f]) mbrLoad(mbrKey(f, 'c', q.id));
+    if (q.o[f]) mbrLoad(mbrKey(f, 'o', q.id));
+    return out;
+  }
+  // 響きの 2 つの畳み込みに割り当てる。入れ替えは音が消えきってから（0.3 秒）。欲しい物がまだ音になっていなければ今のまま鳴らし続ける
+  function mbrAssign(want, t, k){
+    var sl = mb.slots;
+    function slotOf(key){ return sl.filter(function(x){ return x.key === key; })[0]; }
+    if (want.length && !want.some(function(p){ return slotOf(p[0]) || ready(MBR.buf[p[0]]); })) return;
+    sl.forEach(function(s){ s.nw = 0; });
+    want.forEach(function(p){
+      var s = slotOf(p[0]), b = MBR.buf[p[0]];
+      if (!s && ready(b)){
+        s = sl.filter(function(x){ return !want.some(function(q){ return q[0] === x.key; }) && t >= x.freeAt; })[0];
+        if (s){ s.cv.buffer = b; s.key = p[0]; }
+      }
+      if (s) s.nw = p[1];
+    });
+    sl.forEach(function(s){
+      if (s.w > 0 && s.nw === 0) s.freeAt = t + .3;
+      s.w = s.nw;
+      s.g.gain.setTargetAtTime(MB.vol * MBR.irGain * s.w, t, k);
+    });
+  }
+  var mbLast = 0;
   function mbUpdate(now){
     if (!mb || !mb.src) return;
-    var lx = me.x, ly = me.y, o = DOOR.open, d = dist(lx, ly, MB.x, MB.y), see = seeLine(lx, ly, MB.x, MB.y);
-    var gain, cut, ax = MB.x, ay = MB.y;
-    if (see){ gain = fall(d); cut = 16000; }
-    else {
-      var gT = .4 * fall(d), cT = 600;  // 閉じた扉を抜けた分（仮：聞こえるように −8 dB。本物の扉はもっと下がる）
-      var dd = dist(lx, ly, DOOR.cx, DOOR.cy) + dist(DOOR.cx, DOOR.cy, MB.x, MB.y), seeDoor = seeLine(lx, ly, DOOR.cx, DOOR.cy);
-      var gD = (seeDoor ? .7 : .3) * fall(dd), cD = seeDoor ? 7000 : 2200;  // 開いた戸口から回り込んだ分
-      gain = gT * (1 - o) + gD * o; cut = Math.exp(Math.log(cT) * (1 - o) + Math.log(cD) * o);
-      if (o > .3){ ax = DOOR.cx; ay = DOOR.cy; }
-    }
-    var inS = room === 'S', sS = .35 * fall(d) * (inS ? 1 : (.12 + .5 * o)), sH = .22 * o * fall(dist(lx, ly, DOOR.cx, DOOR.cy)) * (room === 'H' ? 1 : .4);
-    var rel = Math.atan2(ay - ly, ax - lx) - me.ang, pn = Math.max(-1, Math.min(1, Math.sin(rel) * .75));
-    var c = rig.ctx, t = c.currentTime, k = now ? .25 : .06;  // 鳴り始めは 0.25 秒で上げる
-    mb.g.gain.setTargetAtTime(MB.vol * gain, t, k);
-    mb.lp.frequency.setTargetAtTime(cut, t, k);
-    mb.sS.gain.setTargetAtTime(MB.vol * sS, t, k);
-    mb.sH.gain.setTargetAtTime(MB.vol * sH, t, k);
+    var c = rig.ctx, t = c.currentTime, k = now ? .25 : .05, dt = Math.min(.1, Math.max(0, t - (mbLast || t)));
+    mbLast = t;
+    var ang = doorDeg(), d = dist(me.x, me.y, MB.x, MB.y), hid = hiddenNow();
+    if (now) hideSmooth = hid;
+    else { var stp = dt / HIDE_SEC; hideSmooth = Math.max(0, Math.min(1, hideSmooth + Math.max(-stp, Math.min(stp, hid - hideSmooth)))); }
+    var lv, muf, ex = MB.x, ey = MB.y, share = 0;
+    if (room === 'S'){ lv = HIDE_LV * hideSmooth; muf = HIDE_MUF * hideSmooth; }
+    else if (room === 'H'){  // 扉越し：扉の曲線＋隠れた分、聞こえる位置は戸口へ寄る（閉じている間は音源のまま）
+      lv = curve(DOOR_VOL, ang) + HIDE_LV * hideSmooth; muf = curve(DOOR_MUF, ang) + HIDE_MUF * hideSmooth;
+      share = hideSmooth * Math.min(1, ang / 8); ex = DOOR.cx; ey = DOOR.cy;
+    } else if (room === 'C'){  // 扉の無い口越し
+      lv = (HIDE_LV - 6) * hideSmooth; muf = HIDE_MUF * hideSmooth; share = hideSmooth; ex = 14; ey = 4.5;
+    } else { lv = -24; muf = HIDE_MUF; }  // 外：壁越し
+    var hx = (MB.x - me.x) * (1 - share) + (ex - me.x) * share, hy = (MB.y - me.y) * (1 - share) + (ey - me.y) * share;
+    var rel = Math.atan2(hy, hx) - me.ang, pn = Math.max(-1, Math.min(1, Math.sin(rel) * .8));
+    var eqLv = Math.max(-24, -muf / 2), eqHi = Math.max(-24, -muf / 2);
+    mb.g.gain.setTargetAtTime(MB.vol * db(lv + curve(DIST_DB, d) + eqLv), t, k);
+    mb.lo.gain.setTargetAtTime(muf / 2, t, k);
+    mb.hi.gain.setTargetAtTime(eqHi, t, k);
+    mb.lp.frequency.setTargetAtTime(curve(LP_HZ, eqHi), t, k);
     if (mb.pan) mb.pan.pan.setTargetAtTime(pn, t, k);
+    // 響き：扉の空き具合（自由端と枠の弦）で閉と開を混ぜる
+    var w = Math.min(1, 2 * Math.sin(ang * Math.PI / 360));
+    mbrAssign(mbrWant(w), t, k);
   }
   function ring(a, w){ if (!reduce){ rings.push({x: me.x * TS, y: me.y * TS, t: 0, a: a, w: w, room: room}); if (rings.length > 24) rings.shift(); } }
 
