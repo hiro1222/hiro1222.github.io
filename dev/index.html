@@ -157,6 +157,8 @@ button{font:inherit}
 .sm-mute .sw{position:relative; width:24px; height:8px; border-radius:4px; background:#A9A59D; box-shadow:inset 0 1px 2px rgba(0,0,0,.35)}
 .sm-mute .sw::after{content:""; position:absolute; top:-2px; left:12px; width:12px; height:12px; border-radius:3px; background:#8F8B83; box-shadow:0 1px 0 rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.35); transition:left .12s ease}
 .sm-mute[aria-pressed="true"] .sw::after{left:0}
+.sm-mute .sp{width:15px; height:15px; margin-right:2px}  /* スピーカーの絵（11-24 本人「ON OFF の横に🔊」）。OFF の時は音の波を消す */
+.sm-mute[aria-pressed="true"] .sp .w{display:none}
 .sm-mute .o{opacity:.55}
 .sm-mute[aria-pressed="true"] .o{opacity:1}
 .sm-mute[aria-pressed="true"] .i{opacity:.55}
@@ -728,7 +730,7 @@ html[data-works="jacket"] .w-stage .w-play{color:var(--wa-ink)}
       <div class="sm-wrap">
         <div class="smap on" id="smap" data-sound="idreal" role="group" aria-label="ミニゲーム：歩くと、部屋ごとに足音の響きが変わります">
           <div class="sm-top">
-            <button type="button" class="sm-mute" aria-pressed="false" aria-label="音を消す"><span class="o">OFF</span><span class="sw" aria-hidden="true"></span><span class="i">ON</span></button>
+            <button type="button" class="sm-mute" aria-pressed="false" aria-label="音を消す"><svg class="sp" viewBox="0 0 16 16" aria-hidden="true"><path d="M2 6h3l4-3v10l-4-3H2z" fill="currentColor"/><path class="w" d="M11 5.5a3.5 3.5 0 0 1 0 5M12.8 3.8a6 6 0 0 1 0 8.4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><span class="o">OFF</span><span class="sw" aria-hidden="true"></span><span class="i">ON</span></button>
           </div>
           <div class="sm-bezel">
             <p class="sm-lab" aria-hidden="true">SOUND MAP</p>
