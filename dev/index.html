@@ -180,7 +180,7 @@ button{font:inherit}
 .sm-float.on{display:block}
 .sm-float i{position:absolute; left:50%; top:50%; width:34px; height:34px; margin:-17px 0 0 -17px; border-radius:50%; background:rgba(29,92,120,.72)}
 /* 十字キー（左）と A（右） */
-.sm-pad{display:flex; align-items:center; justify-content:center; gap:34px; margin-top:20px}  /* 十字キーとボタンは真ん中に寄せる（11-24 本人「もう少し内側に」→「真ん中に寄せて」。前は端から 18 px） */
+.sm-pad{display:flex; align-items:center; justify-content:space-between; width:min(100% - 40px, 260px); margin:20px auto 0}  /* 十字キーとボタンは内側へ（11-24 本人「もう少し内側に」→「真ん中に寄せて」→「真ん中寄せすぎ」で間をとった。スマホは間 54 px・PC は 90 px） */
 .sm-dpad{position:relative; flex:none; width:90px; height:90px; touch-action:none; cursor:pointer}
 .sm-cross{position:absolute; inset:0; transition:transform .06s ease-out}
 .sm-cross span{position:absolute; background:var(--gb-pad)}
