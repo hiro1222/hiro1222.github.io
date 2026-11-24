@@ -9,7 +9,7 @@
 <title>【確認用】ポートフォリオ 竹内寛登</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+JP:wght@400;500;600&family=Oswald:wght@400;500&family=Shippori+Mincho+B1:wght@600;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+JP:wght@400;500;600&family=Shippori+Mincho+B1:wght@600;800&display=swap">
 <style>
 /* 上に固定のバー。下は全画面の節が 6 枚、節ごとに背景が 1 つ。スクロールは節の頭に吸い付く。
    スマホ（860px 以下）はバーの代わりに左上のボタン → 左から出るサイドバー。
@@ -22,7 +22,7 @@
   --accent:#1D5C78; --accent-hi:#7DB8D1; --signal:#D9774C;
   --f-display:"Shippori Mincho B1","Hiragino Mincho ProN","Yu Mincho","YuMincho",serif;
   --f-body:"IBM Plex Sans JP","Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic UI","Meiryo",sans-serif;
-  --f-label:"Oswald","Arial Narrow","Helvetica Neue",sans-serif;
+  --f-label:"IBM Plex Sans JP","Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic UI","Meiryo",sans-serif;  /* 英字ラベル（11-24 に Oswald から。本文と同じ仲間で、肩書きの行となじむ） */
   --f-mono:"IBM Plex Mono",ui-monospace,"Consolas","Menlo",monospace;
   --bar:64px;
   color-scheme:light;
@@ -57,7 +57,7 @@ button{font:inherit}
 .logo-disc::after{content:""; position:absolute; inset:0; border-radius:50%; background:repeating-radial-gradient(circle closest-side, transparent 0 1.2px, rgba(255,255,255,.07) 1.2px 2px); -webkit-mask:radial-gradient(circle closest-side, transparent 0 44%, #000 46%); mask:radial-gradient(circle closest-side, transparent 0 44%, #000 46%)}
 .logo:hover .logo-disc{transform:rotate(180deg)}
 .logo-t{display:flex; flex-direction:column; min-width:0}
-.logo .who{font-family:var(--f-label); font-weight:500; font-size:16px; letter-spacing:.14em; white-space:nowrap}
+.logo .who{font-family:var(--f-label); font-weight:600; font-size:16px; letter-spacing:.1em; white-space:nowrap}
 .logo .mark{font-size:11px; letter-spacing:.06em; color:#5C6770}
 .todo{display:inline-block; font-family:var(--f-mono); font-size:.86em; letter-spacing:.04em; border-bottom:1px dashed currentColor; opacity:.75; line-height:1.4}
 .nav{margin-left:auto; display:flex; gap:clamp(18px, 3.2vw, 52px)}
@@ -65,7 +65,7 @@ button{font:inherit}
   display:flex; flex-direction:column; align-items:center; gap:1px; text-decoration:none; color:var(--bar-ink);
   padding-block:6px; border-bottom:2px solid transparent;
 }
-.nav .en{font-family:var(--f-label); font-size:15px; letter-spacing:.16em; text-transform:uppercase}
+.nav .en{font-family:var(--f-label); font-weight:500; font-size:14px; letter-spacing:.12em; text-transform:uppercase}
 .nav .ja{font-size:10.5px; color:#6B767F; letter-spacing:.04em}
 .nav a:hover .en{color:var(--accent)}
 .nav a[aria-current="true"]{border-bottom-color:var(--bar-line)}
@@ -93,7 +93,7 @@ button{font:inherit}
 .close-btn svg{width:20px; height:20px}
 .drawer ul{list-style:none; margin:20px 0 0; padding:0 0 24px}
 .drawer a{display:flex; align-items:baseline; gap:12px; padding:12px 28px 12px 40px; text-decoration:none; color:#4A535B; font-size:17px}
-.drawer a .en{font-family:var(--f-label); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:#8A949C}
+.drawer a .en{font-family:var(--f-label); font-weight:500; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:#8A949C}
 .drawer a[aria-current="true"]{color:var(--bar-ink); font-weight:600}
 .drawer a[aria-current="true"]::before{content:""; width:3px; align-self:stretch; background:var(--bar-line); margin-left:-14px; margin-right:11px}
 
@@ -108,7 +108,7 @@ button{font:inherit}
 }
 /* 背景は画面に固定した 1 枚。節の範囲だけ見えるので、節の境目が来ると次の背景に入れ替わる */
 .bg{position:fixed; inset:0; z-index:-1; pointer-events:none}
-.eyebrow{font-family:var(--f-label); font-size:13px; letter-spacing:.2em; text-transform:uppercase; display:flex; gap:12px; align-items:center}
+.eyebrow{font-family:var(--f-label); font-weight:500; font-size:13px; letter-spacing:.16em; text-transform:uppercase; display:flex; gap:12px; align-items:center}
 .eyebrow .no{font-variant-numeric:tabular-nums}
 .eyebrow .no::after{content:""; display:inline-block; width:28px; height:1px; background:currentColor; vertical-align:middle; margin-left:12px; opacity:.6}
 .panel h2{font-family:var(--f-display); font-weight:800; font-size:clamp(28px, 3.4vw, 40px); line-height:1.35; letter-spacing:.04em; margin-top:10px}
@@ -127,14 +127,14 @@ button{font:inherit}
 @media (min-width:861px){ .p-top{padding-bottom:84px} }  /* 下の SCROLL と説明文が重ならないように */
 .p-top .bg{background:radial-gradient(ellipse 55% 60% at 78% 52%, rgba(125,184,209,.07), transparent 70%)}
 .hero{max-width:36em}
-.hero .kicker{font-family:var(--f-label); font-size:13px; letter-spacing:.22em; text-transform:uppercase; color:var(--accent-hi)}
+.hero .kicker{font-family:var(--f-label); font-weight:500; font-size:13px; letter-spacing:.18em; text-transform:uppercase; color:var(--accent-hi)}
 .hero h1{font-family:var(--f-display); font-weight:800; font-size:clamp(28px, min(8.4vw, 8.2vh), 68px); line-height:1.22; letter-spacing:.03em; margin-top:16px}
 .hero h1 .ln{display:block; white-space:nowrap}
 /* 名前・肩書き */
 .hero-name{margin-top:26px; padding-left:14px; border-left:2px solid var(--accent-hi)}
 .hero-name .nm{display:flex; flex-wrap:wrap; align-items:baseline; gap:2px 14px}
 .hero-name .jp{font-family:var(--f-display); font-weight:800; font-size:clamp(22px, 2.3vw, 30px); letter-spacing:.14em; line-height:1.4}
-.hero-name .en{font-family:var(--f-label); font-size:13px; letter-spacing:.24em; text-transform:uppercase; color:var(--night-muted)}
+.hero-name .en{font-family:var(--f-label); font-weight:500; font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:var(--night-muted)}
 .hero-name .role{margin-top:4px; font-size:14px; color:#C9D3DA}
 .hero .lead{margin-top:18px; max-width:29em; font-size:14.5px; color:#AEBAC3}
 /* DEV-ONLY: ミニマップ（確認用だけ） */
@@ -142,8 +142,8 @@ button{font:inherit}
 .top-grid{display:grid; grid-template-columns:minmax(0,1fr); row-gap:28px; align-items:center}
 .smap{--map:clamp(150px, calc(100vw - 190px), 250px); justify-self:start; width:fit-content; max-width:100%; padding:12px 12px 14px; border:1px solid var(--night-line); border-radius:14px; background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02)); box-shadow:0 18px 50px rgba(0,0,0,.35); -webkit-user-select:none; user-select:none; -webkit-touch-callout:none}
 .sm-top{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:10px; padding:0 2px}
-.sm-lab{font-family:var(--f-label); font-size:12px; letter-spacing:.22em; color:var(--accent-hi)}
-.sm-mute{display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border:1px solid var(--night-line); border-radius:999px; background:none; color:var(--night-muted); font-family:var(--f-label); font-size:11px; letter-spacing:.12em; line-height:1.4; cursor:pointer}
+.sm-lab{font-family:var(--f-label); font-weight:500; font-size:12px; letter-spacing:.18em; color:var(--accent-hi)}
+.sm-mute{display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border:1px solid var(--night-line); border-radius:999px; background:none; color:var(--night-muted); font-family:var(--f-label); font-weight:500; font-size:11px; letter-spacing:.1em; line-height:1.4; cursor:pointer}
 .sm-mute svg{width:14px; height:14px}
 .sm-mute:hover{color:var(--night-ink); border-color:var(--night-muted)}
 .sm-mute[aria-pressed="true"] .w{display:none}
@@ -180,7 +180,7 @@ button{font:inherit}
 .sm-ab{display:flex; gap:12px; align-items:flex-start}
 .sm-btn{display:flex; flex-direction:column; align-items:center; gap:4px; font-size:11px; line-height:1.3; color:var(--night-muted)}
 .sm-btn:last-child{margin-top:-12px}
-.sm-ab button{width:42px; height:42px; padding:0; border:0; border-radius:50%; font-family:var(--f-label); font-size:15px; letter-spacing:0; cursor:pointer; touch-action:none; box-shadow:0 3px 0 #05080B; transition:transform .06s ease, box-shadow .06s ease, filter .06s ease}
+.sm-ab button{width:42px; height:42px; padding:0; border:0; border-radius:50%; font-family:var(--f-label); font-weight:600; font-size:15px; letter-spacing:0; cursor:pointer; touch-action:none; box-shadow:0 3px 0 #05080B; transition:transform .06s ease, box-shadow .06s ease, filter .06s ease}
 .sm-a{background:var(--accent-hi); color:#0D1620}
 .sm-b{background:#2B3A45; color:var(--night-ink)}
 .sm-ab button.on{transform:translateY(2px); box-shadow:0 1px 0 #05080B; filter:brightness(1.18)}
@@ -204,7 +204,7 @@ button{font:inherit}
 .cue{
   position:absolute; left:50%; bottom:calc(18px + env(safe-area-inset-bottom, 0px)); transform:translateX(-50%);
   display:flex; flex-direction:column; align-items:center; gap:8px; text-decoration:none;
-  font-family:var(--f-label); font-size:11px; letter-spacing:.24em; color:var(--night-muted);
+  font-family:var(--f-label); font-weight:500; font-size:11px; letter-spacing:.2em; color:var(--night-muted);
 }
 .cue::after{content:""; width:1px; height:36px; background:linear-gradient(var(--night-muted), transparent)}
 
@@ -323,7 +323,7 @@ button{font:inherit}
 .w-head .eyebrow{color:var(--wa)}
 .w-idx{font-family:var(--f-mono); letter-spacing:.08em; color:var(--night-muted)}
 .w-lead{margin-top:10px; font-size:14px; color:#C9D3DA}
-.w-shot{aspect-ratio:16/9; border-radius:8px; overflow:hidden; border:1px solid var(--night-line); background:repeating-linear-gradient(135deg, #0F151B 0 14px, #121A21 14px 28px); display:grid; place-items:center; color:var(--night-muted); font-family:var(--f-label); letter-spacing:.2em; font-size:12px; box-shadow:0 22px 50px rgba(0,0,0,.45)}
+.w-shot{aspect-ratio:16/9; border-radius:8px; overflow:hidden; border:1px solid var(--night-line); background:repeating-linear-gradient(135deg, #0F151B 0 14px, #121A21 14px 28px); display:grid; place-items:center; color:var(--night-muted); font-family:var(--f-label); font-weight:500; letter-spacing:.16em; font-size:12px; box-shadow:0 22px 50px rgba(0,0,0,.45)}
 .w-shot img{width:100%; height:100%; object-fit:cover; display:block}
 .w-pts{list-style:none; margin:18px 0 0; padding:0; display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:22px 28px}
 .w-pts li{display:grid; grid-template-columns:34px minmax(0,1fr); column-gap:12px; align-items:start}
@@ -333,7 +333,7 @@ button{font:inherit}
 /* DEV-ONLY: MORE と窓（確認用だけ） */
 /* MORE と 作品資料（右の列の真ん中に並べる） */
 .w-acts{display:flex; justify-content:center; align-items:center; flex-wrap:wrap; gap:12px; margin-top:28px}
-.w-more{display:inline-block; margin:0; padding:9px 36px; border:1px solid var(--wa); border-radius:3px; background:none; color:var(--wa); font-family:var(--f-label); font-size:13px; letter-spacing:.22em; text-decoration:none; cursor:pointer; transition:background .2s ease, color .2s ease}
+.w-more{display:inline-block; margin:0; padding:9px 36px; border:1px solid var(--wa); border-radius:3px; background:none; color:var(--wa); font-family:var(--f-label); font-weight:500; font-size:13px; letter-spacing:.16em; text-decoration:none; cursor:pointer; transition:background .2s ease, color .2s ease}
 .w-more:hover{background:var(--wa); color:#0D1620}
 .w-doc{display:inline-block; margin:0; padding:9px 24px; border:1px solid var(--wa); border-radius:3px; background:var(--wa); color:#0D1620; font-family:var(--f-body); font-weight:700; font-size:13.5px; letter-spacing:.14em; cursor:pointer; transition:filter .2s ease}
 .w-doc:hover{filter:brightness(1.12)}
@@ -355,7 +355,7 @@ html.dlg-open{overflow:hidden}
 @keyframes dlg-in{from{opacity:0; transform:translateY(14px)}}
 @media (prefers-reduced-motion: reduce){ .dlg[open]{animation:none} }
 .dlg-bar{position:sticky; top:0; z-index:1; display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 12px 10px 24px; background:#0F171F; border-bottom:1px solid var(--night-line)}
-.dlg-eb{min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-family:var(--f-label); font-size:13px; letter-spacing:.16em; color:var(--wa, var(--accent-hi))}
+.dlg-eb{min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-family:var(--f-label); font-weight:500; font-size:13px; letter-spacing:.12em; color:var(--wa, var(--accent-hi))}
 .dlg-bar-r{display:flex; align-items:center; gap:8px; flex:none}
 .dlg-x, .dlg-open{display:inline-flex; align-items:center; gap:6px; padding:7px 12px; border:1px solid var(--night-line); border-radius:3px; background:none; color:var(--night-ink); font:inherit; font-size:13px; line-height:1.4; text-decoration:none; cursor:pointer}
 .dlg-x:hover, .dlg-open:hover{border-color:var(--wa, var(--accent-hi)); color:var(--wa, var(--accent-hi))}
@@ -404,7 +404,7 @@ html.dlg-open{overflow:hidden}
   .w-wip{font-size:13.5px}
   /* DEV-ONLY: MORE（確認用だけ） */
   .w-acts{margin-top:clamp(32px, 6vh, 68px); gap:16px}  /* 右の列の真ん中・離して・大きく */
-  .w-more{padding:15px 68px; font-size:16px; letter-spacing:.26em}
+  .w-more{padding:15px 68px; font-size:16px; letter-spacing:.2em}
   .w-doc{padding:15px 40px; font-size:16px}
   /* /DEV-ONLY */
 }
@@ -427,8 +427,8 @@ html.dlg-open{overflow:hidden}
 .fav-tile{position:absolute; inset:0; width:100%; height:100%; padding:0; border:0; border-radius:3px; overflow:hidden; cursor:inherit; color:var(--night-ink); background:linear-gradient(135deg, color-mix(in srgb, var(--fc) 40%, #0B1015), color-mix(in srgb, var(--fc) 12%, #0B1015))}
 .fav-tile img{width:100%; height:100%; object-fit:cover; display:block; transition:transform .5s ease; -webkit-user-drag:none}
 .fav-tile:hover img{transform:scale(1.04)}
-.fav-ph{position:absolute; inset:0; display:grid; place-items:center; font-family:var(--f-label); font-size:12px; letter-spacing:.24em; color:rgba(227,233,238,.38)}
-.fav-tag{position:absolute; top:8px; right:8px; z-index:1; padding:0 10px; border:1px solid rgba(255,255,255,.8); background:rgba(8,10,13,.3); color:#fff; font-family:var(--f-label); font-size:12px; letter-spacing:.14em; line-height:1.7}
+.fav-ph{position:absolute; inset:0; display:grid; place-items:center; font-family:var(--f-label); font-weight:500; font-size:12px; letter-spacing:.18em; color:rgba(227,233,238,.38)}
+.fav-tag{position:absolute; top:8px; right:8px; z-index:1; padding:0 10px; border:1px solid rgba(255,255,255,.8); background:rgba(8,10,13,.3); color:#fff; font-family:var(--f-label); font-weight:500; font-size:12px; letter-spacing:.1em; line-height:1.7}
 .fav-tile::after{content:""; position:absolute; inset:0; border:2px solid transparent; border-radius:3px; pointer-events:none; transition:border-color .2s, background-color .2s}
 .fav-tile:hover::after{background-color:rgba(255,255,255,.06)}
 .fav-tile[aria-pressed="true"]::after{border-color:#fff}
@@ -510,7 +510,7 @@ html.dlg-open{overflow:hidden}
 .w-media{grid-area:shot; align-self:center; min-width:0}
 .w-wave{display:flex; align-items:center; gap:14px; margin-top:12px; padding:8px 14px 8px 12px; border:1px solid var(--night-line); border-radius:8px; background:rgba(8,12,16,.45); -webkit-user-select:none; user-select:none}
 .w-wave-lab{flex:none; display:flex; flex-direction:column; align-items:flex-start; line-height:1.15; color:var(--wa)}
-.w-wave-lab small{font-family:var(--f-label); font-size:10px; letter-spacing:.26em}
+.w-wave-lab small{font-family:var(--f-label); font-weight:500; font-size:10px; letter-spacing:.2em}
 .w-wave-lab b{font-family:var(--f-mono); font-size:20px; font-weight:600; letter-spacing:.04em}
 .w-wave canvas{flex:1; min-width:0; height:40px; display:block; cursor:crosshair; touch-action:pan-y}
 /* 作品の切り替え（画面に止めた舞台の上で入れ替える。見た目はジャケット・レコード・フィルム） */
@@ -644,7 +644,7 @@ html[data-works="jacket"].has-tl .w-stage > .w-slide{padding-top:calc(env(safe-a
 .w-play:not(:disabled):hover .w-play-ic{background:color-mix(in srgb, currentColor 14%, transparent)}
 .w-play:focus-visible{outline:2px solid currentColor; outline-offset:3px; border-radius:6px}
 .w-play-t{display:flex; flex-direction:column; align-items:flex-start; line-height:1.15}
-.w-play-t small{font-family:var(--f-label); font-size:10px; letter-spacing:.2em}
+.w-play-t small{font-family:var(--f-label); font-weight:500; font-size:10px; letter-spacing:.16em}
 .w-play-t b{font-family:var(--f-mono); font-size:18px; font-weight:600; letter-spacing:.04em}
 html[data-works="jacket"] .w-stage .w-play{color:var(--wa-ink)}
 .w-shot{position:relative}
