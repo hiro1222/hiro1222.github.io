@@ -354,6 +354,7 @@ button{font:inherit}
 .w-detail{grid-area:detail}
 .w-head .eyebrow{color:var(--wa)}
 .w-idx{font-family:var(--f-mono); letter-spacing:.08em; color:var(--night-muted)}
+.w-year{font-family:var(--f-body); font-weight:700; font-size:12.5px; letter-spacing:.1em; text-transform:none; padding-left:12px; border-left:1px solid color-mix(in srgb, currentColor 45%, transparent); line-height:1.2}  /* 何年次の個人・チーム制作か（11-25 本人） */
 .w-lead{margin-top:10px; font-size:14px; color:#C9D3DA}
 .w-shot{aspect-ratio:16/9; border-radius:8px; overflow:hidden; border:1px solid var(--night-line); background:repeating-linear-gradient(135deg, #0F151B 0 14px, #121A21 14px 28px); display:grid; place-items:center; color:var(--night-muted); font-family:var(--f-label); font-weight:500; letter-spacing:.16em; font-size:12px; box-shadow:0 22px 50px rgba(0,0,0,.45)}
 .w-shot img{width:100%; height:100%; object-fit:cover; display:block}
@@ -433,7 +434,7 @@ html.dlg-open{overflow:hidden}
   .w-pts p{font-size:15.5px; line-height:1.85; margin-top:4px}
   .w-facts dt{font-size:14px}
   .w-facts dd{font-size:15.5px}
-  .w-wip{font-size:13.5px}
+  .w-wip, .w-year{font-size:13.5px}
   /* DEV-ONLY: MORE（確認用だけ） */
   .w-acts{margin-top:clamp(32px, calc(6vh / var(--z,1)), 68px); gap:16px}  /* 右の列の真ん中・離して・大きく */
   .w-more{padding:15px 68px; font-size:16px; letter-spacing:.2em}
@@ -1108,7 +1109,7 @@ html[data-works="jacket"] .w-stage .w-play{color:var(--wa-ink)}
     <div class="wrap">
       <div class="w-grid">
         <div class="w-head">
-          <p class="eyebrow"><span class="no">02</span>Works <span class="w-idx">01 / 05</span><span class="w-wip">制作中</span></p>
+          <p class="eyebrow"><span class="no">02</span>Works <span class="w-idx">01 / 05</span><span class="w-year">3年次 個人制作</span><span class="w-wip">制作中</span></p>
           <h2 id="w1-title">IdReal</h2>
         </div>
         <div class="w-shot"><img src="img/works/idreal.jpg?v=4" width="1400" height="788" alt="IdReal のデバッグ表示（床に並んだプローブの点と、右上の耳から出る 16 本のレイで壁までの距離を測っている地図）" decoding="async"></div>
@@ -1138,7 +1139,7 @@ html[data-works="jacket"] .w-stage .w-play{color:var(--wa-ink)}
     <div class="wrap">
       <div class="w-grid">
         <div class="w-head">
-          <p class="eyebrow"><span class="no">02</span>Works <span class="w-idx">02 / 05</span><span class="w-wip">制作中</span></p>
+          <p class="eyebrow"><span class="no">02</span>Works <span class="w-idx">02 / 05</span><span class="w-year">3年次 個人制作</span><span class="w-wip">制作中</span></p>
           <h2 id="w2-title">探索型ホラーゲーム</h2>
         </div>
         <div class="w-shot"><img src="img/works/horror.jpg" width="1400" height="788" alt="探索型ホラーゲームの画面（懐中電灯で照らした暗い部屋、隅に人形、奥に扉）" decoding="async"></div>
@@ -1167,7 +1168,7 @@ html[data-works="jacket"] .w-stage .w-play{color:var(--wa-ink)}
     <div class="wrap">
       <div class="w-grid">
         <div class="w-head">
-          <p class="eyebrow"><span class="no">02</span>Works <span class="w-idx">03 / 05</span></p>
+          <p class="eyebrow"><span class="no">02</span>Works <span class="w-idx">03 / 05</span><span class="w-year">3年次 チーム制作</span></p>
           <h2 id="w3-title">御墨付</h2>
         </div>
         <div class="w-shot"><img src="img/works/osumitsuki.jpg?v=2" width="1400" height="788" alt="御墨付のタイトル画面" decoding="async"></div>
@@ -1196,7 +1197,7 @@ html[data-works="jacket"] .w-stage .w-play{color:var(--wa-ink)}
     <div class="wrap">
       <div class="w-grid">
         <div class="w-head">
-          <p class="eyebrow"><span class="no">02</span>Works <span class="w-idx">04 / 05</span></p>
+          <p class="eyebrow"><span class="no">02</span>Works <span class="w-idx">04 / 05</span><span class="w-year">2年次 チーム制作</span></p>
           <h2 id="w4-title">RibBond</h2>
         </div>
         <div class="w-shot"><img src="img/works/ribbond.jpg?v=2" width="1400" height="788" alt="RibBond のタイトル画面" decoding="async"></div>
@@ -1225,7 +1226,7 @@ html[data-works="jacket"] .w-stage .w-play{color:var(--wa-ink)}
     <div class="wrap">
       <div class="w-grid">
         <div class="w-head">
-          <p class="eyebrow"><span class="no">02</span>Works <span class="w-idx">05 / 05</span></p>
+          <p class="eyebrow"><span class="no">02</span>Works <span class="w-idx">05 / 05</span><span class="w-year">3年次 個人制作</span></p>
           <h2 id="w5-title">SoundMarker</h2>
         </div>
         <div class="w-shot"><img src="img/works/soundmarker.jpg?v=2" width="1400" height="789" alt="SoundMarker の画面（アニメーションのタイムラインに音を置く）" decoding="async"></div>
@@ -1255,7 +1256,7 @@ html[data-works="jacket"] .w-stage .w-play{color:var(--wa-ink)}
     <div class="wrap">
       <div class="w-grid">
         <div class="w-head">
-          <p class="eyebrow"><span class="no">02</span>Works <span class="w-idx">06 / 07</span><span class="w-wip">制作中</span></p>
+          <p class="eyebrow"><span class="no">02</span>Works <span class="w-idx">06 / 07</span><span class="w-year">3年次 個人制作</span><span class="w-wip">制作中</span></p>
           <h2 id="w6-title">友人作品A</h2>
         </div>
         <div class="w-shot">画像 準備中</div>
@@ -1282,7 +1283,7 @@ html[data-works="jacket"] .w-stage .w-play{color:var(--wa-ink)}
     <div class="wrap">
       <div class="w-grid">
         <div class="w-head">
-          <p class="eyebrow"><span class="no">02</span>Works <span class="w-idx">07 / 07</span><span class="w-wip">制作中</span></p>
+          <p class="eyebrow"><span class="no">02</span>Works <span class="w-idx">07 / 07</span><span class="w-year">3年次 個人制作</span><span class="w-wip">制作中</span></p>
           <h2 id="w7-title">友人作品B</h2>
         </div>
         <div class="w-shot">画像 準備中</div>
