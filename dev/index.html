@@ -170,7 +170,7 @@ button{font:inherit}
 /* 画面（地図と、いる部屋の名前・響きの長さ）。地図の色は下の script の PAL */
 .sm-screen{position:relative; width:calc(var(--map) + 12px); padding:6px 6px 0; background:var(--lcd0); border-radius:3px; box-shadow:inset 0 0 0 1px rgba(0,0,0,.28), inset 0 2px 6px rgba(22,50,63,.3); outline:none}
 .sm-screen:focus-visible{outline:2px solid var(--accent-hi); outline-offset:3px}
-.sm-screen canvas{display:block; width:100%; aspect-ratio:1 / 1; height:auto; cursor:pointer; touch-action:none}
+.sm-screen canvas{display:block; width:100%; aspect-ratio:1 / 1; height:auto; cursor:pointer}  /* 指で触っても歩かない（ページが動く） */
 .sm-room{display:flex; justify-content:space-between; gap:8px; padding:4px 1px 5px; font-family:var(--f-mono); font-size:11.5px; line-height:1.4; color:var(--lcd3)}
 .sm-room span{padding:0 2px}
 .sm-room.flash .sm-rn{animation:sm-flash .7s steps(4, end)}
@@ -2190,12 +2190,14 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
   padEl.addEventListener('pointermove', function(e){ if (e.pointerId === padId) padAt(e); });
   ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(function(t){ padEl.addEventListener(t, function(e){ if (e.pointerId === padId){ padId = null; padLook(0, 0); endStick(); keysLook(); } }); });
   function setRun(on){ run = on; }  // 走る：キーボードの X・Shift（画面のボタンは手をたたく 1 つだけ）
-  // 地図をなぞる：触れた所に丸が出て、なぞった向きへ歩く（離すと止まる）。動かさずに離したら手をたたく
+  // 地図をなぞる（マウスだけ）：押した所に丸が出て、なぞった向きへ歩く（離すと止まる）。動かさずに離したら手をたたく
+  // スマホの指では地図を触っても何もしない（11-24 本人「スマホ版のマップ直操作なくして」。指でなぞるとページが動く）
   var scr = root.querySelector('.sm-screen'), fl = document.createElement('div'), flId = null, fl0 = null;
   fl.className = 'sm-float';
   fl.innerHTML = '<i></i>';
   scr.appendChild(fl);
   cv.addEventListener('pointerdown', function(e){
+    if (e.pointerType !== 'mouse') return;
     e.preventDefault(); ensureAudio(); flId = e.pointerId;
     try{ cv.setPointerCapture(e.pointerId); }catch(err){}
     var r = scr.getBoundingClientRect();
