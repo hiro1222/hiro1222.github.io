@@ -385,7 +385,7 @@ html.dlg-open{overflow:hidden}
 .dlg-x:hover, .dlg-open:hover{border-color:var(--wa, var(--accent-hi)); color:var(--wa, var(--accent-hi))}
 .dlg-body{padding:26px 28px 34px}
 .dlg-body h3{font-family:var(--f-display); font-weight:800; font-size:clamp(26px, 4vw, 38px); line-height:1.3; letter-spacing:.03em}
-.dlg-lead{margin-top:10px; color:#C9D3DA; line-height:1.8}
+.w-sum{margin-top:14px; color:#C9D3DA; line-height:1.85}  /* MORE の概要（11-24 にカードの表から移した） */
 .dlg-h{margin-top:28px; padding-bottom:8px; border-bottom:1px solid var(--night-line); font-family:var(--f-display); font-weight:800; font-size:19px; letter-spacing:.06em}
 /* 詳細資料：PDF をそのまま窓いっぱいに */
 .dlg-pdf{width:min(1200px, calc(100% - 32px)); height:calc(100vh - 48px); height:calc(100dvh - 48px); overflow:hidden}
@@ -397,7 +397,7 @@ html.dlg-open{overflow:hidden}
 .w-wip::before{content:""; width:7px; height:7px; border-radius:50%; background:currentColor; animation:wip 1.8s ease-in-out infinite}
 @keyframes wip{50%{opacity:.2}}
 @media (prefers-reduced-motion: reduce){ .w-wip::before{animation:none} }
-/* 作品の表（概要・ゲームジャンル・制作規模・担当範囲・制作期間・制作環境）。題のすぐ下 */
+/* 作品の表（こだわり・ゲームジャンル・制作規模・担当範囲・制作期間・制作環境）。題のすぐ下。概要は MORE の窓へ（11-24 本人「作品群の概要全部消して大まかな制作時のこだわりを置こう」） */
 .w-facts{margin:22px 0 0; border-top:1px solid var(--night-line)}
 .w-facts div{display:grid; grid-template-columns:7em minmax(0,1fr); column-gap:14px; padding:7px 0; border-bottom:1px solid var(--night-line)}
 .w-facts div:last-child{border-bottom:0}
@@ -1105,13 +1105,15 @@ html[data-works="jacket"] .w-stage .w-play{color:var(--wa-ink)}
         </div>
         <div class="w-shot"><img src="img/works/idreal.jpg?v=4" width="1400" height="788" alt="IdReal のデバッグ表示（床に並んだプローブの点と、右上の耳から出る 16 本のレイで壁までの距離を測っている地図）" decoding="async"></div>
         <div class="w-detail">
-          <dl class="w-facts"><div><dt>概要</dt><dd>自作の音響エンジンと、それを扱うゲーム側の仕組み。空間の広さや壁などの近さが、見えていなくても伝わる体験を目指して制作。</dd></div><div><dt>ゲームジャンル</dt><dd>—（音響エンジン）</dd></div><div><dt>制作規模</dt><dd>個人制作</dd></div><div><dt>担当範囲</dt><dd>すべて</dd></div><div><dt>制作期間</dt><dd>2026年7月〜制作中</dd></div><div><dt>制作環境</dt><dd>C++（Visual Studio 2022）／Unreal Engine 5.6／Wwise 2025.1</dd></div></dl>
+          <dl class="w-facts"><div><dt>こだわり</dt><dd><span class="todo">準備中</span></dd></div><div><dt>ゲームジャンル</dt><dd>—（音響エンジン）</dd></div><div><dt>制作規模</dt><dd>個人制作</dd></div><div><dt>担当範囲</dt><dd>すべて</dd></div><div><dt>制作期間</dt><dd>2026年7月〜制作中</dd></div><div><dt>制作環境</dt><dd>C++（Visual Studio 2022）／Unreal Engine 5.6／Wwise 2025.1</dd></div></dl>
           <!-- DEV-ONLY: MORE（確認用だけ） -->
           <div class="w-acts">
             <button type="button" class="w-more" aria-haspopup="dialog">MORE</button>
             <button type="button" class="w-doc" data-pdf="docs/idreal.pdf" data-title="IdReal 作品資料" aria-haspopup="dialog" disabled><span class="w-doc-t">作品資料</span><small class="w-doc-s">準備中</small></button>
           </div>
           <div class="w-extra" hidden>
+            <p class="dlg-h">概要</p>
+            <p class="w-sum">自作の音響エンジンと、それを扱うゲーム側の仕組み。空間の広さや壁などの近さが、見えていなくても伝わる体験を目指して制作。</p>
             <p class="dlg-h">こだわり</p>
             <ul class="w-pts">
                 <li><span class="w-ic" aria-hidden="true">01</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
@@ -1133,12 +1135,14 @@ html[data-works="jacket"] .w-stage .w-play{color:var(--wa-ink)}
         </div>
         <div class="w-shot"><img src="img/works/horror.jpg" width="1400" height="788" alt="探索型ホラーゲームの画面（懐中電灯で照らした暗い部屋、隅に人形、奥に扉）" decoding="async"></div>
         <div class="w-detail">
-          <dl class="w-facts"><div><dt>概要</dt><dd>自作の音響エンジン IdReal を使った探索型ホラー。暗い視界の中、足音や周りの音の聞こえ方を頼りに、どんな空間にいるのかを感じ取りながらキーアイテムを集めていく。</dd></div><div><dt>ゲームジャンル</dt><dd>探索型ホラー</dd></div><div><dt>制作規模</dt><dd>個人制作</dd></div><div><dt>担当範囲</dt><dd>すべて</dd></div><div><dt>制作期間</dt><dd>2026年9月〜制作中</dd></div><div><dt>制作環境</dt><dd>Unreal Engine 5.6／Wwise 2025.1</dd></div></dl>
+          <dl class="w-facts"><div><dt>こだわり</dt><dd><span class="todo">準備中</span></dd></div><div><dt>ゲームジャンル</dt><dd>探索型ホラー</dd></div><div><dt>制作規模</dt><dd>個人制作</dd></div><div><dt>担当範囲</dt><dd>すべて</dd></div><div><dt>制作期間</dt><dd>2026年9月〜制作中</dd></div><div><dt>制作環境</dt><dd>Unreal Engine 5.6／Wwise 2025.1</dd></div></dl>
           <!-- DEV-ONLY: MORE（確認用だけ） -->
           <div class="w-acts">
             <button type="button" class="w-more" aria-haspopup="dialog">MORE</button>
           </div>
           <div class="w-extra" hidden>
+            <p class="dlg-h">概要</p>
+            <p class="w-sum">自作の音響エンジン IdReal を使った探索型ホラー。暗い視界の中、足音や周りの音の聞こえ方を頼りに、どんな空間にいるのかを感じ取りながらキーアイテムを集めていく。</p>
             <p class="dlg-h">こだわり</p>
             <ul class="w-pts">
                 <li><span class="w-ic" aria-hidden="true">01</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
@@ -1160,12 +1164,14 @@ html[data-works="jacket"] .w-stage .w-play{color:var(--wa-ink)}
         </div>
         <div class="w-shot"><img src="img/works/osumitsuki.jpg?v=2" width="1400" height="788" alt="御墨付のタイトル画面" decoding="async"></div>
         <div class="w-detail">
-          <dl class="w-facts"><div><dt>概要</dt><dd>世界に色を付け、その上を歩いていく3Dアクションゲーム。</dd></div><div><dt>ゲームジャンル</dt><dd>3Dアクションゲーム</dd></div><div><dt>制作規模</dt><dd>チーム制作・11人</dd></div><div><dt>担当範囲</dt><dd>サブリーダー、プレイヤー制御、サウンド設計・実装</dd></div><div><dt>制作期間</dt><dd>4か月</dd></div><div><dt>制作環境</dt><dd>Unity 6</dd></div></dl>
+          <dl class="w-facts"><div><dt>こだわり</dt><dd><span class="todo">準備中</span></dd></div><div><dt>ゲームジャンル</dt><dd>3Dアクションゲーム</dd></div><div><dt>制作規模</dt><dd>チーム制作・11人</dd></div><div><dt>担当範囲</dt><dd>サブリーダー、プレイヤー制御、サウンド設計・実装</dd></div><div><dt>制作期間</dt><dd>4か月</dd></div><div><dt>制作環境</dt><dd>Unity 6</dd></div></dl>
           <!-- DEV-ONLY: MORE（確認用だけ） -->
           <div class="w-acts">
             <button type="button" class="w-more" aria-haspopup="dialog">MORE</button>
           </div>
           <div class="w-extra" hidden>
+            <p class="dlg-h">概要</p>
+            <p class="w-sum">世界に色を付け、その上を歩いていく3Dアクションゲーム。</p>
             <p class="dlg-h">こだわり</p>
             <ul class="w-pts">
                 <li><span class="w-ic" aria-hidden="true">01</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
@@ -1187,12 +1193,14 @@ html[data-works="jacket"] .w-stage .w-play{color:var(--wa-ink)}
         </div>
         <div class="w-shot"><img src="img/works/ribbond.jpg?v=2" width="1400" height="788" alt="RibBond のタイトル画面" decoding="async"></div>
         <div class="w-detail">
-          <dl class="w-facts"><div><dt>概要</dt><dd>裁縫の世界で、針にリボンを引っかけたり、敵をリボンで飾ったりして先へ進んでいくワイヤーアクションゲーム。</dd></div><div><dt>ゲームジャンル</dt><dd>2D横スクロールワイヤーアクション</dd></div><div><dt>制作規模</dt><dd>チーム制作・10人</dd></div><div><dt>担当範囲</dt><dd>リードプログラマー、リーダー、全体設計、ロード制御、サウンド制御、ステージ管理</dd></div><div><dt>制作期間</dt><dd>4か月</dd></div><div><dt>制作環境</dt><dd>DirectX 11</dd></div></dl>
+          <dl class="w-facts"><div><dt>こだわり</dt><dd><span class="todo">準備中</span></dd></div><div><dt>ゲームジャンル</dt><dd>2D横スクロールワイヤーアクション</dd></div><div><dt>制作規模</dt><dd>チーム制作・10人</dd></div><div><dt>担当範囲</dt><dd>リードプログラマー、リーダー、全体設計、ロード制御、サウンド制御、ステージ管理</dd></div><div><dt>制作期間</dt><dd>4か月</dd></div><div><dt>制作環境</dt><dd>DirectX 11</dd></div></dl>
           <!-- DEV-ONLY: MORE（確認用だけ） -->
           <div class="w-acts">
             <button type="button" class="w-more" aria-haspopup="dialog">MORE</button>
           </div>
           <div class="w-extra" hidden>
+            <p class="dlg-h">概要</p>
+            <p class="w-sum">裁縫の世界で、針にリボンを引っかけたり、敵をリボンで飾ったりして先へ進んでいくワイヤーアクションゲーム。</p>
             <p class="dlg-h">こだわり</p>
             <ul class="w-pts">
                 <li><span class="w-ic" aria-hidden="true">01</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
@@ -1214,12 +1222,14 @@ html[data-works="jacket"] .w-stage .w-play{color:var(--wa-ink)}
         </div>
         <div class="w-shot"><img src="img/works/soundmarker.jpg?v=2" width="1400" height="789" alt="SoundMarker の画面（アニメーションのタイムラインに音を置く）" decoding="async"></div>
         <div class="w-detail">
-          <dl class="w-facts"><div><dt>概要</dt><dd>サウンドデザイナーさんとのチーム制作で経験した、実装して検証するまでの時間や、実装後の手戻りを減らすために、サウンドデザイナーさんと話し合って制作した検証ツール。</dd></div><div><dt>ゲームジャンル</dt><dd>—（アニメーション・サウンド検証ツール）</dd></div><div><dt>制作規模</dt><dd>個人制作</dd></div><div><dt>担当範囲</dt><dd>すべて</dd></div><div><dt>制作期間</dt><dd>2週間</dd></div><div><dt>制作環境</dt><dd>DirectX 11／C++17</dd></div></dl>
+          <dl class="w-facts"><div><dt>こだわり</dt><dd><span class="todo">準備中</span></dd></div><div><dt>ゲームジャンル</dt><dd>—（アニメーション・サウンド検証ツール）</dd></div><div><dt>制作規模</dt><dd>個人制作</dd></div><div><dt>担当範囲</dt><dd>すべて</dd></div><div><dt>制作期間</dt><dd>2週間</dd></div><div><dt>制作環境</dt><dd>DirectX 11／C++17</dd></div></dl>
           <!-- DEV-ONLY: MORE（確認用だけ） -->
           <div class="w-acts">
             <button type="button" class="w-more" aria-haspopup="dialog">MORE</button>
           </div>
           <div class="w-extra" hidden>
+            <p class="dlg-h">概要</p>
+            <p class="w-sum">サウンドデザイナーさんとのチーム制作で経験した、実装して検証するまでの時間や、実装後の手戻りを減らすために、サウンドデザイナーさんと話し合って制作した検証ツール。</p>
             <p class="dlg-h">こだわり</p>
             <ul class="w-pts">
                 <li><span class="w-ic" aria-hidden="true">01</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
@@ -1242,11 +1252,13 @@ html[data-works="jacket"] .w-stage .w-play{color:var(--wa-ink)}
         </div>
         <div class="w-shot">画像 準備中</div>
         <div class="w-detail">
-          <dl class="w-facts"><div><dt>概要</dt><dd><span class="todo">準備中</span></dd></div><div><dt>ゲームジャンル</dt><dd><span class="todo">準備中</span></dd></div><div><dt>制作規模</dt><dd>—</dd></div><div><dt>担当範囲</dt><dd>サウンド面で協力、<span class="todo">詳しくは準備中</span></dd></div><div><dt>制作期間</dt><dd>1か月</dd></div><div><dt>制作環境</dt><dd>DirectX 11／C++17</dd></div></dl>
+          <dl class="w-facts"><div><dt>こだわり</dt><dd><span class="todo">準備中</span></dd></div><div><dt>ゲームジャンル</dt><dd><span class="todo">準備中</span></dd></div><div><dt>制作規模</dt><dd>—</dd></div><div><dt>担当範囲</dt><dd>サウンド面で協力、<span class="todo">詳しくは準備中</span></dd></div><div><dt>制作期間</dt><dd>1か月</dd></div><div><dt>制作環境</dt><dd>DirectX 11／C++17</dd></div></dl>
           <div class="w-acts">
             <button type="button" class="w-more" aria-haspopup="dialog">MORE</button>
           </div>
           <div class="w-extra" hidden>
+            <p class="dlg-h">概要</p>
+            <p class="w-sum"><span class="todo">準備中</span></p>
             <p class="dlg-h">こだわり</p>
             <ul class="w-pts">
                 <li><span class="w-ic" aria-hidden="true">01</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
@@ -1267,11 +1279,13 @@ html[data-works="jacket"] .w-stage .w-play{color:var(--wa-ink)}
         </div>
         <div class="w-shot">画像 準備中</div>
         <div class="w-detail">
-          <dl class="w-facts"><div><dt>概要</dt><dd><span class="todo">準備中</span></dd></div><div><dt>ゲームジャンル</dt><dd><span class="todo">準備中</span></dd></div><div><dt>制作規模</dt><dd>—</dd></div><div><dt>担当範囲</dt><dd>サウンド面で協力、<span class="todo">詳しくは準備中</span></dd></div><div><dt>制作期間</dt><dd>1か月</dd></div><div><dt>制作環境</dt><dd>DirectX 12／C++17</dd></div></dl>
+          <dl class="w-facts"><div><dt>こだわり</dt><dd><span class="todo">準備中</span></dd></div><div><dt>ゲームジャンル</dt><dd><span class="todo">準備中</span></dd></div><div><dt>制作規模</dt><dd>—</dd></div><div><dt>担当範囲</dt><dd>サウンド面で協力、<span class="todo">詳しくは準備中</span></dd></div><div><dt>制作期間</dt><dd>1か月</dd></div><div><dt>制作環境</dt><dd>DirectX 12／C++17</dd></div></dl>
           <div class="w-acts">
             <button type="button" class="w-more" aria-haspopup="dialog">MORE</button>
           </div>
           <div class="w-extra" hidden>
+            <p class="dlg-h">概要</p>
+            <p class="w-sum"><span class="todo">準備中</span></p>
             <p class="dlg-h">こだわり</p>
             <ul class="w-pts">
                 <li><span class="w-ic" aria-hidden="true">01</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
@@ -1312,7 +1326,7 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
 <!-- 作品の MORE の窓（中身は各作品の .w-extra を写す。こだわりなどはそこに書く） -->
 <dialog class="dlg" id="w-dlg" aria-labelledby="w-dlg-title">
   <div class="dlg-bar"><p class="dlg-eb"></p><div class="dlg-bar-r"><button type="button" class="dlg-x" data-close>閉じる<span aria-hidden="true">×</span></button></div></div>
-  <div class="dlg-body"><h3 id="w-dlg-title"></h3><p class="dlg-lead"></p><div class="dlg-more"></div></div>
+  <div class="dlg-body"><h3 id="w-dlg-title"></h3><div class="dlg-more"></div></div>
 </dialog>
 <!-- 作品資料（PDF）の窓。PC はページの中に表示、スマホは新しいタブで開く -->
 <dialog class="dlg dlg-pdf" id="pdf-dlg" aria-label="作品資料">
@@ -1530,10 +1544,9 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
   document.querySelectorAll('.p-work .w-more').forEach(function(b){
     var sec = b.closest('.p-work');
     b.addEventListener('click', function(){
-      var ex = sec.querySelector('.w-extra'), idx = sec.querySelector('.w-idx'), lead = sec.querySelector('.w-facts dd');  // 表の 1 行目＝概要
+      var ex = sec.querySelector('.w-extra'), idx = sec.querySelector('.w-idx');  // 概要・こだわりは .w-extra に（11-24 本人「概要は MORE のほうに」）
       wdlg.querySelector('.dlg-eb').textContent = 'Works ' + (idx ? idx.textContent : '');
       wdlg.querySelector('h3').textContent = sec.querySelector('h2').textContent;
-      wdlg.querySelector('.dlg-lead').textContent = lead ? lead.textContent : '';
       wdlg.querySelector('.dlg-more').innerHTML = ex ? ex.innerHTML : '';
       openDlg(wdlg, sec);
     });
@@ -2734,10 +2747,9 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
     b.addEventListener('click', function(e){
       e.stopImmediatePropagation();
       if (!wdlg.showModal) return;
-      var ex = sl.querySelector('.w-extra'), idx = sl.querySelector('.w-idx'), lead = sl.querySelector('.w-facts dd'), wa = getComputedStyle(sl).getPropertyValue('--wa').trim();
+      var ex = sl.querySelector('.w-extra'), idx = sl.querySelector('.w-idx'), wa = getComputedStyle(sl).getPropertyValue('--wa').trim();
       wdlg.querySelector('.dlg-eb').textContent = 'Works ' + (idx ? idx.textContent : '');
       wdlg.querySelector('h3').textContent = sl.querySelector('h2').textContent;
-      wdlg.querySelector('.dlg-lead').textContent = lead ? lead.textContent : '';
       wdlg.querySelector('.dlg-more').innerHTML = ex ? ex.innerHTML : '';
       if (wa) wdlg.style.setProperty('--wa', wa);
       stopScroll();
