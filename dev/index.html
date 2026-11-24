@@ -177,26 +177,19 @@ button{font:inherit}
 .sm-dpad[data-on="left"] .sm-left::after{border-right-color:var(--accent-hi)!important}
 .sm-dpad[data-on="right"] .sm-right::after{border-left-color:var(--accent-hi)!important}
 /* 丸ボタン（A＝手をたたく、B＝押しながら走る） */
-.sm-ab{display:flex; gap:12px; align-items:flex-start}
-.sm-btn{display:flex; flex-direction:column; align-items:center; gap:4px; font-size:11px; line-height:1.3; color:var(--night-muted)}
-.sm-btn:last-child{margin-top:-12px}
+.sm-ab{display:flex; gap:12px; align-items:center}
 .sm-ab button{width:42px; height:42px; padding:0; border:0; border-radius:50%; font-family:var(--f-label); font-weight:600; font-size:15px; letter-spacing:0; cursor:pointer; touch-action:none; box-shadow:0 3px 0 #05080B; transition:transform .06s ease, box-shadow .06s ease, filter .06s ease}
 .sm-a{background:var(--accent-hi); color:#0D1620}
 .sm-b{background:#2B3A45; color:var(--night-ink)}
 .sm-ab button.on{transform:translateY(2px); box-shadow:0 1px 0 #05080B; filter:brightness(1.18)}
-.sm-hint{margin-top:10px; max-width:calc(var(--map) + 124px); padding:0 2px; font-size:11.5px; line-height:1.65; color:var(--night-muted)}
-.sm-kb{display:none}
 @media (min-width:861px){
   .top-grid{grid-template-columns:minmax(0,1fr) auto; column-gap:40px}
   .hero h1{font-size:clamp(28px, min(8.2vh, calc((100vw - 470px) / 10.4)), 68px)}  /* 右にミニマップが入る分だけ小さく */
   .smap{--map:clamp(180px, calc(100vh - 470px), 300px); justify-self:end; padding:14px 16px 16px}
   .sm-body{grid-template-columns:auto; row-gap:14px}
   .sm-pad{flex-direction:row; justify-content:space-between; width:100%; padding:0 8px}
-  .sm-hint{max-width:calc(var(--map) + 12px); font-size:12px}
 }
-@media (min-width:861px) and (pointer:fine){ .sm-kb{display:block} }
-@media (min-width:861px) and (max-height:760px){ .sm-kb{display:none!important} .sm-body{row-gap:10px} .sm-top{margin-bottom:8px} }  /* 低い画面では 1 ページに収める */
-.sm-hint .nw{display:inline-block}
+@media (min-width:861px) and (max-height:760px){ .sm-body{row-gap:10px} .sm-top{margin-bottom:8px} }  /* 低い画面では 1 ページに収める */
 .sm-credit{margin-top:6px; max-width:calc(var(--map) + 124px); padding:0 2px; font-size:10.5px; line-height:1.55; color:var(--night-muted); opacity:.85}
 .sm-credit a{color:inherit; text-decoration:underline; text-underline-offset:2px}
 @media (min-width:861px){ .sm-credit{max-width:calc(var(--map) + 12px)} }
@@ -652,8 +645,8 @@ html[data-works="jacket"] .w-stage .w-play{color:var(--wa-ink)}
 .w-wave canvas{cursor:pointer}
 /* /DEV-ONLY */
 /* DEV-ONLY: ミニゲームの丸い操作（確認用だけ） */
-/* PC は地図の下に丸い棒（倒した向きへそのまま歩く、端まで倒すと走る）と A。スマホは横の操作を無くして地図を大きくし、
-   地図に触れた所に丸が出て、なぞった向きへ歩く（タップで手をたたく）。斜めも自由に歩ける。人は丸で、向いている方に三角の視界が出る */
+/* PC もスマホも地図の下に丸い棒（倒した向きへそのまま歩く、端まで倒すと走る）と A（11-24 本人「スマホ版でも操作 Controller は表示」）。
+   地図に触れた所にも丸が出て、なぞった向きへ歩く（タップで手をたたく）。斜めも自由に歩ける。人は丸で、向いている方に三角の視界が出る */
 .sm-screen{position:relative}
 .sm-screen canvas{touch-action:none}
 .sm-float{position:absolute; left:0; top:0; z-index:2; width:84px; height:84px; margin:-42px 0 0 -42px; border-radius:50%; border:2px solid rgba(29,92,120,.6); background:rgba(29,92,120,.12); pointer-events:none; display:none}
@@ -662,16 +655,12 @@ html[data-works="jacket"] .w-stage .w-play{color:var(--wa-ink)}
 .sm-stick{position:relative; flex:none; width:96px; height:96px; border-radius:50%; background:#1B2731; box-shadow:inset 0 0 0 2px #2C3B46, 0 2px 0 #05080B; touch-action:none; cursor:pointer}
 .sm-knob{position:absolute; left:50%; top:50%; width:42px; height:42px; margin:-21px 0 0 -21px; border-radius:50%; background:#3A4E5C; box-shadow:0 2px 0 #05080B, inset 0 0 0 2px #4C6475; transition:transform .1s ease-out}
 .sm-stick.on .sm-knob{background:var(--accent-hi); transition:none}
-.sm-btn:last-child{margin-top:0}
-.sm-tp{display:none}
 @media (max-width:860px){
-  .smap{--map:clamp(190px, min(calc(100vw - 80px), calc(100svh - 570px)), 290px)}  /* 1 ページ目に収まる大きさまで */
-  .sm-body{grid-template-columns:auto}
-  .sm-pad{display:none}
-  .sm-tp{display:inline}
-  .sm-pcn{display:none}
-  .sm-hint{max-width:calc(var(--map) + 12px)}
-  .p-top .cue{display:none}  /* スマホは SCROLL を出さない（ミニマップの説明と重なるので） */
+  .smap{--map:clamp(190px, min(calc(100vw - 80px), calc(100svh - 575px)), 290px); justify-self:stretch; width:auto}  /* 枠は横いっぱい、地図は下の操作まで 1 ページ目に収まる大きさまで */
+  .sm-body{grid-template-columns:auto; justify-content:center; row-gap:12px}
+  .sm-pad{flex-direction:row; justify-content:space-between; width:100%; padding:0 8px}
+  .sm-credit{max-width:none}
+  .p-top .cue{display:none}  /* スマホは SCROLL を出さない（ミニマップと重なるので） */
 }
 /* /DEV-ONLY */
 </style>
@@ -737,11 +726,10 @@ html[data-works="jacket"] .w-stage .w-play{color:var(--wa-ink)}
           <div class="sm-pad">
             <div class="sm-stick" aria-hidden="true"><span class="sm-knob"></span></div>
             <div class="sm-ab">
-              <div class="sm-btn"><button type="button" class="sm-a" aria-label="A：手をたたく">A</button><span>たたく</span></div>
+              <button type="button" class="sm-a" aria-label="A：手をたたく">A</button>
             </div>
           </div>
         </div>
-        <p class="sm-hint"><span class="sm-tp">地図をなぞって歩く・タップで手をたたく<span class="nw">（音が出ます）</span></span><span class="sm-pcn">足音はどこも同じ。変わるのは場所の響きだけ<span class="nw">（音が出ます）</span></span><span class="sm-kb">キーボード：地図をクリックして 矢印キー・Z・X</span></p>
         <p class="sm-credit">足音：<a href="https://freesound.org/people/swuing/sounds/38873/" target="_blank" rel="noopener">footstep-concrete.wav</a>（swuing）を元にした素材、<a href="https://creativecommons.org/licenses/by/3.0/" target="_blank" rel="noopener">CC BY 3.0</a>。Idreal の響きを足して使っています</p>
       </div>
       <!-- /DEV-ONLY -->
