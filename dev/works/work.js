@@ -16,8 +16,6 @@
     if (S.isOn()) setTimeout(function(){ location.href = href; }, 150); else location.href = href;
   }
 
-  //開いて少ししたら、トーンアームの針を盤へ下ろす
-  setTimeout(function(){ body.classList.add('arm-on'); }, reduce ? 0 : 1250);
 
   // ---------- ほかの作品の帯・前後の作品 ----------
   var items = [].slice.call(document.querySelectorAll('.ws-i a')), list = document.querySelector('.ws-list'), cur = -1;
@@ -229,20 +227,40 @@
       if (q < 1) requestAnimationFrame(f);
     })(t0);
   }
+  //再生：dev/video/<slug>.mp4 があれば動画、無い間は静止画を 5 秒「再生」する（盤が回り、針が下り、波形が進む）
   var btn = document.querySelector('.wp-play'), shot = document.querySelector('.wp-shot'), video = null, raf = 0, url = body.getAttribute('data-video') || '';
   var title = (document.querySelector('h1') || {}).textContent || '';
+  var STILL = 5, mode = 'still', st = 0, stOn = false, stLast = 0, simg = shot ? shot.querySelector('img') : null;
+  function fmt(x){ x = Math.max(0, Math.round(x)); return Math.floor(x / 60) + ':' + String(x % 60).padStart(2, '0'); }
+  function dur(){ return mode === 'video' ? (video && video.duration) || 0 : STILL; }
+  function now(){ return mode === 'video' ? (video ? video.currentTime : 0) : st; }
+  function isOn(){ return mode === 'video' ? !!video && !video.paused && !video.ended : stOn; }
   function progress(){
     cancelAnimationFrame(raf);
-    if (!video) return;
-    if (video.duration){ run++; play = video.currentTime / video.duration; drawWave(); }
-    if (!video.paused && !video.ended) raf = requestAnimationFrame(progress);
+    var d = dur();
+    if (d){ run++; play = Math.min(1, now() / d); drawWave(); }
+    if (btn) btn.querySelector('small').textContent = fmt(now()) + ' / ' + fmt(d || STILL);
+    //静止画は少しずつ寄る（止まっている絵でも進んでいるのが分かるように）
+    if (mode === 'still' && simg && !reduce) simg.style.transform = 'scale(' + (1 + .06 * (d ? now() / d : 0)).toFixed(4) + ')';
+    if (isOn()) raf = requestAnimationFrame(progress);
   }
   function state(){
-    var on = !!video && !video.paused && !video.ended;
+    var on = isOn();
     btn.classList.toggle('is-playing', on);
     body.classList.toggle('is-playing', on);
+    btn.querySelector('b').textContent = on ? '停止' : '再生';
     btn.setAttribute('aria-label', title + (on ? ' の動画を止める' : ' の動画を再生'));
   }
+  //静止画の 5 秒：時計を進めるだけ
+  function stTick(t){
+    if (!stOn) return;
+    st += (t - stLast) / 1000; stLast = t;
+    if (st >= STILL){ st = STILL; stOn = false; state(); }
+    progress();
+    if (stOn) requestAnimationFrame(stTick);
+  }
+  function stPlay(){ if (st >= STILL) st = 0; stOn = true; stLast = performance.now(); state(); requestAnimationFrame(stTick); }
+  function stPause(){ stOn = false; state(); progress(); }
   function ensure(){
     if (video) return video;
     video = document.createElement('video');
@@ -252,17 +270,20 @@
     video.src = url;
     shot.appendChild(video);
     video.addEventListener('play', function(){ state(); progress(); });
-    video.addEventListener('pause', state);
+    video.addEventListener('pause', function(){ state(); progress(); });
     video.addEventListener('ended', function(){ state(); progress(); });
+    video.addEventListener('loadedmetadata', progress);
     video.addEventListener('click', toggle);
     return video;
   }
   function toggle(){
-    if (!btn || btn.disabled) return;
+    if (!btn) return;
+    if (mode === 'still'){ if (stOn) stPause(); else stPlay(); return; }
     var v = ensure();
     if (v.paused || v.ended){ if (v.ended) v.currentTime = 0; var pr = v.play(); if (pr && pr['catch']) pr['catch'](function(){}); }
     else v.pause();
   }
+  if (shot) shot.addEventListener('click', function(e){ if (mode === 'still' && e.target.tagName !== 'VIDEO') toggle(); });
   if (wcv){
     var at = function(e){ var r = wcv.getBoundingClientRect(); hover = r.width ? Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)) * wcv.clientWidth : 0; drawWave(); };
     var off = function(){ hover = -1; drawWave(); };
@@ -272,16 +293,25 @@
     wcv.addEventListener('pointercancel', off);
     wcv.addEventListener('pointerup', function(e){ if (e.pointerType !== 'mouse') off(); });
     wcv.addEventListener('click', function(e){
-      if (!btn || btn.disabled) return;
+      if (!btn) return;
       var r = wcv.getBoundingClientRect(), q = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
+      if (mode === 'still'){ st = q * STILL; if (!stOn) stPlay(); else progress(); return; }
       var v = ensure(), seek = function(){ v.currentTime = q * v.duration; if (v.paused){ var pr = v.play(); if (pr && pr['catch']) pr['catch'](function(){}); } progress(); };
       if (v.readyState >= 1) seek(); else v.addEventListener('loadedmetadata', seek, {once: true});
     });
   }
   if (btn){
     btn.addEventListener('click', toggle);
-    var enable = function(){ btn.disabled = false; btn.querySelector('small').textContent = 'PLAY'; state(); };
-    if (url && window.fetch) fetch(url, {method: 'HEAD', cache: 'no-store'}).then(function(r){ if (r.ok) enable(); }, function(){});
+    //動画のファイルがあれば、静止画の 5 秒から動画に切り替える
+    if (url && window.fetch) fetch(url, {method: 'HEAD', cache: 'no-store'}).then(function(r){
+      if (!r.ok) return;
+      if (stOn) stPause();
+      mode = 'video';
+      if (simg) simg.style.transform = '';
+      ensure();
+      progress();
+    }, function(){});
+    progress();
   }
   drawWave();
 
