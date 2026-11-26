@@ -19,9 +19,9 @@
 .p-works{background:var(--night); display:block}
 /* 選んでいる作品の画像をぼかして後ろに（画面に固定、この節の範囲だけ見える）。文字が読めるよう暗く */
 .wl-bg{background:var(--night)}
-.wl-bg i{position:absolute; inset:-60px; background:center / cover no-repeat; filter:blur(28px) saturate(1.1) brightness(.5); opacity:0; transition:opacity .6s ease; will-change:opacity}
+.wl-bg i{position:absolute; inset:-60px; background:center / cover no-repeat; filter:blur(28px) saturate(1.2) brightness(.8); opacity:0; transition:opacity .6s ease; will-change:opacity}
 .wl-bg i.on{opacity:1}
-.wl-bg::after{content:""; position:absolute; inset:0; background:linear-gradient(90deg, rgba(8,12,16,.76) 0%, rgba(8,12,16,.58) 45%, rgba(8,12,16,.76) 100%)}
+.wl-bg::after{content:""; position:absolute; inset:0; background:linear-gradient(90deg, rgba(8,12,16,.6) 0%, rgba(8,12,16,.36) 45%, rgba(8,12,16,.6) 100%)}
 @media (prefers-reduced-motion:reduce){ .wl-bg i{transition:none} }
 .p-works > .wrap{position:relative}
 .wl-head{display:grid; grid-template-columns:minmax(0, 1fr) auto; align-items:end; gap:8px 28px}
@@ -35,7 +35,7 @@
 .wl-a{position:relative; isolation:isolate; display:grid; grid-template-columns:64px minmax(220px, 300px) minmax(0, 1fr) 40px; align-items:center; gap:28px; padding:22px 14px 22px 8px; text-decoration:none; color:inherit; outline-offset:-2px}
 /* なぞった行の帯（左から作品の色が差す） */
 .wl-a::before{content:""; position:absolute; inset:0; z-index:-1; background:linear-gradient(90deg, color-mix(in srgb, var(--wa) 16%, transparent), transparent 75%); opacity:0; transform:scaleX(.6); transform-origin:left; transition:opacity .25s, transform .35s cubic-bezier(.22,1,.36,1)}
-.wl-no{position:relative; font-family:var(--f-mono); font-size:26px; letter-spacing:.04em; color:var(--night-muted); padding-left:22px; transition:color .2s}
+.wl-no{position:relative; font-family:var(--f-mono); font-size:26px; letter-spacing:.04em; color:#C9D3DA; padding-left:22px; transition:color .2s}
 /* ゲームのカーソル（▶）。選んでいる行で点滅 */
 .wl-cur{position:absolute; left:0; top:50%; width:0; height:0; border-style:solid; border-width:7px 0 7px 11px; border-color:transparent transparent transparent var(--wa); transform:translate(-6px, -50%); opacity:0; transition:opacity .15s, transform .2s}
 .wl-jk{position:relative; display:block; aspect-ratio:16 / 9; isolation:isolate}
@@ -48,10 +48,10 @@
 .wl-disc::after{content:""; position:absolute; inset:0; border-radius:50%; background:repeating-radial-gradient(circle closest-side, transparent 0 1.6px, rgba(255,255,255,.06) 1.6px 2.6px); animation:wl-spin 6s linear infinite; animation-play-state:paused}
 .wl-body{display:flex; flex-direction:column; gap:6px; min-width:0}
 .wl-tags{display:flex; flex-wrap:wrap; gap:6px}
-.wl-tags > span{padding:1px 9px; border:1px solid var(--night-line); border-radius:999px; font-size:11.5px; letter-spacing:.06em; color:var(--night-muted); white-space:nowrap}
+.wl-tags > span{padding:1px 9px; border:1px solid rgba(227,233,238,.28); border-radius:999px; font-size:11.5px; letter-spacing:.06em; color:#D5DCE1; background:rgba(8,12,16,.35); white-space:nowrap}
 .wl-tags > .wl-wip{border-color:var(--wa); color:var(--wa)}
-.wl-t{font-family:var(--f-display); font-weight:800; font-size:clamp(22px, 2.2vw, 28px); line-height:1.3; letter-spacing:.04em; color:var(--night-ink)}
-.wl-k{font-size:13.5px; line-height:1.75; color:var(--night-muted); display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; overflow:hidden}
+.wl-t{font-family:var(--f-display); font-weight:800; font-size:clamp(22px, 2.2vw, 28px); line-height:1.3; letter-spacing:.04em; color:#FFFFFF; text-shadow:0 1px 3px rgba(0,0,0,.5)}
+.wl-k{font-size:13.5px; line-height:1.75; color:#D5DCE1; text-shadow:0 1px 2px rgba(0,0,0,.55); display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; overflow:hidden}
 .wl-k br{display:none}
 .wl-side{display:flex; flex-direction:column; align-items:flex-end; gap:10px}
 .wl-eq{display:flex; align-items:flex-end; gap:3px; height:22px}

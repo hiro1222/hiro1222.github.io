@@ -161,9 +161,9 @@ body.is-playing .wp-disc::after{animation-duration:3s}
 .wp-other{position:relative; isolation:isolate; overflow:hidden; padding:36px 0 56px}
 /* 帯の真ん中の作品（なぞっている時はその作品）の画像をぼかして後ろに。上下はページの色へなじませる */
 .wo-bg{position:absolute; inset:0; z-index:-1; pointer-events:none}
-.wo-bg i{position:absolute; inset:-50px; background:center / cover no-repeat; filter:blur(24px) saturate(1.1) brightness(.5); opacity:0; transition:opacity .5s ease; will-change:opacity}
+.wo-bg i{position:absolute; inset:-50px; background:center / cover no-repeat; filter:blur(24px) saturate(1.2) brightness(.8); opacity:0; transition:opacity .5s ease; will-change:opacity}
 .wo-bg i.on{opacity:1}
-.wo-bg::after{content:""; position:absolute; inset:0; background:linear-gradient(180deg, var(--night) 0%, rgba(13,22,32,.5) 28%, rgba(13,22,32,.5) 72%, var(--night) 100%)}
+.wo-bg::after{content:""; position:absolute; inset:0; background:linear-gradient(180deg, var(--night) 0%, rgba(13,22,32,.28) 28%, rgba(13,22,32,.28) 72%, var(--night) 100%)}
 @media (prefers-reduced-motion:reduce){ .wo-bg i{transition:none} }
 .wp-other-h{font-size:15px; font-weight:600; letter-spacing:.08em; color:var(--night-ink)}
 .ws{position:relative; margin-top:16px; display:flex; align-items:center; gap:8px; padding:0 max(8px, env(safe-area-inset-left, 0px))}
