@@ -63,7 +63,7 @@ def list_block():
         row = ('    <li class="wl-i" style="--wa:%s">\n'
                '      <a class="wl-a" href="works/%s.html" data-i="%d">\n'
                '        <span class="wl-no" aria-hidden="true"><i class="wl-cur"></i>%02d</span>\n'
-               '        <span class="wl-jk"><span class="wl-disc" aria-hidden="true"></span>%s</span>\n'
+               '        <span class="wl-jk"><span class="wl-disc" aria-hidden="true"><span class="wl-disc-in"></span></span>%s</span>\n'
                '        <span class="wl-body">\n'
                '          <span class="wl-tags">%s</span>\n'
                '          <span class="wl-t">%s</span>\n'
@@ -170,7 +170,7 @@ def page(w):
         %(genre)s
       </div>
       <figure class="wp-media">
-        <div class="wp-jk"><span class="wp-disc" aria-hidden="true"></span><div class="wp-shot">%(img)s</div></div>
+        <div class="wp-jk"><span class="wp-disc" aria-hidden="true"><span class="wp-disc-in"></span><svg class="wp-arm" viewBox="0 0 100 100"><g><path d="M108 -2 L116 -12" stroke="#7F8890" stroke-width="2.6" stroke-linecap="round" fill="none"/><circle cx="117" cy="-13" r="4.2" fill="#3A4249" stroke="#7F8890" stroke-width=".8"/><circle cx="108" cy="-2" r="5.6" fill="#252B31" stroke="#9AA3AB" stroke-width="1"/><circle cx="108" cy="-2" r="1.6" fill="#9AA3AB"/><path d="M108 -2 L87 37" stroke="#C9D0D6" stroke-width="1.8" stroke-linecap="round" fill="none"/><path d="M87 37 L82 44" stroke="#DDE3E8" stroke-width="3.4" stroke-linecap="round" fill="none"/></g></svg></span><div class="wp-shot">%(img)s</div></div>
         <div class="wp-player"><button type="button" class="wp-play" disabled aria-label="%(title_a)s の動画（準備中）"><i class="wp-play-ic" aria-hidden="true"></i><span class="wp-play-t"><small>準備中</small><b>動画</b></span></button><canvas class="wp-wave"></canvas></div>
       </figure>
     </div>
@@ -231,7 +231,7 @@ def page(w):
         'facts': facts(w), 'pdf': pdf,
         'pv': pv['slug'], 'pv_t': '%02d %s' % (WORKS.index(pv) + 1, pv['title']),
         'nx': nx['slug'], 'nx_t': '%02d %s' % (WORKS.index(nx) + 1, nx['title']),
-        'strip': strip_items(w), 'v': '7',
+        'strip': strip_items(w), 'v': '9',
     }
     return s
 

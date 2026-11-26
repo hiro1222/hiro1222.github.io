@@ -12,9 +12,12 @@
 
   //音を鳴らしてから移る（鳴っている途中で切れないよう、ON の時だけ少し待つ）
   function go(href, kind){
-    if (kind === 'back') S.back(); else S.confirm();
+    if (kind === 'back') S.back(); else if (S.drop) S.drop(); else S.confirm();
     if (S.isOn()) setTimeout(function(){ location.href = href; }, 150); else location.href = href;
   }
+
+  //開いて少ししたら、トーンアームの針を盤へ下ろす
+  setTimeout(function(){ body.classList.add('arm-on'); }, reduce ? 0 : 1250);
 
   // ---------- ほかの作品の帯・前後の作品 ----------
   var items = [].slice.call(document.querySelectorAll('.ws-i a')), list = document.querySelector('.ws-list'), cur = -1;

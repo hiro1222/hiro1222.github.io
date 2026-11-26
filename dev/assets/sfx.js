@@ -53,7 +53,23 @@
     },
     confirm: function(){ if (!on) return; tone(659.25, 0, .12, .06); tone(880, .07, .22, .06); },
     back: function(){ if (!on) return; tone(880, 0, .1, .05); tone(659.25, .06, .18, .05); },
-    tick: function(){ if (!on) return; tone(1975.5, 0, .035, .018, 'square'); }
+    tick: function(){ if (!on) return; tone(1975.5, 0, .035, .018, 'square'); },
+    //針を落とす音：低い「プツッ」と、盤のまばらな「ジリッ」
+    drop: function(){
+      if (!on) return;
+      var c = ac();
+      if (!c || c.state !== 'running') return;
+      tone(68, 0, .1, .09, 'sine');
+      var sr = c.sampleRate, len = Math.floor(sr * .45), buf = c.createBuffer(1, len, sr), d = buf.getChannelData(0), i, k;
+      for (i = 0; i < len; i++){
+        k = 1 - i / len;
+        d[i] = (Math.random() < .003 ? (Math.random() * 2 - 1) : 0) * Math.pow(k, 1.4) + (Math.random() * 2 - 1) * .012 * k;
+      }
+      var s = c.createBufferSource(), hp = c.createBiquadFilter(), g = c.createGain();
+      s.buffer = buf; hp.type = 'highpass'; hp.frequency.value = 1400; g.gain.value = .4;
+      s.connect(hp); hp.connect(g); g.connect(c.destination);
+      s.start(c.currentTime + .015);
+    }
   };
   window.SFX = api;
   //押したら切り替え（どの .sfx でも同じ）
