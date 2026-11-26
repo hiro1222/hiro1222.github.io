@@ -20,15 +20,13 @@
 .p-works > .wrap{position:relative}
 .wl-head{display:grid; grid-template-columns:minmax(0, 1fr) auto; align-items:end; gap:8px 28px}
 .wl-head .head{grid-row:1 / 3}
-.wl-lead, .wl-sfx{justify-self:end}
-.wl-lead{font-size:13.5px; color:var(--night-muted); letter-spacing:.04em}
-.wl-lead-en{font-family:var(--f-mono); font-size:12px; letter-spacing:.2em; color:var(--accent-hi); margin-right:12px}
+.wl-sfx{justify-self:end}
 .wl-sfx{display:flex; align-items:center; gap:10px; font-size:12px; color:var(--night-muted)}
 .wl-sfx .sfx{color:var(--night-muted)}
 .wl-sfx .sfx[aria-pressed="true"]{color:var(--accent-hi); background:rgba(125,184,209,.08)}
 .wl{list-style:none; margin:30px 0 0; padding:0; border-top:1px solid var(--night-line)}
 .wl-i{border-bottom:1px solid var(--night-line)}
-.wl-a{position:relative; isolation:isolate; display:grid; grid-template-columns:64px minmax(220px, 300px) minmax(0, 1fr) 92px; align-items:center; gap:28px; padding:22px 14px 22px 8px; text-decoration:none; color:inherit; outline-offset:-2px}
+.wl-a{position:relative; isolation:isolate; display:grid; grid-template-columns:64px minmax(220px, 300px) minmax(0, 1fr) 40px; align-items:center; gap:28px; padding:22px 14px 22px 8px; text-decoration:none; color:inherit; outline-offset:-2px}
 /* なぞった行の帯（左から作品の色が差す） */
 .wl-a::before{content:""; position:absolute; inset:0; z-index:-1; background:linear-gradient(90deg, color-mix(in srgb, var(--wa) 16%, transparent), transparent 75%); opacity:0; transform:scaleX(.6); transform-origin:left; transition:opacity .25s, transform .35s cubic-bezier(.22,1,.36,1)}
 .wl-no{position:relative; font-family:var(--f-mono); font-size:26px; letter-spacing:.04em; color:var(--night-muted); padding-left:22px; transition:color .2s}
@@ -53,8 +51,6 @@
 .wl-eq{display:flex; align-items:flex-end; gap:3px; height:22px}
 .wl-eq i{width:4px; height:100%; background:var(--night-line); border-radius:1px; transform-origin:bottom; transform:scaleY(.25); transition:background .2s}
 .wl-eq i:nth-child(2){transform:scaleY(.45)} .wl-eq i:nth-child(3){transform:scaleY(.3)} .wl-eq i:nth-child(4){transform:scaleY(.55)} .wl-eq i:nth-child(5){transform:scaleY(.2)}
-.wl-go{font-family:var(--f-mono); font-size:12px; letter-spacing:.2em; color:var(--night-muted); transition:color .2s, letter-spacing .25s}
-.wl-go::after{content:" ▶"; font-size:.85em}
 /* なぞった行・Tab で選んだ行 */
 .wl-a:hover::before, .wl-a:focus-visible::before{opacity:1; transform:none}
 .wl-a:hover .wl-no, .wl-a:focus-visible .wl-no{color:var(--wa)}
@@ -67,7 +63,6 @@
 .wl-a:hover .wl-eq i:nth-child(3), .wl-a:focus-visible .wl-eq i:nth-child(3){animation-duration:.7s; animation-delay:-.4s}
 .wl-a:hover .wl-eq i:nth-child(4), .wl-a:focus-visible .wl-eq i:nth-child(4){animation-duration:.5s; animation-delay:-.1s}
 .wl-a:hover .wl-eq i:nth-child(5), .wl-a:focus-visible .wl-eq i:nth-child(5){animation-duration:.65s; animation-delay:-.3s}
-.wl-a:hover .wl-go, .wl-a:focus-visible .wl-go{color:var(--wa); letter-spacing:.26em}
 /* 押した瞬間（決定）：行が白く光る */
 .wl-a.is-go::before{opacity:1; transform:none; background:linear-gradient(90deg, color-mix(in srgb, var(--wa) 40%, transparent), transparent 85%)}
 @keyframes wl-spin{to{transform:rotate(360deg)}}
@@ -85,8 +80,7 @@
   .wl-disc{display:none}
   .wl-head{grid-template-columns:minmax(0, 1fr)}
   .wl-head .head{grid-row:auto}
-  .wl-lead, .wl-sfx{justify-self:start}
-  .wl-sfx-t{display:none}
+  .wl-sfx{justify-self:start}
 }
 @media (prefers-reduced-motion:reduce){
   .wl-a *, .wl-a::before{animation:none!important; transition:none!important}

@@ -69,7 +69,7 @@ def list_block():
                '          <span class="wl-t">%s</span>\n'
                '          <span class="wl-k">%s</span>\n'
                '        </span>\n'
-               '        <span class="wl-side" aria-hidden="true"><span class="wl-eq"><i></i><i></i><i></i><i></i><i></i></span><span class="wl-go">PLAY</span></span>\n'
+               '        <span class="wl-side" aria-hidden="true"><span class="wl-eq"><i></i><i></i><i></i><i></i><i></i></span></span>\n'
                '      </a>\n'
                '    </li>') % (w['color'], w['slug'], i, i + 1, img_tag(w, '', 'wl', alt=''), ''.join(tags), w['title'], t(w.get('kodawari')))
         rows.append(dev_wrap(w, row, w['title']))
@@ -82,8 +82,6 @@ def list_block():
             '          <p class="eyebrow"><span class="no">02</span>Works</p>\n'
             '          <h2 id="h-works">作品</h2>\n'
             '        </div>\n'
-            '        <p class="wl-lead"><span class="wl-lead-en">TRACK LIST</span>1 作品 1 トラック。選ぶと作品ごとのページへ</p>\n'
-            '        <p class="wl-sfx">' + SFX_BTN + '<span class="wl-sfx-t">ON にすると、なぞった作品ごとに音が鳴ります</span></p>\n'
             '      </div>\n'
             '      <ol class="wl">\n' + '\n'.join(rows) + '\n      </ol>\n'
             '    </div>\n'
@@ -115,7 +113,7 @@ def strip_items(cur):
         li = ('<li class="ws-i%s" style="--wa:%s"><a href="%s.html" data-i="%d" data-t="%s"%s><span class="ws-th">%s</span>'
               '<span class="ws-cap"><span class="ws-no">%02d</span>%s</span>%s</a></li>'
               % (' is-cur' if w is cur else '', w['color'], w['slug'], i, a(w['title']), ' aria-current="page"' if w is cur else '',
-                 th, i + 1, w['title'], '<span class="ws-now">NOW PLAYING</span>' if w is cur else ''))
+                 th, i + 1, w['title'], ''))
         out.append(dev_wrap(w, li, w['title']))
     return '\n'.join(out)
 
@@ -158,7 +156,7 @@ def page(w):
 <header class="wb">
   <div class="wb-in">
     <a class="logo" href="../" aria-label="Hiroto Takeuchi Portfolio（トップへ）"><span class="logo-disc" aria-hidden="true"></span><span class="logo-t"><span class="who">HIROTO TAKEUCHI</span><span class="mark">Portfolio</span></span></a>
-    <a class="wb-back" href="../#works" data-back><span class="wb-back-ic" aria-hidden="true"></span><span class="wb-back-t"><span class="wb-back-en"><span class="wb-pc">TRACK </span>LIST</span><small>作品一覧へ</small></span></a>
+    <a class="wb-back" href="../#works" data-back><span class="wb-back-ic" aria-hidden="true"></span><span class="wb-back-t">作品一覧<span class="wb-pc">へ</span></span></a>
     %(sfx)s
   </div>
   <div class="wb-prog" aria-hidden="true"><canvas></canvas></div>
@@ -173,8 +171,7 @@ def page(w):
       </div>
       <figure class="wp-media">
         <div class="wp-jk"><span class="wp-disc" aria-hidden="true"></span><div class="wp-shot">%(img)s</div></div>
-        <div class="wp-player"><button type="button" class="wp-play" disabled aria-label="%(title_a)s の動画（準備中）"><i class="wp-play-ic" aria-hidden="true"></i><span class="wp-play-t"><small>準備中</small><b>VIDEO</b></span></button><canvas class="wp-wave"></canvas></div>
-        %(cap)s
+        <div class="wp-player"><button type="button" class="wp-play" disabled aria-label="%(title_a)s の動画（準備中）"><i class="wp-play-ic" aria-hidden="true"></i><span class="wp-play-t"><small>準備中</small><b>動画</b></span></button><canvas class="wp-wave"></canvas></div>
       </figure>
     </div>
   </section>
@@ -182,31 +179,30 @@ def page(w):
     <div class="wp-in wp-sheet-in">
       <article class="wp-main">
         <section class="wp-sec" data-mark="概要">
-          <h2 class="wp-h"><span class="wp-h-no">A1</span>概要</h2>
+          <h2 class="wp-h">概要</h2>
           <p class="wp-txt">%(summary)s</p>
         </section>
         <section class="wp-sec" data-mark="こだわり">
-          <h2 class="wp-h"><span class="wp-h-no">A2</span>こだわり</h2>
+          <h2 class="wp-h">こだわり</h2>
           <p class="wp-txt wp-lead">%(kodawari)s</p>
           %(points)s
         </section>
       </article>
-      <aside class="wp-credits" data-mark="CREDITS">
-        <h2 class="wp-cr-h">CREDITS<small>制作情報</small></h2>
+      <aside class="wp-credits" data-mark="制作情報">
+        <h2 class="wp-cr-h">制作情報</h2>
         <dl class="wp-facts">%(facts)s</dl>
         %(pdf)s
       </aside>
     </div>
   </div>
   <nav class="wp-nav wp-in" aria-label="前後の作品">
-    <a class="wp-prev" href="%(pv)s.html" rel="prev"><small>PREV TRACK</small><b>%(pv_t)s</b></a>
-    <a class="wp-list" href="../#works" data-back>TRACK LIST</a>
-    <a class="wp-next" href="%(nx)s.html" rel="next"><small>NEXT TRACK</small><b>%(nx_t)s</b></a>
+    <a class="wp-prev" href="%(pv)s.html" rel="prev"><small>前の作品</small><b>%(pv_t)s</b></a>
+    <a class="wp-list" href="../#works" data-back>一覧へ</a>
+    <a class="wp-next" href="%(nx)s.html" rel="next"><small>次の作品</small><b>%(nx_t)s</b></a>
   </nav>
   <section class="wp-other" aria-labelledby="h-other">
     <div class="wp-in">
-      <h2 class="wp-other-h" id="h-other">OTHER TRACKS<small>ほかの作品</small></h2>
-      <p class="wp-keys" aria-hidden="true"><kbd>←</kbd><kbd>→</kbd> で前後の作品へ</p>
+      <h2 class="wp-other-h" id="h-other">ほかの作品</h2>
     </div>
     <div class="ws">
       <button type="button" class="ws-arr prev" aria-label="前へ流す"></button>
@@ -220,6 +216,7 @@ def page(w):
 <footer class="wf"><div class="wp-in wf-in"><span>© Hiroto Takeuchi</span><a href="../">ポートフォリオのトップへ</a></div></footer>
 <dialog class="wp-dlg" id="pdf-dlg" aria-label="作品資料"><div class="wp-dlg-bar"><a id="pdf-open" href="#" target="_blank" rel="noopener">新しいタブで開く</a><button type="button" data-close>閉じる ×</button></div><iframe id="pdf-frame" title="作品資料（PDF）"></iframe></dialog>
 <script src="../assets/sfx.js?v=%(v)s"></script>
+<script src="../assets/progress.js?v=%(v)s"></script>
 <script src="work.js?v=%(v)s"></script>
 </body>
 </html>
@@ -232,7 +229,7 @@ def page(w):
         'facts': facts(w), 'pdf': pdf,
         'pv': pv['slug'], 'pv_t': '%02d %s' % (WORKS.index(pv) + 1, pv['title']),
         'nx': nx['slug'], 'nx_t': '%02d %s' % (WORKS.index(nx) + 1, nx['title']),
-        'strip': strip_items(w), 'v': '3',
+        'strip': strip_items(w), 'v': '4',
     }
     return s
 
