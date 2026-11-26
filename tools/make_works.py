@@ -80,7 +80,6 @@ def list_block():
             '    <div class="wrap">\n'
             '      <div class="wl-head">\n'
             '        <div class="head">\n'
-            '          <p class="eyebrow"><span class="no">02</span>Works</p>\n'
             '          <h2 id="h-works">作品</h2>\n'
             '        </div>\n'
             '      </div>\n'

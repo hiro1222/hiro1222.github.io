@@ -75,10 +75,10 @@ button{font:inherit}
   padding-block:6px; border-bottom:2px solid transparent;
 }
 .nav .en{font-family:var(--f-label); font-weight:500; font-size:14px; letter-spacing:.12em; text-transform:uppercase}
-.nav .ja{font-size:10.5px; color:#6B767F; letter-spacing:.04em}
-.nav a:hover .en{color:var(--accent)}
+.nav .ja{font-size:14px; font-weight:600; color:var(--bar-ink); letter-spacing:.06em}
+.nav a:hover .ja{color:var(--accent)}
 .nav a[aria-current="true"]{border-bottom-color:var(--bar-line)}
-.nav a[aria-current="true"] .en{color:var(--accent)}
+.nav a[aria-current="true"] .ja{color:var(--accent)}
 .menu-btn{display:none}
 
 /* ---------- サイドバー（スマホ） ---------- */
@@ -273,11 +273,11 @@ button{font:inherit}
   .sk-groups{grid-template-columns:repeat(4, minmax(0,1fr)); column-gap:20px}
   /* 分類の中は縦に積む：アイコン・名前・年数を 1 行に */
   .pf-cols .cards{grid-template-columns:minmax(0,1fr); gap:6px}
-  .pf-cols .card{grid-template-columns:26px minmax(0,1fr) auto; column-gap:10px; padding:7px 12px}
+  .pf-cols .card{padding:7px 2px}
   .pf-cols .card .ic{grid-row:auto; width:26px; height:26px}
   .pf-cols .card .ic svg{width:22px; height:22px}
   .pf-cols .card .ic.txt{font-size:11px}
-  .pf-cols .card.noyr .nm{grid-row:auto}
+  .pf-cols .card.noyr .nm{flex:1}
   .pf-cols .block{margin-top:32px}
   .pf-cols .sg{margin:14px 0 6px}
 }
@@ -288,18 +288,18 @@ button{font:inherit}
 @media (max-width:480px){ .bh-sub{display:block; margin:2px 0 0} }
 .sg{font-size:13px; font-weight:600; color:var(--night-muted); letter-spacing:.08em; margin:20px 0 8px}
 .cards{list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(auto-fill, minmax(230px, 1fr)); gap:10px}
-.card{display:grid; grid-template-columns:34px minmax(0,1fr); column-gap:12px; align-items:center; padding:12px 14px; background:rgba(255,255,255,.045); border:1px solid var(--night-line); border-left:3px solid var(--c); border-radius:3px; min-width:0}
+.card{display:flex; align-items:baseline; justify-content:space-between; gap:12px; padding:10px 2px; border-bottom:1px solid var(--night-line); min-width:0}
 .card .ic{grid-row:1 / 3; width:32px; height:32px; display:grid; place-items:center; color:var(--c)}
 .card .ic svg{width:28px; height:28px; fill:currentColor}
 .card .ic.txt{box-sizing:border-box; border:1.5px solid var(--c); border-radius:5px; font-family:var(--f-mono); font-weight:500; font-size:12px; letter-spacing:.02em}
 .card .nm{font-weight:600; font-size:15px; line-height:1.35; overflow-wrap:anywhere}
-.card.noyr .nm{grid-row:1 / 3}
-.card .yr{font-family:var(--f-mono); font-weight:500; font-size:13px; color:var(--accent-hi); line-height:1.4}
+.card.noyr .nm{flex:1}
+.card .yr{flex:none; font-size:13px; color:var(--night-muted); line-height:1.4}
 .lic-box{margin-top:14px; max-width:680px; background:rgba(255,255,255,.045); border:1px solid var(--night-line); border-radius:4px; padding:4px 20px}
 .lic{list-style:none; margin:0; padding:0}
 .lic li{display:flex; align-items:center; gap:14px; padding:13px 0; border-top:1px solid var(--night-line)}
 .lic li:first-child{border-top:0}
-.lk{flex:none; min-width:5.2em; text-align:center; font-size:11.5px; font-weight:600; letter-spacing:.04em; color:var(--c); border:1px solid var(--c); border-radius:999px; padding:1px 8px; line-height:1.6}
+.lk{flex:none; min-width:5em; font-size:12.5px; letter-spacing:.04em; color:var(--night-muted); line-height:1.6}
 .ln{font-weight:500; min-width:0}
 .ay{flex:none; min-width:4ch; font-family:var(--f-mono); font-size:13px; color:var(--night-muted)}
 .ap{flex:none; margin-left:auto; font-weight:700; color:#E58A5E}
@@ -424,7 +424,7 @@ button{font:inherit}
   .c-row{grid-template-columns:minmax(0,1fr) auto}
   .c-row dt{grid-column:1 / -1}
   .cards{grid-template-columns:repeat(2, minmax(0,1fr)); gap:8px}
-  .card{grid-template-columns:28px minmax(0,1fr); column-gap:10px; padding:10px 10px}
+  .card{padding:9px 2px}
   .card .ic{width:28px; height:28px}
   .card .ic svg{width:24px; height:24px}
   .card .nm{font-size:14px}
@@ -446,10 +446,10 @@ button{font:inherit}
       <span class="logo-t"><span class="who">HIROTO TAKEUCHI</span><span class="mark">Portfolio</span></span>
     </a>
     <nav class="nav" aria-label="ページの中身">
-      <a href="#top" data-go="top"><span class="en">Home</span><span class="ja">ホーム</span></a>
-      <a href="#profile" data-go="profile"><span class="en">Profile</span><span class="ja">プロフィール</span></a>
-      <a href="#works" data-go="works"><span class="en">Works</span><span class="ja">作品</span></a>
-      <a href="#contact" data-go="contact"><span class="en">Contact</span><span class="ja">連絡先</span></a>
+      <a href="#top" data-go="top"><span class="ja">ホーム</span></a>
+      <a href="#profile" data-go="profile"><span class="ja">プロフィール</span></a>
+      <a href="#works" data-go="works"><span class="ja">作品</span></a>
+      <a href="#contact" data-go="contact"><span class="ja">連絡先</span></a>
     </nav>
     <button type="button" class="sfx" aria-pressed="false" aria-label="操作の音"><svg class="sfx-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor"/><path class="sfx-w" d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path class="sfx-x" d="M16 9.5l5 5M21 9.5l-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span class="sfx-l">SOUND OFF</span></button>
   </div>
@@ -461,10 +461,10 @@ button{font:inherit}
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"/></svg>
   </button>
   <ul>
-    <li><a href="#top" data-go="top">ホーム<span class="en">Home</span></a></li>
-    <li><a href="#profile" data-go="profile">プロフィール<span class="en">Profile</span></a></li>
-    <li><a href="#works" data-go="works">作品<span class="en">Works</span></a></li>
-    <li><a href="#contact" data-go="contact">連絡先<span class="en">Contact</span></a></li>
+    <li><a href="#top" data-go="top">ホーム</a></li>
+    <li><a href="#profile" data-go="profile">プロフィール</a></li>
+    <li><a href="#works" data-go="works">作品</a></li>
+    <li><a href="#contact" data-go="contact">連絡先</a></li>
   </ul>
 </aside>
 
@@ -474,7 +474,6 @@ button{font:inherit}
     <div class="bg"></div>
     <div class="wrap top-grid">
       <div class="hero">
-        <p class="kicker">Sound Programmer Portfolio</p>
         <h1><span class="ln">ゲームに沿った</span><span class="ln">アプローチを</span><span class="ln">考える。</span></h1>
         <div class="hero-name">
           <p class="nm"><span class="jp">竹内 寛登</span><span class="en">Hiroto Takeuchi</span></p>
@@ -514,27 +513,9 @@ button{font:inherit}
 
   <!-- 02 プロフィール -->
   <section class="panel dark p-profile" id="profile" aria-labelledby="h-profile">
-    <div class="bg">
-      <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-        <g stroke="#7DB8D1" stroke-opacity=".09" stroke-width="1" fill="none">
-          <path d="M80 120H1560M80 332H1560M80 544H1560M80 756H1560"/>
-        </g>
-        <g fill="#7DB8D1" fill-opacity=".22" font-family="IBM Plex Mono, Consolas, monospace" font-size="15">
-          <text x="1500" y="112">0 dB</text><text x="1490" y="324">−20</text><text x="1490" y="536">−40</text><text x="1490" y="748">−60</text>
-        </g>
-        <g stroke="#7DB8D1" stroke-width="1.5" fill="none" stroke-linecap="round">
-          <path d="M80 120L329 756" stroke-opacity=".20"/>
-          <path d="M80 120L689 756" stroke-opacity=".15"/>
-          <path d="M80 120L1298 756" stroke-opacity=".11"/>
-        </g>
-        <g fill="#7DB8D1" fill-opacity=".26" font-family="IBM Plex Mono, Consolas, monospace" font-size="14">
-          <text x="300" y="790">RT60 0.45 s</text><text x="660" y="790">RT60 1.10 s</text><text x="1268" y="790">RT60 2.20 s</text>
-        </g>
-      </svg>
-    </div>
+    <div class="bg"></div>
     <div class="wrap">
       <div class="head">
-        <p class="eyebrow"><span class="no">01</span>Profile</p>
         <h2 id="h-profile">プロフィール</h2>
       </div>
       <div class="who-block">
@@ -574,7 +555,7 @@ button{font:inherit}
         </div>
         <div class="pf-about">
           <div class="block">
-            <h3 class="bh">What I Want to Create<span class="bh-sub">どんなものが作りたい？</span></h3>
+            <h3 class="bh">どんなものが作りたい？</h3>
             <div class="pr-box about-box">
               <p class="pr-catch">ゲームの体験を支える、<wbr>音の環境</p>
               <p>ゲームで作りたい体験をサポートする、音の環境を作りたいと考えています。体験を向上させる音の鳴らし方の決まりや調整、デザイナーさんの作品をどうすればよりよく見せられるか。音の観点から、ゲーム全体のクオリティをサポートできるものを作っていきたいと考えています。</p>
@@ -588,31 +569,31 @@ button{font:inherit}
             <div class="sk-group">
               <p class="sg">ゲームエンジン</p>
               <ul class="cards">
-                <li class="card" style="--c:#D5DCE1"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12.9288 4.2939 3.7997 2.1929c.1366.077.1415.2905 0 .3675l-4.515 2.6076a.4192.4192 0 0 1-.4246 0L7.274 6.8543c-.139-.0745-.1415-.293 0-.3675l3.7972-2.193V0L1.3758 5.5977V16.793l3.7177-2.1456v-4.3858c-.0025-.1565.1813-.2682.318-.1838l4.5148 2.6076a.4252.4252 0 0 1 .2136.3676v5.2127c.0025.1565-.1813.2682-.3179.1838l-3.7996-2.1929-3.7178 2.1457L12 24l9.6954-5.5977-3.7178-2.1457-3.7996 2.1929c-.1341.082-.3229-.0248-.3179-.1838V13.053c0-.1565.087-.2956.2136-.3676l4.5149-2.6076c.134-.082.3228.0224.3179.1838v4.3858l3.7177 2.1456V5.5977L12.9288 0Z"/></svg></span><span class="nm">Unity</span><span class="yr">3年</span></li>
-                <li class="card" style="--c:#D5DCE1"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0a12 12 0 1012 12A12 12 0 0012 0zm0 23.52A11.52 11.52 0 1123.52 12 11.52 11.52 0 0112 23.52zm7.13-9.791c-.206.997-1.126 3.557-4.06 4.942l-1.179-1.325-1.988 2a7.338 7.338 0 01-5.804-2.978 2.859 2.859 0 00.65.123c.326.006.678-.114.678-.66v-5.394a.89.89 0 00-1.116-.89c-.92.212-1.656 2.509-1.656 2.509a7.304 7.304 0 012.528-5.597 7.408 7.408 0 013.73-1.721c-1.006.573-1.57 1.507-1.57 2.29 0 1.262.76 1.109.984.923v7.28a1.157 1.157 0 00.148.256 1.075 1.075 0 00.88.445c.76 0 1.747-.868 1.747-.868V9.172c0-.6-.452-1.324-.905-1.572 0 0 .838-.149 1.484.346a5.537 5.537 0 01.387-.425c1.508-1.48 2.929-1.902 4.112-2.112 0 0-2.151 1.69-2.151 3.96 0 1.687.043 5.801.043 5.801.799.771 1.986-.342 3.059-1.441Z"/></svg></span><span class="nm">Unreal Engine</span><span class="yr">2年</span></li>
-                <li class="card" style="--c:#A595E0"><span class="ic txt" aria-hidden="true">DX</span><span class="nm">DXライブラリ</span><span class="yr">2年</span></li>
-                <li class="card" style="--c:#6FA3C2"><span class="ic txt" aria-hidden="true">GL</span><span class="nm">OpenGL</span><span class="yr">1年</span></li>
+                <li class="card" style="--c:#D5DCE1"><span class="nm">Unity</span><span class="yr">3年</span></li>
+                <li class="card" style="--c:#D5DCE1"><span class="nm">Unreal Engine</span><span class="yr">2年</span></li>
+                <li class="card" style="--c:#A595E0"><span class="nm">DXライブラリ</span><span class="yr">2年</span></li>
+                <li class="card" style="--c:#6FA3C2"><span class="nm">OpenGL</span><span class="yr">1年</span></li>
               </ul>
             </div>
             <div class="sk-group">
               <p class="sg">言語</p>
               <ul class="cards">
-                <li class="card" style="--c:#5FA8E3"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22.394 6c-.167-.29-.398-.543-.652-.69L12.926.22c-.509-.294-1.34-.294-1.848 0L2.26 5.31c-.508.293-.923 1.013-.923 1.6v10.18c0 .294.104.62.271.91.167.29.398.543.652.69l8.816 5.09c.508.293 1.34.293 1.848 0l8.816-5.09c.254-.147.485-.4.652-.69.167-.29.27-.616.27-.91V6.91c.003-.294-.1-.62-.268-.91zM12 19.11c-3.92 0-7.109-3.19-7.109-7.11 0-3.92 3.19-7.11 7.11-7.11a7.133 7.133 0 016.156 3.553l-3.076 1.78a3.567 3.567 0 00-3.08-1.78A3.56 3.56 0 008.444 12 3.56 3.56 0 0012 15.555a3.57 3.57 0 003.08-1.778l3.078 1.78A7.135 7.135 0 0112 19.11zm7.11-6.715h-.79v.79h-.79v-.79h-.79v-.79h.79v-.79h.79v.79h.79zm2.962 0h-.79v.79h-.79v-.79h-.79v-.79h.79v-.79h.79v.79h.79z"/></svg></span><span class="nm">C++</span><span class="yr">3年</span></li>
-                <li class="card" style="--c:#C882C3"><span class="ic txt" aria-hidden="true">C#</span><span class="nm">C#</span><span class="yr">3年</span></li>
+                <li class="card" style="--c:#5FA8E3"><span class="nm">C++</span><span class="yr">3年</span></li>
+                <li class="card" style="--c:#C882C3"><span class="nm">C#</span><span class="yr">3年</span></li>
               </ul>
             </div>
             <div class="sk-group">
               <p class="sg">サウンド</p>
               <ul class="cards">
-                <li class="card" style="--c:#4FA8F0"><span class="ic txt" aria-hidden="true">Ww</span><span class="nm">Wwise</span><span class="yr">2年</span></li>
+                <li class="card" style="--c:#4FA8F0"><span class="nm">Wwise</span><span class="yr">2年</span></li>
               </ul>
             </div>
             <div class="sk-group">
               <p class="sg">開発環境</p>
               <ul class="cards">
-                <li class="card noyr" style="--c:#A884DD"><span class="ic txt" aria-hidden="true">VS</span><span class="nm">Visual Studio</span></li>
-                <li class="card noyr" style="--c:#F05032"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.09 23.549a1.54 1.54 0 0 1-2.18 0L.451 13.089a1.54 1.54 0 0 1 0-2.179l7.191-7.19 2.733 2.733a1.85 1.85 0 0 0 .964 2.326v6.66a1.849 1.849 0 1 0 1.54 0V8.957l2.508 2.508a1.85 1.85 0 1 0 1.09-1.09l-2.634-2.634a1.85 1.85 0 0 0-2.378-2.377L8.73 2.63 10.91.451a1.54 1.54 0 0 1 2.179 0l10.459 10.46a1.54 1.54 0 0 1 0 2.179z"/></svg></span><span class="nm">Git</span></li>
-                <li class="card noyr" style="--c:#D5DCE1"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></span><span class="nm">GitHub</span></li>
+                <li class="card noyr" style="--c:#A884DD"><span class="nm">Visual Studio</span></li>
+                <li class="card noyr" style="--c:#F05032"><span class="nm">Git</span></li>
+                <li class="card noyr" style="--c:#D5DCE1"><span class="nm">GitHub</span></li>
               </ul>
             </div>
             </div>
@@ -652,24 +633,7 @@ button{font:inherit}
   <!-- 02 の続き：プログラマーとして意識していること（暗い背景）。中身が入るまで hidden で隠している（2026-11-18 本人「一旦なくしておこう」） -->
   <!-- DEV-ONLY: 意識していること（中身が準備中なので確認用だけ。公開用のソースにも出さない） -->
   <section class="panel dark p-pr" id="pr" data-nav="profile" aria-label="プログラマーとして意識していること" hidden>
-    <div class="bg">
-      <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-        <g stroke="#7DB8D1" stroke-opacity=".09" stroke-width="1" fill="none">
-          <path d="M80 120H1560M80 332H1560M80 544H1560M80 756H1560"/>
-        </g>
-        <g fill="#7DB8D1" fill-opacity=".22" font-family="IBM Plex Mono, Consolas, monospace" font-size="15">
-          <text x="1500" y="112">0 dB</text><text x="1490" y="324">−20</text><text x="1490" y="536">−40</text><text x="1490" y="748">−60</text>
-        </g>
-        <g stroke="#7DB8D1" stroke-width="1.5" fill="none" stroke-linecap="round">
-          <path d="M80 120L329 756" stroke-opacity=".20"/>
-          <path d="M80 120L689 756" stroke-opacity=".15"/>
-          <path d="M80 120L1298 756" stroke-opacity=".11"/>
-        </g>
-        <g fill="#7DB8D1" fill-opacity=".26" font-family="IBM Plex Mono, Consolas, monospace" font-size="14">
-          <text x="300" y="790">RT60 0.45 s</text><text x="660" y="790">RT60 1.10 s</text><text x="1268" y="790">RT60 2.20 s</text>
-        </g>
-      </svg>
-    </div>
+    <div class="bg"></div>
     <div class="wrap">
       <div class="pr">
         <div class="block" id="pr-mind">
@@ -689,7 +653,6 @@ button{font:inherit}
     <div class="bg"></div>
     <div class="wrap">
       <div class="fav-head">
-        <p class="eyebrow"><span class="no">01</span>Favorite Games</p>
         <h2 id="h-fav">好きなゲーム体験</h2>
       </div>
       <div class="fav-grid">
@@ -860,7 +823,6 @@ button{font:inherit}
     <div class="wrap">
       <div class="wl-head">
         <div class="head">
-          <p class="eyebrow"><span class="no">02</span>Works</p>
           <h2 id="h-works">作品</h2>
         </div>
       </div>
@@ -963,7 +925,6 @@ button{font:inherit}
     <div class="bg"></div>
     <div class="wrap">
       <div class="head">
-        <p class="eyebrow"><span class="no">03</span>Contact</p>
         <h2 id="h-contact">連絡先</h2>
       </div>
       <dl class="contact">
