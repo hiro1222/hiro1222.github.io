@@ -11,7 +11,10 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEV = os.path.join(ROOT, 'dev')
-ASSETS = ['img', 'audio', 'video', 'docs']
+ASSETS = ['img', 'audio', 'video', 'docs', 'assets']
+# HTML のページが入ったフォルダ（作品ごとのページ）。index.html と同じく確認用だけの部分を消して写す。
+# <meta name="pf-dev-only"> のあるページ（確認用だけの作品）は写さない
+PAGES = ['works']
 TITLE_DEV = '【確認用】'
 # 確認用だけに足す帯（2026-11-20 本人「確認用の下のタブ消して」で無しに。確認用だと分かるのはタイトルの【確認用】だけ）
 DEV_BLOCK = ''
@@ -55,6 +58,45 @@ def mirror(src, dst):
 DEV_ONLY = re.compile(r'[ \t]*(?:<!--|/\*) DEV-ONLY.*?(?:<!--|/\*) /DEV-ONLY (?:-->|\*/)[ \t]*\r?\n?', re.S)
 
 
+def strip_dev(s, name):
+    # 印の入れ子は消し方がずれるので止める（始まりと終わりが交互になっているか）
+    seq = ['E' if m.group(1) else 'S' for m in re.finditer(r'(?:<!--|/\*) (/)?DEV-ONLY', s)]
+    bad = [i for i in range(len(seq) - 1) if seq[i] == seq[i + 1]]
+    assert not bad and (not seq or (seq[0] == 'S' and seq[-1] == 'E')), '%s: 確認用だけの印が入れ子か、閉じていない所がある（%d 番目あたり）' % (name, bad[0] + 1 if bad else 0)
+    n = len(DEV_ONLY.findall(s))
+    s = DEV_ONLY.sub('', s)
+    assert 'DEV-ONLY' not in s and 'devbar' not in s
+    return s.replace('<title>' + TITLE_DEV, '<title>'), n
+
+
+def publish_pages(d):
+    # dev/<d>/ の HTML は確認用の部分を消して、ほかのファイルはそのまま公開用へ。dev に無い・確認用だけのページは公開用から消す
+    src, dst = os.path.join(DEV, d), os.path.join(ROOT, d)
+    os.makedirs(dst, exist_ok=True)
+    keep, made, skipped = set(), 0, 0
+    for f in sorted(os.listdir(src)):
+        a = os.path.join(src, f)
+        if not os.path.isfile(a):
+            continue
+        if f.endswith('.html'):
+            s = read(a)
+            if 'name="pf-dev-only"' in s:
+                skipped += 1
+                continue
+            s, _ = strip_dev(s, d + '/' + f)
+            write(os.path.join(dst, f), s)
+        else:
+            shutil.copy2(a, os.path.join(dst, f))
+        keep.add(f)
+        made += 1
+    removed = 0
+    for f in os.listdir(dst):
+        if f not in keep and os.path.isfile(os.path.join(dst, f)):
+            os.remove(os.path.join(dst, f))
+            removed += 1
+    print('%s/: 写した %d・確認用だけで写さない %d・消した %d' % (d, made, skipped, removed))
+
+
 def publish():
     s = read(os.path.join(DEV, 'index.html'))
     # 印の入れ子は消し方がずれるので止める（始まりと終わりが交互になっているか）
@@ -70,6 +112,9 @@ def publish():
     for a in ASSETS:
         if os.path.isdir(os.path.join(DEV, a)):
             print('%s/: 足した %d・変えた %d・消した %d' % ((a,) + mirror(os.path.join(DEV, a), os.path.join(ROOT, a))))
+    for d in PAGES:
+        if os.path.isdir(os.path.join(DEV, d)):
+            publish_pages(d)
 
 
 def reset_dev():

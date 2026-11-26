@@ -1,0 +1,223 @@
+[
+  {
+    "slug": "idreal",
+    "title": "IdReal",
+    "color": "#7DB8D1",
+    "wip": true,
+    "year": "3年次 個人制作",
+    "devOnly": false,
+    "image": {
+      "src": "img/works/idreal.jpg",
+      "w": 1400,
+      "h": 788,
+      "alt": "IdReal のデバッグ表示（床に並んだプローブの点と、右上の耳から出る 16 本のレイで壁までの距離を測っている地図）"
+    },
+    "genre": "—（音響エンジン）",
+    "scale": "個人制作",
+    "role": "すべて",
+    "period": "2026年7月〜制作中",
+    "env": "C++／Unreal Engine 5.6／Wwise 2025.1",
+    "kodawari": "音でのプレイヤーのフィードバックを向上させる為に遮蔽や空間、での表現などの実装を１から行い作るゲームに沿ったサウンド表現を目指して作成",
+    "summary": "自作の音響エンジンと、それを扱うゲーム側の仕組み。空間の広さや壁などの近さが、見えていなくても伝わる体験を目指して制作。",
+    "points": [
+      {
+        "h": null,
+        "p": null
+      },
+      {
+        "h": null,
+        "p": null
+      }
+    ],
+    "pdf": "docs/idreal.pdf",
+    "video": "video/idreal.mp4"
+  },
+  {
+    "slug": "horror",
+    "title": "探索型ホラーゲーム",
+    "color": "#E58A5E",
+    "wip": true,
+    "year": "3年次 個人制作",
+    "devOnly": false,
+    "image": {
+      "src": "img/works/horror.jpg",
+      "w": 1400,
+      "h": 788,
+      "alt": "探索型ホラーゲームの画面（懐中電灯で照らした暗い部屋、隅に人形、奥に扉）"
+    },
+    "genre": "探索型ホラー",
+    "scale": "個人制作",
+    "role": "すべて",
+    "period": "2026年9月〜制作中",
+    "env": "Unreal Engine 5.6／Wwise 2025.1",
+    "kodawari": "自作のサウンドシステムを用いてジャンプスケアではなく音で少しでも空気感を味わえるようにEnemyの動作やUnreal環境でのライティングの見せ方を調整、また動線と作品意図がわかりやすいような見せ方に挑戦",
+    "summary": "自作の音響エンジン IdReal を使った探索型ホラー。暗い視界の中、足音や周りの音の聞こえ方を頼りに、どんな空間にいるのかを感じ取りながらキーアイテムを集めていく。",
+    "points": [
+      {
+        "h": null,
+        "p": null
+      },
+      {
+        "h": null,
+        "p": null
+      }
+    ],
+    "pdf": null,
+    "video": "video/horror.mp4"
+  },
+  {
+    "slug": "osumitsuki",
+    "title": "御墨付",
+    "color": "#A595E0",
+    "wip": false,
+    "year": "3年次 チーム制作",
+    "devOnly": false,
+    "image": {
+      "src": "img/works/osumitsuki.jpg",
+      "w": 1400,
+      "h": 788,
+      "alt": "御墨付のタイトル画面"
+    },
+    "genre": "3Dアクションゲーム",
+    "scale": "チーム制作・11人",
+    "role": "サブリーダー、プレイヤー制御、サウンド設計・実装",
+    "period": "4か月",
+    "env": "Unity 6",
+    "kodawari": "プレイヤー制御ということでフィールドやエネミー等他の担当箇所からでも参照しやすいデータ構造と設計<br>またチームでの話し合いやサウンドデザイナーさんへの仕様書制作時にリファレンスやメモを通じた全体での方向性の共有",
+    "summary": "世界に色を付け、その上を歩いていく3Dアクションゲーム。",
+    "points": [
+      {
+        "h": null,
+        "p": null
+      },
+      {
+        "h": null,
+        "p": null
+      }
+    ],
+    "pdf": null,
+    "video": "video/osumitsuki.mp4"
+  },
+  {
+    "slug": "ribbond",
+    "title": "RibBond",
+    "color": "#8FC7A0",
+    "wip": false,
+    "year": "2年次 チーム制作",
+    "devOnly": false,
+    "image": {
+      "src": "img/works/ribbond.jpg",
+      "w": 1400,
+      "h": 788,
+      "alt": "RibBond のタイトル画面"
+    },
+    "genre": "2D横スクロールワイヤーアクション",
+    "scale": "チーム制作・10人",
+    "role": "リードプログラマー、リーダー、全体設計、ロード制御、サウンド制御、ステージ管理",
+    "period": "4か月",
+    "env": "DirectX 11",
+    "kodawari": "全体フレームワークの作成でみんなが触りやすい、あとから機能の修正、追加のしやすい設計を勉強、実装。<br>デザイナーさんの成果物を高画質のまま取り込むために分割ロードなどの制御に挑戦",
+    "summary": "裁縫の世界で、針にリボンを引っかけたり、敵をリボンで飾ったりして先へ進んでいくワイヤーアクションゲーム。",
+    "points": [
+      {
+        "h": null,
+        "p": null
+      },
+      {
+        "h": null,
+        "p": null
+      }
+    ],
+    "pdf": null,
+    "video": "video/ribbond.mp4"
+  },
+  {
+    "slug": "soundmarker",
+    "title": "SoundMarker",
+    "color": "#E3C26B",
+    "wip": false,
+    "year": "3年次 個人制作",
+    "devOnly": false,
+    "image": {
+      "src": "img/works/soundmarker.jpg",
+      "w": 1400,
+      "h": 789,
+      "alt": "SoundMarker の画面（アニメーションのタイムラインに音を置く）"
+    },
+    "genre": "—（アニメーション・サウンド検証ツール）",
+    "scale": "個人制作",
+    "role": "すべて",
+    "period": "2週間",
+    "env": "DirectX 11／C++17",
+    "kodawari": null,
+    "summary": "サウンドデザイナーさんとのチーム制作で経験した、実装して検証するまでの時間や、実装後の手戻りを減らすために、サウンドデザイナーさんと話し合って制作した検証ツール。",
+    "points": [
+      {
+        "h": null,
+        "p": null
+      },
+      {
+        "h": null,
+        "p": null
+      }
+    ],
+    "pdf": null,
+    "video": "video/soundmarker.mp4"
+  },
+  {
+    "slug": "friend-a",
+    "title": "友人作品A",
+    "color": "#E08AA8",
+    "wip": true,
+    "year": "3年次 個人制作",
+    "devOnly": true,
+    "image": null,
+    "genre": null,
+    "scale": "—",
+    "role": "サウンド面で協力、<span class=\"todo\">詳しくは準備中</span>",
+    "period": "1か月",
+    "env": "DirectX 11／C++17",
+    "kodawari": null,
+    "summary": null,
+    "points": [
+      {
+        "h": null,
+        "p": null
+      },
+      {
+        "h": null,
+        "p": null
+      }
+    ],
+    "pdf": null,
+    "video": "video/friend-a.mp4"
+  },
+  {
+    "slug": "friend-b",
+    "title": "友人作品B",
+    "color": "#6CC4C0",
+    "wip": true,
+    "year": "3年次 個人制作",
+    "devOnly": true,
+    "image": null,
+    "genre": null,
+    "scale": "—",
+    "role": "サウンド面で協力、<span class=\"todo\">詳しくは準備中</span>",
+    "period": "1か月",
+    "env": "DirectX 12／C++17",
+    "kodawari": null,
+    "summary": null,
+    "points": [
+      {
+        "h": null,
+        "p": null
+      },
+      {
+        "h": null,
+        "p": null
+      }
+    ],
+    "pdf": null,
+    "video": "video/friend-b.mp4"
+  }
+]

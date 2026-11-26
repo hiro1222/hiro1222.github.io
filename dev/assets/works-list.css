@@ -1,0 +1,93 @@
+/* トップの作品一覧：トラックリスト × ゲームの選択画面。
+   1 作品 1 トラック。なぞると左にカーソル（▶）、ジャケットの後ろから盤がすべり出て回り、右のイコライザーが動く。
+   音を ON にしていると、行ごとに違う音が鳴る（上から順になぞるとメロディ）。押すと作品ごとのページへ */
+@view-transition{navigation:auto}
+::view-transition-old(root), ::view-transition-new(root){animation-duration:.26s}
+::view-transition-group(*){animation-duration:.42s; animation-timing-function:cubic-bezier(.22,1,.36,1)}
+@media (prefers-reduced-motion:reduce){ @view-transition{navigation:none} }
+
+/* 操作の音のスイッチ（上のバーと、一覧の見出しの横） */
+.sfx{display:inline-flex; align-items:center; gap:6px; height:32px; padding:0 12px 0 9px; border:1.5px solid currentColor; border-radius:999px; background:none; color:#5C6770; cursor:pointer; font-family:var(--f-mono); font-size:11.5px; letter-spacing:.1em; white-space:nowrap; transition:color .2s, background .2s}
+.sfx-ic{width:18px; height:18px; flex:none}
+.sfx .sfx-w{display:none}
+.sfx[aria-pressed="true"]{color:var(--bar-line); background:rgba(42,134,181,.08)}
+.sfx[aria-pressed="true"] .sfx-w{display:inline}
+.sfx[aria-pressed="true"] .sfx-x{display:none}
+.bar .sfx{flex:none; margin-left:20px}
+@media (max-width:860px){ .bar .sfx{margin-left:auto; padding:0 8px; gap:0} .bar .sfx .sfx-l{display:none} }
+
+.p-works{background:var(--night); display:block}
+.p-works > .wrap{position:relative}
+.wl-head{display:grid; grid-template-columns:minmax(0, 1fr) auto; align-items:end; gap:8px 28px}
+.wl-head .head{grid-row:1 / 3}
+.wl-lead, .wl-sfx{justify-self:end}
+.wl-lead{font-size:13.5px; color:var(--night-muted); letter-spacing:.04em}
+.wl-lead-en{font-family:var(--f-mono); font-size:12px; letter-spacing:.2em; color:var(--accent-hi); margin-right:12px}
+.wl-sfx{display:flex; align-items:center; gap:10px; font-size:12px; color:var(--night-muted)}
+.wl-sfx .sfx{color:var(--night-muted)}
+.wl-sfx .sfx[aria-pressed="true"]{color:var(--accent-hi); background:rgba(125,184,209,.08)}
+.wl{list-style:none; margin:30px 0 0; padding:0; border-top:1px solid var(--night-line)}
+.wl-i{border-bottom:1px solid var(--night-line)}
+.wl-a{position:relative; isolation:isolate; display:grid; grid-template-columns:64px minmax(220px, 300px) minmax(0, 1fr) 92px; align-items:center; gap:28px; padding:22px 14px 22px 8px; text-decoration:none; color:inherit; outline-offset:-2px}
+/* なぞった行の帯（左から作品の色が差す） */
+.wl-a::before{content:""; position:absolute; inset:0; z-index:-1; background:linear-gradient(90deg, color-mix(in srgb, var(--wa) 16%, transparent), transparent 75%); opacity:0; transform:scaleX(.6); transform-origin:left; transition:opacity .25s, transform .35s cubic-bezier(.22,1,.36,1)}
+.wl-no{position:relative; font-family:var(--f-mono); font-size:26px; letter-spacing:.04em; color:var(--night-muted); padding-left:22px; transition:color .2s}
+/* ゲームのカーソル（▶）。選んでいる行で点滅 */
+.wl-cur{position:absolute; left:0; top:50%; width:0; height:0; border-style:solid; border-width:7px 0 7px 11px; border-color:transparent transparent transparent var(--wa); transform:translate(-6px, -50%); opacity:0; transition:opacity .15s, transform .2s}
+.wl-jk{position:relative; display:block; aspect-ratio:16 / 9; isolation:isolate}
+.wl-jk img, .wl-noimg{position:relative; z-index:1; width:100%; height:100%; object-fit:cover; border-radius:6px; box-shadow:0 12px 28px rgba(0,0,0,.45); border:1px solid rgba(255,255,255,.08); transition:transform .3s cubic-bezier(.22,1,.36,1), filter .3s; filter:saturate(.85) brightness(.88)}
+.wl-noimg{display:grid; place-items:center; text-align:center; font-family:var(--f-mono); font-size:11.5px; letter-spacing:.14em; line-height:1.6; color:var(--night-muted); background:repeating-linear-gradient(135deg, #111A22 0 12px, #0E161D 12px 24px)}
+/* ジャケットの後ろの盤：なぞるとすべり出て回る */
+.wl-disc{position:absolute; z-index:0; top:6%; right:4%; height:88%; aspect-ratio:1 / 1; border-radius:50%;
+  background:radial-gradient(circle closest-side, var(--wa) 0 17%, #0B0E11 18% 19%, #15191C 20% 100%); box-shadow:0 10px 24px rgba(0,0,0,.4);
+  opacity:0; transition:transform .5s cubic-bezier(.22,1,.36,1), opacity .2s}
+.wl-disc::after{content:""; position:absolute; inset:0; border-radius:50%; background:repeating-radial-gradient(circle closest-side, transparent 0 1.6px, rgba(255,255,255,.06) 1.6px 2.6px); animation:wl-spin 6s linear infinite; animation-play-state:paused}
+.wl-body{display:flex; flex-direction:column; gap:6px; min-width:0}
+.wl-tags{display:flex; flex-wrap:wrap; gap:6px}
+.wl-tags > span{padding:1px 9px; border:1px solid var(--night-line); border-radius:999px; font-size:11.5px; letter-spacing:.06em; color:var(--night-muted); white-space:nowrap}
+.wl-tags > .wl-wip{border-color:var(--wa); color:var(--wa)}
+.wl-t{font-family:var(--f-display); font-weight:800; font-size:clamp(22px, 2.2vw, 28px); line-height:1.3; letter-spacing:.04em; color:var(--night-ink)}
+.wl-k{font-size:13.5px; line-height:1.75; color:var(--night-muted); display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; overflow:hidden}
+.wl-k br{display:none}
+.wl-side{display:flex; flex-direction:column; align-items:flex-end; gap:10px}
+.wl-eq{display:flex; align-items:flex-end; gap:3px; height:22px}
+.wl-eq i{width:4px; height:100%; background:var(--night-line); border-radius:1px; transform-origin:bottom; transform:scaleY(.25); transition:background .2s}
+.wl-eq i:nth-child(2){transform:scaleY(.45)} .wl-eq i:nth-child(3){transform:scaleY(.3)} .wl-eq i:nth-child(4){transform:scaleY(.55)} .wl-eq i:nth-child(5){transform:scaleY(.2)}
+.wl-go{font-family:var(--f-mono); font-size:12px; letter-spacing:.2em; color:var(--night-muted); transition:color .2s, letter-spacing .25s}
+.wl-go::after{content:" ▶"; font-size:.85em}
+/* なぞった行・Tab で選んだ行 */
+.wl-a:hover::before, .wl-a:focus-visible::before{opacity:1; transform:none}
+.wl-a:hover .wl-no, .wl-a:focus-visible .wl-no{color:var(--wa)}
+.wl-a:hover .wl-cur, .wl-a:focus-visible .wl-cur{opacity:1; transform:translate(0, -50%); animation:wl-blink .9s steps(2, jump-none) infinite}
+.wl-a:hover .wl-jk img, .wl-a:focus-visible .wl-jk img, .wl-a:hover .wl-noimg{transform:translateY(-3px); filter:none}
+.wl-a:hover .wl-disc, .wl-a:focus-visible .wl-disc{transform:translateX(22%); opacity:1}
+.wl-a:hover .wl-disc::after, .wl-a:focus-visible .wl-disc::after{animation-play-state:running}
+.wl-a:hover .wl-eq i, .wl-a:focus-visible .wl-eq i{background:var(--wa); animation:wl-eq .8s ease-in-out infinite alternate}
+.wl-a:hover .wl-eq i:nth-child(2), .wl-a:focus-visible .wl-eq i:nth-child(2){animation-duration:.55s; animation-delay:-.2s}
+.wl-a:hover .wl-eq i:nth-child(3), .wl-a:focus-visible .wl-eq i:nth-child(3){animation-duration:.7s; animation-delay:-.4s}
+.wl-a:hover .wl-eq i:nth-child(4), .wl-a:focus-visible .wl-eq i:nth-child(4){animation-duration:.5s; animation-delay:-.1s}
+.wl-a:hover .wl-eq i:nth-child(5), .wl-a:focus-visible .wl-eq i:nth-child(5){animation-duration:.65s; animation-delay:-.3s}
+.wl-a:hover .wl-go, .wl-a:focus-visible .wl-go{color:var(--wa); letter-spacing:.26em}
+/* 押した瞬間（決定）：行が白く光る */
+.wl-a.is-go::before{opacity:1; transform:none; background:linear-gradient(90deg, color-mix(in srgb, var(--wa) 40%, transparent), transparent 85%)}
+@keyframes wl-spin{to{transform:rotate(360deg)}}
+@keyframes wl-blink{50%{opacity:0}}
+@keyframes wl-eq{from{transform:scaleY(.15)} to{transform:scaleY(1)}}
+@media (max-width:1023px){
+  .wl-a{grid-template-columns:44px minmax(160px, 240px) minmax(0, 1fr); gap:18px}
+  .wl-side{display:none}
+  .wl-no{font-size:20px; padding-left:16px}
+}
+@media (max-width:640px){
+  .wl-a{grid-template-columns:minmax(0, 1fr); gap:12px; padding:18px 0 20px}
+  .wl-no{position:absolute; z-index:3; left:10px; top:28px; padding:2px 8px; border-radius:3px; background:rgba(8,12,16,.75); font-size:13px; color:var(--wa)}
+  .wl-cur{display:none}
+  .wl-disc{display:none}
+  .wl-head{grid-template-columns:minmax(0, 1fr)}
+  .wl-head .head{grid-row:auto}
+  .wl-lead, .wl-sfx{justify-self:start}
+  .wl-sfx-t{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  .wl-a *, .wl-a::before{animation:none!important; transition:none!important}
+}

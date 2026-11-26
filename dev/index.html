@@ -10,6 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+JP:wght@400;500;600&family=Shippori+Mincho+B1:wght@600;800&display=swap">
+<link rel="stylesheet" href="assets/works-list.css?v=4">
 <style>
 /* 上に固定のバー。下は全画面の節が 6 枚、節ごとに背景が 1 つ。スクロールは節の頭に吸い付く。
    スマホ（860px 以下）はバーの代わりに左上のボタン → 左から出るサイドバー。
@@ -336,112 +337,6 @@ button{font:inherit}
   .pr-card h4{font-size:22px}
 }
 
-/* 03 作品：1 作品 = 全画面 1 枚。左に大きな画像、右に題・表。色は作品ごとの --wa */
-.p-work{background:var(--black)}
-.p-work .bg{background:
-  radial-gradient(ellipse 60% 60% at 28% 50%, color-mix(in srgb, var(--wa) 15%, transparent), transparent 70%),
-  radial-gradient(ellipse 45% 45% at 88% 15%, color-mix(in srgb, var(--wa) 8%, transparent), transparent 70%),
-  var(--black)}
-/* 画像があれば背景はその画像をぼかして暗くした物（.w-shot に img を入れると、下の JS が --shot に写して has-shot を付ける） */
-.p-work .bg::before, .p-work .bg::after{content:""; position:absolute; inset:0; opacity:0; transition:opacity .4s}
-.p-work .bg::before{inset:-60px; background:var(--shot, none) center / cover no-repeat; filter:blur(24px) saturate(1.25) brightness(.72); transform:scale(1.06)}
-.p-work .bg::after{background:linear-gradient(90deg, rgba(8,10,13,.15) 0%, rgba(8,10,13,.52) 55%, rgba(8,10,13,.68) 100%)}
-.p-work.has-shot .bg::before, .p-work.has-shot .bg::after{opacity:1}
-@media (max-width:1023px){ .p-work .bg::after{background:rgba(8,10,13,.66)} }
-.w-grid{display:grid; grid-template-columns:minmax(0,1fr); grid-template-areas:"head" "shot" "detail"; gap:22px}
-.w-head{grid-area:head}
-.w-shot{grid-area:shot}
-.w-detail{grid-area:detail}
-.w-head .eyebrow{color:var(--wa)}
-.w-idx{font-family:var(--f-mono); letter-spacing:.08em; color:var(--night-muted)}
-.w-year{font-family:var(--f-body); font-weight:700; font-size:12.5px; letter-spacing:.1em; text-transform:none; padding-left:12px; border-left:1px solid color-mix(in srgb, currentColor 45%, transparent); line-height:1.2}  /* 何年次の個人・チーム制作か（11-25 本人） */
-.w-lead{margin-top:10px; font-size:14px; color:#C9D3DA}
-.w-shot{aspect-ratio:16/9; border-radius:8px; overflow:hidden; border:1px solid var(--night-line); background:repeating-linear-gradient(135deg, #0F151B 0 14px, #121A21 14px 28px); display:grid; place-items:center; color:var(--night-muted); font-family:var(--f-label); font-weight:500; letter-spacing:.16em; font-size:12px; box-shadow:0 22px 50px rgba(0,0,0,.45)}
-.w-shot img{width:100%; height:100%; object-fit:cover; display:block}
-.w-pts{list-style:none; margin:18px 0 0; padding:0; display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:22px 28px}
-.w-pts li{display:grid; grid-template-columns:34px minmax(0,1fr); column-gap:12px; align-items:start}
-.w-ic{grid-row:1 / 3; width:34px; height:34px; border:1.5px solid var(--wa); border-radius:6px; display:grid; place-items:center; font-family:var(--f-mono); font-size:12px; color:var(--wa)}
-.w-pts h4{font-size:14.5px; font-weight:700; line-height:1.45; word-break:keep-all}
-.w-pts p{font-size:13px; color:var(--night-muted); line-height:1.7; margin-top:2px}
-/* DEV-ONLY: MORE と窓（確認用だけ） */
-/* MORE と 作品資料（右の列の真ん中に並べる） */
-.w-acts{display:flex; justify-content:center; align-items:center; flex-wrap:wrap; gap:12px; margin-top:28px}
-.w-more{display:inline-block; margin:0; padding:9px 36px; border:1px solid var(--wa); border-radius:3px; background:none; color:var(--wa); font-family:var(--f-label); font-weight:500; font-size:13px; letter-spacing:.16em; text-decoration:none; cursor:pointer; transition:background .2s ease, color .2s ease}
-.w-more:hover{background:var(--wa); color:#0D1620}
-.w-doc{display:inline-block; margin:0; padding:9px 24px; border:1px solid var(--wa); border-radius:3px; background:var(--wa); color:#0D1620; font-family:var(--f-body); font-weight:700; font-size:13.5px; letter-spacing:.14em; cursor:pointer; transition:filter .2s ease}
-.w-doc:hover{filter:brightness(1.12)}
-.w-doc:disabled{opacity:.4; cursor:default; filter:none}
-/* 作品資料（今は IdReal だけ）。PDF（docs/<名前>.pdf）が無い間は薄く「準備中」 */
-.w-doc-s{margin-left:8px; font-size:11px; font-weight:400; letter-spacing:.08em}
-.w-doc:not(:disabled) .w-doc-s{display:none}
-/* 作品資料がある作品は MORE と横に並べる（両方の横の余白を詰める） */
-.w-acts:has(.w-doc) .w-more{padding-left:38px; padding-right:38px}
-.w-acts .w-doc{padding-left:26px; padding-right:26px}
-html[data-works="jacket"] .w-stage .w-doc{border-color:var(--wa-ink); background:var(--wa-ink); color:#ECE6DA}
-.w-more:focus-visible, .w-doc:focus-visible{outline:2px solid var(--wa); outline-offset:3px}
-/* 作品の MORE・詳細資料の窓（<dialog>）。開いている間は後ろのページを止める */
-html{scrollbar-gutter:stable}
-html.dlg-open{overflow:hidden}
-.dlg{width:min(880px, calc(100% - 32px)); max-width:none; max-height:calc(calc(100vh / var(--z,1)) - 48px); max-height:calc(calc(100dvh / var(--z,1)) - 48px); margin:auto; padding:0; border:1px solid var(--night-line); border-top:3px solid var(--wa, var(--accent-hi)); border-radius:6px; background:#0F171F; color:var(--night-ink); overflow:auto; overscroll-behavior:contain; box-shadow:0 30px 80px rgba(0,0,0,.6)}
-.dlg::backdrop{background:rgba(6,10,14,.74)}
-.dlg[open]{animation:dlg-in .22s ease-out}
-@keyframes dlg-in{from{opacity:0; transform:translateY(14px)}}
-@media (prefers-reduced-motion: reduce){ .dlg[open]{animation:none} }
-.dlg-bar{position:sticky; top:0; z-index:1; display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 12px 10px 24px; background:#0F171F; border-bottom:1px solid var(--night-line)}
-.dlg-eb{min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-family:var(--f-label); font-weight:500; font-size:13px; letter-spacing:.12em; color:var(--wa, var(--accent-hi))}
-.dlg-bar-r{display:flex; align-items:center; gap:8px; flex:none}
-.dlg-x, .dlg-open{display:inline-flex; align-items:center; gap:6px; padding:7px 12px; border:1px solid var(--night-line); border-radius:3px; background:none; color:var(--night-ink); font:inherit; font-size:13px; line-height:1.4; text-decoration:none; cursor:pointer}
-.dlg-x:hover, .dlg-open:hover{border-color:var(--wa, var(--accent-hi)); color:var(--wa, var(--accent-hi))}
-.dlg-body{padding:26px 28px 34px}
-.dlg-body h3{font-family:var(--f-display); font-weight:800; font-size:clamp(26px, calc(4vw / var(--z,1)), 38px); line-height:1.3; letter-spacing:.03em}
-.w-sum{margin-top:14px; color:#C9D3DA; line-height:1.85}  /* MORE の概要（11-24 にカードの表から移した） */
-.dlg-h{margin-top:28px; padding-bottom:8px; border-bottom:1px solid var(--night-line); font-family:var(--f-display); font-weight:800; font-size:19px; letter-spacing:.06em}
-/* 詳細資料：PDF をそのまま窓いっぱいに */
-.dlg-pdf{width:min(1200px, calc(100% - 32px)); height:calc(calc(100vh / var(--z,1)) - 48px); height:calc(calc(100dvh / var(--z,1)) - 48px); overflow:hidden}
-.dlg-pdf[open]{display:flex; flex-direction:column}
-.dlg-pdf iframe{flex:1; min-height:0; width:100%; border:0; background:#525659}
-/* /DEV-ONLY */
-/* 制作中の印（題の上の行、作品の番号の横。点がゆっくり明滅） */
-.w-wip{display:inline-flex; align-items:center; gap:7px; margin-left:4px; padding:1px 12px 1px 10px; border:1px solid var(--wa); border-radius:999px; color:var(--wa); font-family:var(--f-body); font-weight:700; font-size:12.5px; letter-spacing:.12em; line-height:1.6; white-space:nowrap}
-.w-wip::before{content:""; width:7px; height:7px; border-radius:50%; background:currentColor; animation:wip 1.8s ease-in-out infinite}
-@keyframes wip{50%{opacity:.2}}
-@media (prefers-reduced-motion: reduce){ .w-wip::before{animation:none} }
-/* 作品の表（こだわり・ゲームジャンル・制作規模・担当範囲・制作期間・制作環境）。題のすぐ下。概要は MORE の窓へ（11-24 本人「作品群の概要全部消して大まかな制作時のこだわりを置こう」） */
-.w-facts{margin:22px 0 0; border-top:1px solid var(--night-line)}
-.w-facts div{display:grid; grid-template-columns:7em minmax(0,1fr); column-gap:14px; padding:7px 0; border-bottom:1px solid var(--night-line)}
-.w-facts div:last-child{border-bottom:0}
-.w-facts dt{font-size:13px; font-weight:700; color:var(--wa); letter-spacing:.04em; white-space:nowrap}
-.w-facts dd{margin:0; font-size:14px; line-height:1.7; color:#D5DCE1}
-/* PC の作品（基本の指定より後ろに置く：同じ強さだと後ろが勝つ） */
-@media (min-width:1024px){
-  /* 画像を左へ寄せて大きく：作品の枠だけ横幅いっぱい（端は画面の 3.5%） */
-  .p-work .wrap{max-width:none; padding-left:max(24px, calc(3.5vw / var(--z,1))); padding-right:max(24px, calc(3.5vw / var(--z,1)))}
-  .p-work{padding-top:calc(env(safe-area-inset-top, 0px) + var(--bar) + 24px); padding-bottom:32px}
-  .w-grid{grid-template-columns:minmax(0,1.25fr) minmax(0,1fr); grid-template-areas:"shot head" "shot detail"; gap:0 clamp(32px, calc(3.5vw / var(--z,1)), 64px)}
-  .w-shot{align-self:center}
-  .w-head{align-self:end}
-  .w-head, .w-detail{max-width:780px}
-  /* 情報も大きく */
-  .p-work h2{font-size:clamp(38px, calc(3.8vw / var(--z,1)), 58px)}
-  .w-head .eyebrow{font-size:15px}
-  .w-lead{font-size:17px; margin-top:14px}
-  /* 縦の間は画面の高さに合わせる（大きい画面ほどゆったり、高さ 760 で 1 枚に収まる） */
-  .w-facts{margin-top:clamp(24px, calc(4.5vh / var(--z,1)), 52px)}
-  .w-pts{margin-top:clamp(22px, calc(3.6vh / var(--z,1)), 40px); gap:clamp(26px, calc(4.5vh / var(--z,1)), 52px) 40px}
-  .w-pts li{grid-template-columns:46px minmax(0,1fr); column-gap:16px}
-  .w-ic{width:46px; height:46px; font-size:15px}
-  .w-pts h4{font-size:18px}
-  .w-pts p{font-size:15.5px; line-height:1.85; margin-top:4px}
-  .w-facts dt{font-size:14px}
-  .w-facts dd{font-size:15.5px}
-  .w-wip, .w-year{font-size:13.5px}
-  /* DEV-ONLY: MORE（確認用だけ） */
-  .w-acts{margin-top:clamp(32px, calc(6vh / var(--z,1)), 68px); gap:16px}  /* 右の列の真ん中・離して・大きく */
-  .w-more{padding:15px 68px; font-size:16px; letter-spacing:.2em}
-  .w-doc{padding:15px 40px; font-size:16px}
-  /* /DEV-ONLY */
-}
-@media (max-width:480px){ .w-pts{grid-template-columns:minmax(0,1fr); gap:16px} }
 
 /* 02 の続き：好きなゲーム体験。左にスクショのモザイク（6 段、横に流す。タイルは同じ比率で大きさ 3 つ）、右に解説。--fc は選んだ 1 本の色。
    背景は選んだ 1 本の色のにじみ、画像があればそれをぼかして暗くした物 */
@@ -538,159 +433,6 @@ html.dlg-open{overflow:hidden}
   html{scroll-behavior:auto}
   .drawer,.scrim{transition:none}
 }
-/* 作品のトラック風の波形 */
-/* 作品をアルバムの曲のように：画像の下に TRACK 番号と作品の色の波形（音は出さない） */
-.w-media{grid-area:shot; align-self:center; min-width:0}
-.w-wave{display:flex; align-items:center; gap:14px; margin-top:12px; padding:8px 14px 8px 12px; border:1px solid var(--night-line); border-radius:8px; background:rgba(8,12,16,.45); -webkit-user-select:none; user-select:none}
-.w-wave-lab{flex:none; display:flex; flex-direction:column; align-items:flex-start; line-height:1.15; color:var(--wa)}
-.w-wave-lab small{font-family:var(--f-label); font-weight:500; font-size:10px; letter-spacing:.2em}
-.w-wave-lab b{font-family:var(--f-mono); font-size:20px; font-weight:600; letter-spacing:.04em}
-.w-wave canvas{flex:1; min-width:0; height:40px; display:block; cursor:crosshair; touch-action:pan-y}
-/* 作品の切り替え（画面に止めた舞台の上で入れ替える。見た目はジャケット・レコード・フィルム） */
-/* 作品は画面に止めた舞台（.w-stage）の上で入れ替わる。もとの節（.w-spacer）は空の場所取りで、スクロールの止まる位置と上のバーの印のために残す */
-/* 舞台の範囲＝作品の数×画面の高さ。舞台はその中だけ止まり、最後の作品の所で一緒に流れて連絡先が出る（場所取りは中に重ねて置く） */
-/* 高さ（--sh）は開いた時の画面の高さを JS が px で入れる。スマホのアドレスバーが出入りしても変えない（変えると中身の縮みが変わったり、位置がずれたりする） */
-.w-pin{position:relative; height:calc(var(--n, 5) * calc(100vh / var(--z,1))); height:calc(var(--n, 5) * var(--sh, calc(100svh / var(--z,1)))); background:var(--black)}
-.w-stage{position:sticky; top:0; z-index:1; height:calc(100vh / var(--z,1)); height:var(--sh, calc(100svh / var(--z,1))); overflow:hidden; background:var(--black)}
-.w-pin > .w-spacer{position:absolute; left:0; right:0; top:calc(var(--k, 0) * calc(100vh / var(--z,1))); top:calc(var(--k, 0) * var(--sh, calc(100svh / var(--z,1)))); height:calc(100vh / var(--z,1)); height:var(--sh, calc(100svh / var(--z,1))); min-height:0}
-.w-stage > .w-slide{position:absolute; inset:0; min-height:0; height:100%; visibility:hidden}
-.w-stage > .w-slide.on{visibility:visible}
-.w-stage > .w-slide > .wrap{transform-origin:50% 50%; display:flex; flex-direction:column}
-/* 作品が変わっても、文字の大きさと題・画像・MORE の場所がずれないように：中身の高さは全作品で一番高い物にそろえ（JS）、縮みも全作品で同じ。
-   題は上、画像は真ん中、MORE は下にそろえる */
-.w-stage .w-grid{flex:1 1 auto}
-.w-stage .w-detail{display:flex; flex-direction:column}
-.w-stage .w-acts{margin-top:auto; padding-top:24px}
-/* 舞台の中は 861 px から 2 列（画像の横に文字）。作品の本体は 1024 px からなので、861〜1023 は並べ方ごと決める。1100 px までは文字の列を広く */
-@media (min-width:861px) and (max-width:1100px){
-  .w-stage .w-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr); column-gap:28px}
-}
-@media (min-width:861px){
-  /* 左の列に 番号・題 → 画像、右の列に 表 → MORE（本人「番号と題は作品画像の上に」） */
-  .w-stage .w-grid{grid-template-areas:"head detail" "shot detail"; grid-template-rows:auto minmax(0,1fr); row-gap:16px}
-  .w-stage .w-head{align-self:end}
-  .w-stage .w-media{align-self:start}
-  .w-stage .w-detail{align-self:stretch}
-  .w-stage .w-detail .w-facts{margin-top:6px}
-}
-@media (max-width:860px){
-  .w-stage .w-grid{grid-template-rows:auto auto minmax(0,1fr)}
-  .w-stage .w-acts{padding-top:14px}
-}
-.w-spacer{visibility:hidden}
-/* レコード＝画像をジャケットに見立て、上から作品の色のラベルの盤がのぞいて回る。フィルム＝画像の上下にフィルムの穴の帯。どちらも画像の大きさは今のまま */
-.w-media{position:relative}
-.w-film{position:relative; z-index:2}
-.w-disc, .w-holes, .w-flash{display:none}
-html[data-works="record"] .w-media{padding-top:19%}
-html[data-works="record"] .w-disc{display:block; position:absolute; z-index:1; top:0; left:50%; width:38%; aspect-ratio:1 / 1; margin-left:-19%}
-.w-disc-in{position:relative; width:100%; height:100%; border-radius:50%; background:radial-gradient(circle closest-side, #0D1620 0 3.5%, var(--wa) 4% 33%, #0A0A0B 33.6% 36%, transparent 36.4%), repeating-radial-gradient(circle closest-side, #141416 0 1.4px, #1D1D20 1.4px 2.8px); box-shadow:0 -4px 22px rgba(0,0,0,.5), inset 0 0 0 2px #050506}
-.w-disc-in::after{content:""; position:absolute; left:47%; top:37%; width:6%; height:6%; border-radius:50%; background:#F2F4F5; opacity:.85}
-.w-disc::after{content:""; position:absolute; inset:0; border-radius:50%; background:conic-gradient(from 200deg, transparent 0 8%, rgba(255,255,255,.08) 13%, transparent 19% 58%, rgba(255,255,255,.06) 63%, transparent 69%); pointer-events:none}
-html[data-works="record"] .p-work.is-on .w-disc-in{animation:w-spin 4.5s linear infinite}
-@keyframes w-spin{to{transform:rotate(1turn)}}
-html[data-works="film"] .w-film{padding:20px 0; background:#0B0B0C; border-radius:6px; overflow:hidden; box-shadow:0 10px 30px rgba(0,0,0,.4)}
-html[data-works="film"] .w-film .w-shot{border-radius:2px; border-color:#000}
-html[data-works="film"] .w-holes{display:block; position:absolute; left:0; right:0; height:8px; background:repeating-linear-gradient(90deg, transparent 0 7px, #D9D5CC 7px 16px, transparent 16px 22px); opacity:.72; border-radius:2px}
-html[data-works="film"] .w-holes.t{top:6px}
-html[data-works="film"] .w-holes.b{bottom:6px}
-html[data-works="film"] .w-flash{display:block; position:absolute; inset:0; z-index:3; background:#FFFFFF; opacity:0; pointer-events:none}
-/* スマホ：舞台の 1 枚に収まるように少し詰める（それでもはみ出す時は JS が縮める） */
-@media (max-width:860px){
-  .w-stage > .w-slide{padding-top:calc(env(safe-area-inset-top, 0px) + var(--bar) + 14px); padding-bottom:14px}
-  .w-stage .w-grid{gap:12px}
-  .w-stage .w-wave{margin-top:8px; padding:5px 10px}
-  .w-stage .w-wave canvas{height:28px}
-  html[data-works="record"] .w-stage .w-media{padding-top:14%}
-  html[data-works="record"] .w-stage .w-disc{width:28%; margin-left:-14%}
-}
-@media (prefers-reduced-motion: reduce){ html[data-works="record"] .p-work.is-on .w-disc-in{animation:none} }
-/* ジャケット風のカード */
-/* 作品 1 つ＝生成りの紙のジャケット 1 枚。次の作品のカードが右下からのぞき、切り替えると上のカードが左上へ抜けて下のカードが持ち上がる */
-html[data-works="jacket"] .w-stage{background:#121C25}
-html[data-works="jacket"] .w-stage > .w-slide{background:none; padding-top:calc(env(safe-area-inset-top, 0px) + var(--bar) + 20px); padding-bottom:56px}
-html[data-works="jacket"] .w-stage > .w-slide > .bg{display:none}
-html[data-works="jacket"] .w-stage > .w-slide{justify-content:center}  /* カードは縮める前に広げることがあるので、はみ出しても真ん中に */
-html[data-works="jacket"] .w-stage > .w-slide > .wrap{flex:none; position:relative; isolation:isolate; width:min(1080px, calc(100% - 96px)); max-width:none; margin:0 auto; padding:22px 28px 28px; color:#2B2620; --wa-ink:color-mix(in srgb, var(--wa) 58%, #1E1A16)}
-html[data-works="jacket"] .w-stage > .w-slide > .wrap::before{content:""; position:absolute; inset:0; z-index:-1; border-radius:10px; background:#ECE6DA; box-shadow:0 26px 60px rgba(0,0,0,.5), inset 0 0 0 1px rgba(255,255,255,.5)}
-html[data-works="jacket"] .w-stage > .w-slide.on{z-index:3}
-html[data-works="jacket"] .w-stage > .w-slide.peek{visibility:visible; z-index:1; transform:translate(24px, 38px) rotate(2deg); filter:brightness(.55)}
-html[data-works="jacket"] .w-stage .w-head .eyebrow, html[data-works="jacket"] .w-stage .w-facts dt, html[data-works="jacket"] .w-stage .w-wave-lab{color:var(--wa-ink)}
-html[data-works="jacket"] .w-stage .w-idx{color:#7A6E60}
-html[data-works="jacket"] .w-stage h2{color:#211D18; font-size:clamp(26px, calc(2.9vw / var(--z,1)), 44px); white-space:nowrap}  /* カードの中でも題は 1 行に */
-html[data-works="jacket"] .w-stage .w-wip{border-color:var(--wa-ink); color:var(--wa-ink)}
-html[data-works="jacket"] .w-stage .w-facts{border-top:1px solid rgba(43,38,32,.28)}
-html[data-works="jacket"] .w-stage .w-facts div{border-bottom:1px dotted rgba(43,38,32,.3)}
-html[data-works="jacket"] .w-stage .w-facts dd{color:#3A332B}
-html[data-works="jacket"] .w-stage .w-shot{border-color:rgba(43,38,32,.2)}
-html[data-works="jacket"] .w-stage .w-wave{background:rgba(43,38,32,.05); border-color:rgba(43,38,32,.16)}
-html[data-works="jacket"] .w-stage .w-more{border-color:var(--wa-ink); color:var(--wa-ink)}
-html[data-works="jacket"] .w-stage .w-more:hover{background:var(--wa-ink); color:#ECE6DA}
-/* 右下の札（番号と題）。下からのぞいている時はここが見える */
-.w-jlab{display:none}
-html[data-works="jacket"] .w-jlab{display:block; position:absolute; right:18px; bottom:9px; font-family:var(--f-mono); font-size:12px; letter-spacing:.08em; color:var(--wa-ink); white-space:nowrap}
-/* 盤：今のページ（カード）にくっついて、右から半分ほど出て回る（PC だけ）。次へ進むと盤は抜けていくカードと一緒に去り、
-   来たカードの盤はジャケットの中から横へすべり出る（下でのぞいているカードの盤はしまったまま）。出る長さはカードの横の余白まで */
-.w-jdisc{display:none}
-@media (min-width:861px){
-  html[data-works="jacket"] .w-jdisc{--jp:clamp(32px, calc(max((calc(100vw / var(--z,1)) - 1080px) / 2, 48px) - 16px), 110px); display:block; position:absolute; z-index:-2; top:24%; right:calc(-1 * var(--jp)); height:52%; aspect-ratio:1 / 1;
-    transform:translateX(calc(-1 * var(--jp))); opacity:0; transition:transform .45s cubic-bezier(.22,1,.36,1), opacity .15s linear}
-  html[data-works="jacket"] .w-stage > .w-slide.jsettled .w-jdisc{transform:none; opacity:1; transition:transform .55s cubic-bezier(.22,1,.36,1), opacity .2s linear}
-}
-@media (prefers-reduced-motion: reduce){ html[data-works="jacket"] .w-jdisc{transition:none!important} }
-html[data-works="jacket"] .w-slide.is-on .w-jdisc .w-disc-in{animation:w-spin 4.5s linear infinite}
-@media (max-width:860px){
-  html[data-works="jacket"] .w-stage > .w-slide{padding-bottom:46px}
-  html[data-works="jacket"] .w-stage > .w-slide > .wrap{width:calc(100% - 10px); padding:14px 12px 28px}
-  html[data-works="jacket"] .w-stage > .w-slide.peek{transform:translate(4px, 30px) rotate(1.2deg)}
-}
-@media (prefers-reduced-motion: reduce){ html[data-works="jacket"] .w-slide.is-on .w-jdisc .w-disc-in{animation:none} }
-/* 作品のトラックリスト */
-/* 舞台の上に作品の一覧（色の点・番号・題）。押すとその作品へ飛ぶ。今の作品はカードと同じ生成りに。入りきらない時は横に送れる */
-.w-tlbar{position:absolute; z-index:6; top:calc(env(safe-area-inset-top, 0px) + var(--bar) + 12px); left:50%; transform:translateX(-50%); width:max-content; max-width:calc(100% - 24px); display:flex; align-items:center; gap:8px}
-.w-arr{flex:none; position:relative; width:38px; height:38px; padding:0; border:1px solid rgba(236,230,218,.14); border-radius:50%; background:rgba(8,12,16,.6); color:rgba(227,233,238,.8); cursor:pointer; -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px)}
-.w-arr::before{content:""; position:absolute; left:50%; top:50%; width:9px; height:9px; border:solid currentColor; border-width:0 0 2px 2px; transform:translate(-30%, -50%) rotate(45deg)}
-.w-arr.next::before{transform:translate(-70%, -50%) rotate(-135deg)}
-.w-arr:hover{color:#fff; background:rgba(255,255,255,.1)}
-.w-arr:focus-visible{outline:2px solid #ECE6DA; outline-offset:1px}
-.w-tl{position:relative; min-width:0; display:flex; align-items:center; gap:2px; padding:3px; border:1px solid rgba(236,230,218,.14); border-radius:999px; background:rgba(8,12,16,.6); overflow-x:auto; overscroll-behavior-x:contain; scrollbar-width:none; scroll-behavior:smooth; -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px)}
-.w-tl::-webkit-scrollbar{display:none}
-.w-tl-i{flex:none; display:flex; align-items:center; gap:7px; height:30px; padding:0 14px 0 11px; border:0; border-radius:999px; background:none; color:rgba(227,233,238,.66); font:inherit; font-size:13px; line-height:1; white-space:nowrap; cursor:pointer; transition:background-color .2s, color .2s}
-.w-tl-i::before{content:""; flex:none; width:8px; height:8px; border-radius:50%; background:var(--c); opacity:.6}
-.w-tl-i .n{font-family:var(--f-mono); font-size:11.5px; letter-spacing:.06em; opacity:.75}
-.w-tl-i:hover{color:#fff; background:rgba(255,255,255,.07)}
-.w-tl-i[aria-current="true"]{background:#ECE6DA; color:#211D18; cursor:default}
-.w-tl-i[aria-current="true"]::before{opacity:1}
-.w-tl-i:focus-visible{outline:2px solid #ECE6DA; outline-offset:1px}
-html[data-works="jacket"].has-tl .w-stage > .w-slide{padding-top:calc(env(safe-area-inset-top, 0px) + var(--bar) + 60px)}
-@media (max-width:860px){
-  .w-tlbar{top:calc(env(safe-area-inset-top, 0px) + var(--bar) + 6px); max-width:calc(100% - 10px); gap:5px}
-  .w-arr{width:32px; height:32px}
-  .w-tl-i{height:28px; padding:0 11px 0 9px; gap:6px; font-size:12px}
-  html[data-works="jacket"].has-tl .w-stage > .w-slide{padding-top:calc(env(safe-area-inset-top, 0px) + var(--bar) + 46px)}
-}
-@media (prefers-reduced-motion: reduce){ .w-tl{scroll-behavior:auto} }
-/* 作品の横スライド */
-/* 舞台の上の横の動きはブラウザに使わせない（JS が作品の切り替えに使う）。縦のスクロールと拡大はそのまま。札の列は横に流れる */
-.w-stage{touch-action:pan-y pinch-zoom}
-.w-tl{touch-action:pan-x pinch-zoom}
-/* DEV-ONLY: 作品の動画（確認用だけ） */
-/* 波形の帯の左の ▶（動画が無い作品は薄く「準備中」）。押すと画像の所に動画が出て音付きで流れ、波形が進み具合になる */
-.w-play{flex:none; display:flex; align-items:center; gap:8px; padding:0; border:0; background:none; color:var(--wa); font:inherit; cursor:pointer}
-.w-play:disabled{cursor:default; opacity:.5}
-.w-play-ic{position:relative; flex:none; width:34px; height:34px; border:1.5px solid currentColor; border-radius:50%}
-.w-play-ic::before{content:""; position:absolute; left:50%; top:50%; margin:-7px 0 0 -4px; border-left:12px solid currentColor; border-top:7px solid transparent; border-bottom:7px solid transparent}
-.w-play.is-playing .w-play-ic::before{margin:-7px 0 0 -6px; width:4px; height:14px; border:0; background:currentColor; box-shadow:7px 0 0 currentColor}
-.w-play:not(:disabled):hover .w-play-ic{background:color-mix(in srgb, currentColor 14%, transparent)}
-.w-play:focus-visible{outline:2px solid currentColor; outline-offset:3px; border-radius:6px}
-.w-play-t{display:flex; flex-direction:column; align-items:flex-start; line-height:1.15}
-.w-play-t small{font-family:var(--f-label); font-weight:500; font-size:10px; letter-spacing:.16em}
-.w-play-t b{font-family:var(--f-mono); font-size:18px; font-weight:600; letter-spacing:.04em}
-html[data-works="jacket"] .w-stage .w-play{color:var(--wa-ink)}
-.w-shot{position:relative}
-.w-shot video{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; background:#000; cursor:pointer}
-.w-wave canvas{cursor:pointer}
-/* /DEV-ONLY */
 </style>
 </head>
 <body>
@@ -709,6 +451,7 @@ html[data-works="jacket"] .w-stage .w-play{color:var(--wa-ink)}
       <a href="#works" data-go="works"><span class="en">Works</span><span class="ja">作品</span></a>
       <a href="#contact" data-go="contact"><span class="en">Contact</span><span class="ja">連絡先</span></a>
     </nav>
+    <button type="button" class="sfx" aria-pressed="false" aria-label="操作の音"><svg class="sfx-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor"/><path class="sfx-w" d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path class="sfx-x" d="M16 9.5l5 5M21 9.5l-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span class="sfx-l">SOUND OFF</span></button>
   </div>
 </header>
 
@@ -1110,209 +853,111 @@ html[data-works="jacket"] .w-stage .w-play{color:var(--wa-ink)}
   </section>
   <!-- /DEV-ONLY -->
 
-  <!-- 03 作品：1 作品 = 全画面 1 枚（左に画像、右に題・表）。画像は .w-shot の中に img を入れる -->
-  <section class="panel dark p-work" id="works" aria-labelledby="w1-title" style="--wa:#7DB8D1">
-    <div class="bg"></div>
+  <!-- WORKS:BEGIN（tools/make_works.py が tools/works.json から作る。ここは手で直さない） -->
+  <!-- 03 作品：トラックリストの形の一覧。押すと作品ごとのページ（works/〇〇.html）へ -->
+  <section class="panel dark p-works" id="works" aria-labelledby="h-works">
     <div class="wrap">
-      <div class="w-grid">
-        <div class="w-head">
-          <p class="eyebrow"><span class="no">02</span>Works <span class="w-idx">01 / 05</span><span class="w-year">3年次 個人制作</span><span class="w-wip">制作中</span></p>
-          <h2 id="w1-title">IdReal</h2>
+      <div class="wl-head">
+        <div class="head">
+          <p class="eyebrow"><span class="no">02</span>Works</p>
+          <h2 id="h-works">作品</h2>
         </div>
-        <div class="w-shot"><img src="img/works/idreal.jpg?v=4" width="1400" height="788" alt="IdReal のデバッグ表示（床に並んだプローブの点と、右上の耳から出る 16 本のレイで壁までの距離を測っている地図）" decoding="async"></div>
-        <div class="w-detail">
-          <dl class="w-facts"><div><dt>ゲームジャンル</dt><dd>—（音響エンジン）</dd></div><div><dt>制作規模</dt><dd>個人制作</dd></div><div><dt>担当範囲</dt><dd>すべて</dd></div><div><dt>制作期間</dt><dd>2026年7月〜制作中</dd></div><div><dt>制作環境</dt><dd>C++／Unreal Engine 5.6／Wwise 2025.1</dd></div><div><dt>こだわり</dt><dd>音でのプレイヤーのフィードバックを向上させる為に遮蔽や空間、での表現などの実装を１から行い作るゲームに沿ったサウンド表現を目指して作成</dd></div></dl>
-          <!-- DEV-ONLY: MORE（確認用だけ） -->
-          <div class="w-acts">
-            <button type="button" class="w-more" aria-haspopup="dialog">MORE</button>
-            <button type="button" class="w-doc" data-pdf="docs/idreal.pdf" data-title="IdReal 作品資料" aria-haspopup="dialog" disabled><span class="w-doc-t">作品資料</span><small class="w-doc-s">準備中</small></button>
-          </div>
-          <div class="w-extra" hidden>
-            <p class="dlg-h">概要</p>
-            <p class="w-sum">自作の音響エンジンと、それを扱うゲーム側の仕組み。空間の広さや壁などの近さが、見えていなくても伝わる体験を目指して制作。</p>
-            <p class="dlg-h">こだわり</p>
-            <ul class="w-pts">
-                <li><span class="w-ic" aria-hidden="true">01</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
-                <li><span class="w-ic" aria-hidden="true">02</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
-            </ul>
-          </div>
-          <!-- /DEV-ONLY -->
-        </div>
+        <p class="wl-lead"><span class="wl-lead-en">TRACK LIST</span>1 作品 1 トラック。選ぶと作品ごとのページへ</p>
+        <p class="wl-sfx"><button type="button" class="sfx" aria-pressed="false" aria-label="操作の音"><svg class="sfx-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor"/><path class="sfx-w" d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path class="sfx-x" d="M16 9.5l5 5M21 9.5l-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span class="sfx-l">SOUND OFF</span></button><span class="wl-sfx-t">ON にすると、なぞった作品ごとに音が鳴ります</span></p>
       </div>
+      <ol class="wl">
+    <li class="wl-i" style="--wa:#7DB8D1">
+      <a class="wl-a" href="works/idreal.html" data-i="0">
+        <span class="wl-no" aria-hidden="true"><i class="wl-cur"></i>01</span>
+        <span class="wl-jk"><span class="wl-disc" aria-hidden="true"></span><img src="img/works/idreal.jpg?v=4" width="1400" height="788" alt="" loading="lazy" decoding="async" style="view-transition-name:jk-idreal"></span>
+        <span class="wl-body">
+          <span class="wl-tags"><span>3年次 個人制作</span><span>音響エンジン</span><span class="wl-wip">制作中</span></span>
+          <span class="wl-t">IdReal</span>
+          <span class="wl-k">音でのプレイヤーのフィードバックを向上させる為に遮蔽や空間、での表現などの実装を１から行い作るゲームに沿ったサウンド表現を目指して作成</span>
+        </span>
+        <span class="wl-side" aria-hidden="true"><span class="wl-eq"><i></i><i></i><i></i><i></i><i></i></span><span class="wl-go">PLAY</span></span>
+      </a>
+    </li>
+    <li class="wl-i" style="--wa:#E58A5E">
+      <a class="wl-a" href="works/horror.html" data-i="1">
+        <span class="wl-no" aria-hidden="true"><i class="wl-cur"></i>02</span>
+        <span class="wl-jk"><span class="wl-disc" aria-hidden="true"></span><img src="img/works/horror.jpg?v=4" width="1400" height="788" alt="" loading="lazy" decoding="async" style="view-transition-name:jk-horror"></span>
+        <span class="wl-body">
+          <span class="wl-tags"><span>3年次 個人制作</span><span>探索型ホラー</span><span class="wl-wip">制作中</span></span>
+          <span class="wl-t">探索型ホラーゲーム</span>
+          <span class="wl-k">自作のサウンドシステムを用いてジャンプスケアではなく音で少しでも空気感を味わえるようにEnemyの動作やUnreal環境でのライティングの見せ方を調整、また動線と作品意図がわかりやすいような見せ方に挑戦</span>
+        </span>
+        <span class="wl-side" aria-hidden="true"><span class="wl-eq"><i></i><i></i><i></i><i></i><i></i></span><span class="wl-go">PLAY</span></span>
+      </a>
+    </li>
+    <li class="wl-i" style="--wa:#A595E0">
+      <a class="wl-a" href="works/osumitsuki.html" data-i="2">
+        <span class="wl-no" aria-hidden="true"><i class="wl-cur"></i>03</span>
+        <span class="wl-jk"><span class="wl-disc" aria-hidden="true"></span><img src="img/works/osumitsuki.jpg?v=4" width="1400" height="788" alt="" loading="lazy" decoding="async" style="view-transition-name:jk-osumitsuki"></span>
+        <span class="wl-body">
+          <span class="wl-tags"><span>3年次 チーム制作</span><span>3Dアクションゲーム</span></span>
+          <span class="wl-t">御墨付</span>
+          <span class="wl-k">プレイヤー制御ということでフィールドやエネミー等他の担当箇所からでも参照しやすいデータ構造と設計<br>またチームでの話し合いやサウンドデザイナーさんへの仕様書制作時にリファレンスやメモを通じた全体での方向性の共有</span>
+        </span>
+        <span class="wl-side" aria-hidden="true"><span class="wl-eq"><i></i><i></i><i></i><i></i><i></i></span><span class="wl-go">PLAY</span></span>
+      </a>
+    </li>
+    <li class="wl-i" style="--wa:#8FC7A0">
+      <a class="wl-a" href="works/ribbond.html" data-i="3">
+        <span class="wl-no" aria-hidden="true"><i class="wl-cur"></i>04</span>
+        <span class="wl-jk"><span class="wl-disc" aria-hidden="true"></span><img src="img/works/ribbond.jpg?v=4" width="1400" height="788" alt="" loading="lazy" decoding="async" style="view-transition-name:jk-ribbond"></span>
+        <span class="wl-body">
+          <span class="wl-tags"><span>2年次 チーム制作</span><span>2D横スクロールワイヤーアクション</span></span>
+          <span class="wl-t">RibBond</span>
+          <span class="wl-k">全体フレームワークの作成でみんなが触りやすい、あとから機能の修正、追加のしやすい設計を勉強、実装。<br>デザイナーさんの成果物を高画質のまま取り込むために分割ロードなどの制御に挑戦</span>
+        </span>
+        <span class="wl-side" aria-hidden="true"><span class="wl-eq"><i></i><i></i><i></i><i></i><i></i></span><span class="wl-go">PLAY</span></span>
+      </a>
+    </li>
+    <li class="wl-i" style="--wa:#E3C26B">
+      <a class="wl-a" href="works/soundmarker.html" data-i="4">
+        <span class="wl-no" aria-hidden="true"><i class="wl-cur"></i>05</span>
+        <span class="wl-jk"><span class="wl-disc" aria-hidden="true"></span><img src="img/works/soundmarker.jpg?v=4" width="1400" height="789" alt="" loading="lazy" decoding="async" style="view-transition-name:jk-soundmarker"></span>
+        <span class="wl-body">
+          <span class="wl-tags"><span>3年次 個人制作</span><span>アニメーション・サウンド検証ツール</span></span>
+          <span class="wl-t">SoundMarker</span>
+          <span class="wl-k"><span class="todo">準備中</span></span>
+        </span>
+        <span class="wl-side" aria-hidden="true"><span class="wl-eq"><i></i><i></i><i></i><i></i><i></i></span><span class="wl-go">PLAY</span></span>
+      </a>
+    </li>
+<!-- DEV-ONLY: 友人作品A（確認用だけ） -->
+    <li class="wl-i" style="--wa:#E08AA8">
+      <a class="wl-a" href="works/friend-a.html" data-i="5">
+        <span class="wl-no" aria-hidden="true"><i class="wl-cur"></i>06</span>
+        <span class="wl-jk"><span class="wl-disc" aria-hidden="true"></span><span class="wl-noimg">IMAGE<br>準備中</span></span>
+        <span class="wl-body">
+          <span class="wl-tags"><span>3年次 個人制作</span><span class="wl-wip">制作中</span></span>
+          <span class="wl-t">友人作品A</span>
+          <span class="wl-k"><span class="todo">準備中</span></span>
+        </span>
+        <span class="wl-side" aria-hidden="true"><span class="wl-eq"><i></i><i></i><i></i><i></i><i></i></span><span class="wl-go">PLAY</span></span>
+      </a>
+    </li>
+<!-- /DEV-ONLY -->
+<!-- DEV-ONLY: 友人作品B（確認用だけ） -->
+    <li class="wl-i" style="--wa:#6CC4C0">
+      <a class="wl-a" href="works/friend-b.html" data-i="6">
+        <span class="wl-no" aria-hidden="true"><i class="wl-cur"></i>07</span>
+        <span class="wl-jk"><span class="wl-disc" aria-hidden="true"></span><span class="wl-noimg">IMAGE<br>準備中</span></span>
+        <span class="wl-body">
+          <span class="wl-tags"><span>3年次 個人制作</span><span class="wl-wip">制作中</span></span>
+          <span class="wl-t">友人作品B</span>
+          <span class="wl-k"><span class="todo">準備中</span></span>
+        </span>
+        <span class="wl-side" aria-hidden="true"><span class="wl-eq"><i></i><i></i><i></i><i></i><i></i></span><span class="wl-go">PLAY</span></span>
+      </a>
+    </li>
+<!-- /DEV-ONLY -->
+      </ol>
     </div>
   </section>
-  <section class="panel dark p-work" id="work-2" data-nav="works" aria-labelledby="w2-title" style="--wa:#E58A5E">
-    <div class="bg"></div>
-    <div class="wrap">
-      <div class="w-grid">
-        <div class="w-head">
-          <p class="eyebrow"><span class="no">02</span>Works <span class="w-idx">02 / 05</span><span class="w-year">3年次 個人制作</span><span class="w-wip">制作中</span></p>
-          <h2 id="w2-title">探索型ホラーゲーム</h2>
-        </div>
-        <div class="w-shot"><img src="img/works/horror.jpg" width="1400" height="788" alt="探索型ホラーゲームの画面（懐中電灯で照らした暗い部屋、隅に人形、奥に扉）" decoding="async"></div>
-        <div class="w-detail">
-          <dl class="w-facts"><div><dt>ゲームジャンル</dt><dd>探索型ホラー</dd></div><div><dt>制作規模</dt><dd>個人制作</dd></div><div><dt>担当範囲</dt><dd>すべて</dd></div><div><dt>制作期間</dt><dd>2026年9月〜制作中</dd></div><div><dt>制作環境</dt><dd>Unreal Engine 5.6／Wwise 2025.1</dd></div><div><dt>こだわり</dt><dd>自作のサウンドシステムを用いてジャンプスケアではなく音で少しでも空気感を味わえるようにEnemyの動作やUnreal環境でのライティングの見せ方を調整、また動線と作品意図がわかりやすいような見せ方に挑戦</dd></div></dl>
-          <!-- DEV-ONLY: MORE（確認用だけ） -->
-          <div class="w-acts">
-            <button type="button" class="w-more" aria-haspopup="dialog">MORE</button>
-          </div>
-          <div class="w-extra" hidden>
-            <p class="dlg-h">概要</p>
-            <p class="w-sum">自作の音響エンジン IdReal を使った探索型ホラー。暗い視界の中、足音や周りの音の聞こえ方を頼りに、どんな空間にいるのかを感じ取りながらキーアイテムを集めていく。</p>
-            <p class="dlg-h">こだわり</p>
-            <ul class="w-pts">
-                <li><span class="w-ic" aria-hidden="true">01</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
-                <li><span class="w-ic" aria-hidden="true">02</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
-            </ul>
-          </div>
-          <!-- /DEV-ONLY -->
-        </div>
-      </div>
-    </div>
-  </section>
-  <section class="panel dark p-work" id="work-3" data-nav="works" aria-labelledby="w3-title" style="--wa:#A595E0">
-    <div class="bg"></div>
-    <div class="wrap">
-      <div class="w-grid">
-        <div class="w-head">
-          <p class="eyebrow"><span class="no">02</span>Works <span class="w-idx">03 / 05</span><span class="w-year">3年次 チーム制作</span></p>
-          <h2 id="w3-title">御墨付</h2>
-        </div>
-        <div class="w-shot"><img src="img/works/osumitsuki.jpg?v=2" width="1400" height="788" alt="御墨付のタイトル画面" decoding="async"></div>
-        <div class="w-detail">
-          <dl class="w-facts"><div><dt>ゲームジャンル</dt><dd>3Dアクションゲーム</dd></div><div><dt>制作規模</dt><dd>チーム制作・11人</dd></div><div><dt>担当範囲</dt><dd>サブリーダー、プレイヤー制御、サウンド設計・実装</dd></div><div><dt>制作期間</dt><dd>4か月</dd></div><div><dt>制作環境</dt><dd>Unity 6</dd></div><div><dt>こだわり</dt><dd>プレイヤー制御ということでフィールドやエネミー等他の担当箇所からでも参照しやすいデータ構造と設計<br>またチームでの話し合いやサウンドデザイナーさんへの仕様書制作時にリファレンスやメモを通じた全体での方向性の共有</dd></div></dl>
-          <!-- DEV-ONLY: MORE（確認用だけ） -->
-          <div class="w-acts">
-            <button type="button" class="w-more" aria-haspopup="dialog">MORE</button>
-          </div>
-          <div class="w-extra" hidden>
-            <p class="dlg-h">概要</p>
-            <p class="w-sum">世界に色を付け、その上を歩いていく3Dアクションゲーム。</p>
-            <p class="dlg-h">こだわり</p>
-            <ul class="w-pts">
-                <li><span class="w-ic" aria-hidden="true">01</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
-                <li><span class="w-ic" aria-hidden="true">02</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
-            </ul>
-          </div>
-          <!-- /DEV-ONLY -->
-        </div>
-      </div>
-    </div>
-  </section>
-  <section class="panel dark p-work" id="work-4" data-nav="works" aria-labelledby="w4-title" style="--wa:#8FC7A0">
-    <div class="bg"></div>
-    <div class="wrap">
-      <div class="w-grid">
-        <div class="w-head">
-          <p class="eyebrow"><span class="no">02</span>Works <span class="w-idx">04 / 05</span><span class="w-year">2年次 チーム制作</span></p>
-          <h2 id="w4-title">RibBond</h2>
-        </div>
-        <div class="w-shot"><img src="img/works/ribbond.jpg?v=2" width="1400" height="788" alt="RibBond のタイトル画面" decoding="async"></div>
-        <div class="w-detail">
-          <dl class="w-facts"><div><dt>ゲームジャンル</dt><dd>2D横スクロールワイヤーアクション</dd></div><div><dt>制作規模</dt><dd>チーム制作・10人</dd></div><div><dt>担当範囲</dt><dd>リードプログラマー、リーダー、全体設計、ロード制御、サウンド制御、ステージ管理</dd></div><div><dt>制作期間</dt><dd>4か月</dd></div><div><dt>制作環境</dt><dd>DirectX 11</dd></div><div><dt>こだわり</dt><dd>全体フレームワークの作成でみんなが触りやすい、あとから機能の修正、追加のしやすい設計を勉強、実装。<br>デザイナーさんの成果物を高画質のまま取り込むために分割ロードなどの制御に挑戦</dd></div></dl>
-          <!-- DEV-ONLY: MORE（確認用だけ） -->
-          <div class="w-acts">
-            <button type="button" class="w-more" aria-haspopup="dialog">MORE</button>
-          </div>
-          <div class="w-extra" hidden>
-            <p class="dlg-h">概要</p>
-            <p class="w-sum">裁縫の世界で、針にリボンを引っかけたり、敵をリボンで飾ったりして先へ進んでいくワイヤーアクションゲーム。</p>
-            <p class="dlg-h">こだわり</p>
-            <ul class="w-pts">
-                <li><span class="w-ic" aria-hidden="true">01</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
-                <li><span class="w-ic" aria-hidden="true">02</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
-            </ul>
-          </div>
-          <!-- /DEV-ONLY -->
-        </div>
-      </div>
-    </div>
-  </section>
-  <section class="panel dark p-work" id="work-5" data-nav="works" aria-labelledby="w5-title" style="--wa:#E3C26B">
-    <div class="bg"></div>
-    <div class="wrap">
-      <div class="w-grid">
-        <div class="w-head">
-          <p class="eyebrow"><span class="no">02</span>Works <span class="w-idx">05 / 05</span><span class="w-year">3年次 個人制作</span></p>
-          <h2 id="w5-title">SoundMarker</h2>
-        </div>
-        <div class="w-shot"><img src="img/works/soundmarker.jpg?v=2" width="1400" height="789" alt="SoundMarker の画面（アニメーションのタイムラインに音を置く）" decoding="async"></div>
-        <div class="w-detail">
-          <dl class="w-facts"><div><dt>ゲームジャンル</dt><dd>—（アニメーション・サウンド検証ツール）</dd></div><div><dt>制作規模</dt><dd>個人制作</dd></div><div><dt>担当範囲</dt><dd>すべて</dd></div><div><dt>制作期間</dt><dd>2週間</dd></div><div><dt>制作環境</dt><dd>DirectX 11／C++17</dd></div><div><dt>こだわり</dt><dd><span class="todo">準備中</span></dd></div></dl>
-          <!-- DEV-ONLY: MORE（確認用だけ） -->
-          <div class="w-acts">
-            <button type="button" class="w-more" aria-haspopup="dialog">MORE</button>
-          </div>
-          <div class="w-extra" hidden>
-            <p class="dlg-h">概要</p>
-            <p class="w-sum">サウンドデザイナーさんとのチーム制作で経験した、実装して検証するまでの時間や、実装後の手戻りを減らすために、サウンドデザイナーさんと話し合って制作した検証ツール。</p>
-            <p class="dlg-h">こだわり</p>
-            <ul class="w-pts">
-                <li><span class="w-ic" aria-hidden="true">01</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
-                <li><span class="w-ic" aria-hidden="true">02</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
-            </ul>
-          </div>
-          <!-- /DEV-ONLY -->
-        </div>
-      </div>
-    </div>
-  </section>
-  <!-- DEV-ONLY: 友人作品 A・B（中身が準備中なので確認用だけ。公開用のソースにも出さない） -->
-  <section class="panel dark p-work" id="work-6" hidden data-nav="works" aria-labelledby="w6-title" style="--wa:#E08AA8">
-    <div class="bg"></div>
-    <div class="wrap">
-      <div class="w-grid">
-        <div class="w-head">
-          <p class="eyebrow"><span class="no">02</span>Works <span class="w-idx">06 / 07</span><span class="w-year">3年次 個人制作</span><span class="w-wip">制作中</span></p>
-          <h2 id="w6-title">友人作品A</h2>
-        </div>
-        <div class="w-shot">画像 準備中</div>
-        <div class="w-detail">
-          <dl class="w-facts"><div><dt>ゲームジャンル</dt><dd><span class="todo">準備中</span></dd></div><div><dt>制作規模</dt><dd>—</dd></div><div><dt>担当範囲</dt><dd>サウンド面で協力、<span class="todo">詳しくは準備中</span></dd></div><div><dt>制作期間</dt><dd>1か月</dd></div><div><dt>制作環境</dt><dd>DirectX 11／C++17</dd></div><div><dt>こだわり</dt><dd><span class="todo">準備中</span></dd></div></dl>
-          <div class="w-acts">
-            <button type="button" class="w-more" aria-haspopup="dialog">MORE</button>
-          </div>
-          <div class="w-extra" hidden>
-            <p class="dlg-h">概要</p>
-            <p class="w-sum"><span class="todo">準備中</span></p>
-            <p class="dlg-h">こだわり</p>
-            <ul class="w-pts">
-                <li><span class="w-ic" aria-hidden="true">01</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
-                <li><span class="w-ic" aria-hidden="true">02</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-  <section class="panel dark p-work" id="work-7" hidden data-nav="works" aria-labelledby="w7-title" style="--wa:#6CC4C0">
-    <div class="bg"></div>
-    <div class="wrap">
-      <div class="w-grid">
-        <div class="w-head">
-          <p class="eyebrow"><span class="no">02</span>Works <span class="w-idx">07 / 07</span><span class="w-year">3年次 個人制作</span><span class="w-wip">制作中</span></p>
-          <h2 id="w7-title">友人作品B</h2>
-        </div>
-        <div class="w-shot">画像 準備中</div>
-        <div class="w-detail">
-          <dl class="w-facts"><div><dt>ゲームジャンル</dt><dd><span class="todo">準備中</span></dd></div><div><dt>制作規模</dt><dd>—</dd></div><div><dt>担当範囲</dt><dd>サウンド面で協力、<span class="todo">詳しくは準備中</span></dd></div><div><dt>制作期間</dt><dd>1か月</dd></div><div><dt>制作環境</dt><dd>DirectX 12／C++17</dd></div><div><dt>こだわり</dt><dd><span class="todo">準備中</span></dd></div></dl>
-          <div class="w-acts">
-            <button type="button" class="w-more" aria-haspopup="dialog">MORE</button>
-          </div>
-          <div class="w-extra" hidden>
-            <p class="dlg-h">概要</p>
-            <p class="w-sum"><span class="todo">準備中</span></p>
-            <p class="dlg-h">こだわり</p>
-            <ul class="w-pts">
-                <li><span class="w-ic" aria-hidden="true">01</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
-                <li><span class="w-ic" aria-hidden="true">02</span><h4><span class="todo">こだわり（準備中）</span></h4><p><span class="todo">準備中</span></p></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-  <!-- /DEV-ONLY -->
+  <!-- WORKS:END -->
 
   <!-- 04 連絡先：波紋 -->
   <section class="panel p-contact" id="contact" aria-labelledby="h-contact">
@@ -1331,39 +976,11 @@ html[data-works="jacket"] .w-stage .w-play{color:var(--wa-ink)}
     </div>
   </section>
 </main>
-<!-- DEV-ONLY: 友人作品 A・B（確認用だけ。公開用は hidden のまま、番号も / 05） -->
-<script>
-document.querySelectorAll('#work-6, #work-7').forEach(function(x){ x.removeAttribute('hidden'); });
-document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent = x.textContent.replace('/ 05', '/ 07'); });
-</script>
-<!-- /DEV-ONLY -->
-
-<!-- DEV-ONLY: MORE と詳細資料の窓（確認用だけ） -->
-<!-- 作品の MORE の窓（中身は各作品の .w-extra を写す。こだわりなどはそこに書く） -->
-<dialog class="dlg" id="w-dlg" aria-labelledby="w-dlg-title">
-  <div class="dlg-bar"><p class="dlg-eb"></p><div class="dlg-bar-r"><button type="button" class="dlg-x" data-close>閉じる<span aria-hidden="true">×</span></button></div></div>
-  <div class="dlg-body"><h3 id="w-dlg-title"></h3><div class="dlg-more"></div></div>
-</dialog>
-<!-- 作品資料（PDF）の窓。PC はページの中に表示、スマホは新しいタブで開く -->
-<dialog class="dlg dlg-pdf" id="pdf-dlg" aria-label="作品資料">
-  <div class="dlg-bar"><p class="dlg-eb"></p><div class="dlg-bar-r"><a class="dlg-open" id="pdf-open" href="#" target="_blank" rel="noopener">新しいタブで開く</a><button type="button" class="dlg-x" data-close>閉じる<span aria-hidden="true">×</span></button></div></div>
-  <iframe id="pdf-frame" title="作品資料（PDF）"></iframe>
-</dialog>
-<!-- /DEV-ONLY -->
-
 <script>
 (function(){
   var reduce = false;
   try{ reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){}
   var sections = Array.prototype.slice.call(document.querySelectorAll('main > section')).filter(function(s){ return !s.hidden; });  // 隠した節は止まる位置に入れない
-
-  // ---- 作品の画像をぼかして背景に（.w-shot の img を写す） ----
-  document.querySelectorAll('.p-work').forEach(function(sec){
-    var img = sec.querySelector('.w-shot img');
-    if (!img) return;
-    sec.style.setProperty('--shot', 'url("' + img.getAttribute('src') + '")');
-    sec.classList.add('has-shot');
-  });
 
   // ---- スクロールの動き（ブラウザの scroll-snap の代わりに自前で動かす） ----
   // 弱めの吸い付き：進んでいる先の止まる位置が画面の SNAP_AHEAD 以内に来た時だけ引き寄せる。
@@ -1536,52 +1153,6 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
   scrim.addEventListener('click', function(){ closeDrawer(); });
   document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && drawer.classList.contains('open')) closeDrawer(); });
   window.addEventListener('resize', function(){ if (window.innerWidth > 860 && drawer.classList.contains('open')) closeDrawer(false); });
-
-  /* DEV-ONLY: MORE と窓（確認用だけ） */
-  // ---- 作品の MORE（こだわりなどを窓で）・詳細資料（PDF） ----
-  var wdlg = document.getElementById('w-dlg'), pdlg = document.getElementById('pdf-dlg'), pframe = document.getElementById('pdf-frame');
-  function openDlg(d, sec){
-    if (!d.showModal) return;
-    var wa = getComputedStyle(sec).getPropertyValue('--wa').trim();
-    if (wa) d.style.setProperty('--wa', wa);
-    stopAll();
-    document.documentElement.classList.add('dlg-open');
-    d.showModal();
-    d.scrollTop = 0;
-  }
-  [wdlg, pdlg].forEach(function(d){
-    d.addEventListener('close', function(){
-      document.documentElement.classList.remove('dlg-open');
-      if (d === pdlg) pframe.removeAttribute('src');
-    });
-    // 外側（暗い所）か「閉じる」で閉じる
-    d.addEventListener('click', function(e){ if (e.target === d || e.target.closest('[data-close]')) d.close(); });
-  });
-  document.querySelectorAll('.p-work .w-more').forEach(function(b){
-    var sec = b.closest('.p-work');
-    b.addEventListener('click', function(){
-      var ex = sec.querySelector('.w-extra'), idx = sec.querySelector('.w-idx');  // 概要・こだわりは .w-extra に（11-24 本人「概要は MORE のほうに」）
-      wdlg.querySelector('.dlg-eb').textContent = 'Works ' + (idx ? idx.textContent : '');
-      wdlg.querySelector('h3').textContent = sec.querySelector('h2').textContent;
-      wdlg.querySelector('.dlg-more').innerHTML = ex ? ex.innerHTML : '';
-      openDlg(wdlg, sec);
-    });
-  });
-  var phoneQ = window.matchMedia ? window.matchMedia('(max-width: 860px), (pointer: coarse)') : null;
-  document.querySelectorAll('.w-doc[data-pdf]').forEach(function(b){
-    var url = b.getAttribute('data-pdf'), sec = b.closest('.p-work');
-    b.addEventListener('click', function(){
-      // スマホ・ページの中で PDF を出せないブラウザは、新しいタブで開く（端末の PDF 表示の方が読みやすい）
-      if (navigator.pdfViewerEnabled === false || (phoneQ && phoneQ.matches)){ window.open(url, '_blank', 'noopener'); return; }
-      pdlg.querySelector('.dlg-eb').textContent = b.getAttribute('data-title') || '作品資料';
-      document.getElementById('pdf-open').href = url;
-      pframe.src = url;
-      openDlg(pdlg, sec);
-    });
-    // 資料の PDF を置けば押せるようになる（無い間は薄く「準備中」）
-    if (window.fetch) fetch(url, {method: 'HEAD', cache: 'no-store'}).then(function(r){ if (r.ok) b.disabled = false; })['catch'](function(){});
-  });
-  /* /DEV-ONLY */
 
   // ---- 好きなゲーム体験：タイルを押すと右（スマホは下）に解説。帯はループする ----
   // タイルは同じ比率で大きさ 3 つ、並べ方は 3 種類。どの作品をどの大きさにするかは開くたびにランダム。
@@ -2502,493 +2073,26 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
 })();
 </script>
 <!-- /DEV-ONLY -->
+<script src="assets/sfx.js?v=1"></script>
 <script>
-// 作品の画像の下に、作品ごとに形の違う波形を描く。ページに入ると左から色が付き（再生の見立て）、乗せた所の近くが持ち上がる。音は出さない
+// 作品一覧：なぞると行ごとの音（上から順にメロディ）、押すと決定の音を鳴らしてから作品のページへ（音が OFF なら鳴らさずすぐ）
 (function(){
-  var reduce = false, tracks = [];
-  try{ reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){}
-  document.querySelectorAll('.p-work').forEach(function(sec){
-    var shot = sec.querySelector('.w-shot');
-    if (!shot) return;
-    // 画像と波形をひとまとめにして、画像のあった場所に置く
-    var media = document.createElement('div'), wave = document.createElement('div'), idx = sec.querySelector('.w-idx');
-    media.className = 'w-media';
-    shot.parentNode.insertBefore(media, shot);
-    media.appendChild(shot);
-    wave.className = 'w-wave';
-    wave.setAttribute('aria-hidden', 'true');
-    wave.innerHTML = '<span class="w-wave-lab"><small>TRACK</small><b>' + (idx ? idx.textContent.split('/')[0].trim() : '') + '</b></span><canvas></canvas>';
-    media.appendChild(wave);
-    // 形は作品の id から決まる（開くたびに同じ）。ときどき大きく立ち上がって、だんだん減る
-    var seed = 7, id = sec.id || 'w', i, env = .3, base = [];
-    for (i = 0; i < id.length; i++) seed = (seed * 31 + id.charCodeAt(i)) >>> 0;
-    function rnd(){ seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }
-    for (i = 0; i < 96; i++){
-      if (rnd() < .11) env = .6 + rnd() * .4;
-      env = Math.max(.18 + rnd() * .12, env * .9);
-      base.push(Math.min(1, env * (.62 + rnd() * .45)));
-    }
-    tracks.push({sec: sec, cv: wave.querySelector('canvas'), base: base, play: reduce ? 1 : 0, hover: -1, run: 0});
+  var S = window.SFX;
+  document.querySelectorAll('.wl-a').forEach(function(a){
+    var i = +a.getAttribute('data-i');
+    a.addEventListener('pointerenter', function(e){ if (S && e.pointerType === 'mouse') S.note(i); });
+    a.addEventListener('focus', function(){ if (S) S.note(i); });
+    a.addEventListener('click', function(e){
+      if (!S || !S.isOn() || e.metaKey || e.ctrlKey || e.shiftKey || e.button) return;
+      e.preventDefault();
+      a.classList.add('is-go');
+      S.confirm();
+      setTimeout(function(){ location.href = a.href; }, 150);
+    });
   });
-  function draw(t){
-    var cv = t.cv, w = cv.clientWidth, h = cv.clientHeight, dpr = Math.min(2, window.devicePixelRatio || 1) * (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--z')) || 1);
-    if (!w || !h) return;
-    if (cv.width !== Math.round(w * dpr) || cv.height !== Math.round(h * dpr)){ cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); }
-    var g = cv.getContext('2d'), col = getComputedStyle(t.sec).getPropertyValue('--wa').trim() || '#7DB8D1';
-    var bw = 3, gap = 2, n = Math.max(8, Math.floor((w + gap) / (bw + gap))), upto = t.hover >= 0 ? t.hover : t.play * w, k, f, a, v, x, d, bh;
-    g.setTransform(dpr, 0, 0, dpr, 0, 0);
-    g.clearRect(0, 0, w, h);
-    g.fillStyle = col;
-    for (k = 0; k < n; k++){
-      f = k / (n - 1) * (t.base.length - 1); a = Math.floor(f);
-      v = t.base[a] + (t.base[Math.min(t.base.length - 1, a + 1)] - t.base[a]) * (f - a);
-      x = k * (bw + gap);
-      if (t.hover >= 0){ d = (x - t.hover) / 34; v = Math.min(1, v * (1 + .75 * Math.exp(-d * d))); }
-      bh = Math.max(2, v * (h - 2));
-      g.globalAlpha = x + bw <= upto ? 1 : .26;
-      g.fillRect(x, (h - bh) / 2, bw, bh);
-    }
-    g.globalAlpha = 1;
-    if (t.hover >= 0){ g.fillStyle = '#E3E9EE'; g.fillRect(Math.round(t.hover), 0, 1, h); }
-  }
-  // 入った時に左から右へ 2.6 秒で色を付ける（出たら戻す。次に入った時にもう一度）
-  function sweep(t){
-    if (reduce) return;
-    var t0 = performance.now(), my = ++t.run;
-    (function f(now){
-      if (t.run !== my) return;
-      var q = Math.min(1, Math.max(0, (now - t0) / 2600));
-      t.play = 1 - Math.pow(1 - q, 3);
-      draw(t);
-      if (q < 1) requestAnimationFrame(f);
-    })(t0);
-  }
-  if ('IntersectionObserver' in window){
-    var io = new IntersectionObserver(function(es){
-      es.forEach(function(e){
-        tracks.forEach(function(t){
-          if (t.sec !== e.target) return;
-          if (e.isIntersecting) sweep(t);
-          else if (!reduce){ t.run++; t.play = 0; draw(t); }
-        });
-      });
-    }, {threshold: .5});
-    tracks.forEach(function(t){ io.observe(t.sec); });
-  } else tracks.forEach(function(t){ t.play = 1; });
-  tracks.forEach(function(t){
-    function at(e){ var r = t.cv.getBoundingClientRect(); t.hover = r.width ? Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)) * t.cv.clientWidth : 0; draw(t); }
-    function off(){ t.hover = -1; draw(t); }
-    t.cv.addEventListener('pointermove', at);
-    t.cv.addEventListener('pointerdown', at);
-    t.cv.addEventListener('pointerleave', off);
-    t.cv.addEventListener('pointercancel', off);
-    t.cv.addEventListener('pointerup', function(e){ if (e.pointerType !== 'mouse') off(); });
-    // 動画とつなぐ：進み具合（0〜1）を受け取って色を付ける／押した所（0〜1）を知らせる
-    t.cv.addEventListener('wprogress', function(e){ t.run++; t.play = e.detail; draw(t); });
-    t.cv.addEventListener('click', function(e){ var r = t.cv.getBoundingClientRect(); t.cv.dispatchEvent(new CustomEvent('wseek', {bubbles: true, detail: Math.max(0, Math.min(1, (e.clientX - r.left) / r.width))})); });
-  });
-  window.addEventListener('resize', function(){ tracks.forEach(draw); });
-  tracks.forEach(draw);
+  // 作品のページから戻った時に、押した印を消す（戻るボタンでページが保存されていた時）
+  window.addEventListener('pageshow', function(){ document.querySelectorAll('.wl-a.is-go').forEach(function(a){ a.classList.remove('is-go'); }); });
 })();
 </script>
-<script>
-// 作品を画面に止めた舞台の上で入れ替える。スクロールは今までどおり（ホイール・キー・指）で、作品の場所の半分を過ぎたら次の作品が「来る」。プロフィール・連絡先との行き来は普通のスクロール（切り替えの動きは作品どうしの間だけ）。
-// 動きは レコード（盤が戻ってジャケットが抜け、次のジャケットが入って盤が出る）／フィルム（コマが横へ送られる）／なし（重ねて切り替え）
-(function(){
-  var html = document.documentElement, reduce = false;
-  try{ reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){}
-  var secs = [].slice.call(document.querySelectorAll('.p-work')).filter(function(x){ return !x.hidden; });
-  if (secs.length < 2) return;
-  // 画像のまわりを組み立てる（盤・フィルムの穴・光る板）
-  document.querySelectorAll('.p-work').forEach(function(sec){
-    var shot = sec.querySelector('.w-shot');
-    if (!shot) return;
-    var media = shot.closest('.w-media'), film = document.createElement('div');
-    if (!media){ media = document.createElement('div'); media.className = 'w-media'; shot.parentNode.insertBefore(media, shot); media.appendChild(shot); }
-    film.className = 'w-film';
-    shot.parentNode.insertBefore(film, shot);
-    film.appendChild(shot);
-    film.insertAdjacentHTML('beforeend', '<i class="w-holes t"></i><i class="w-holes b"></i><i class="w-flash"></i>');
-    media.insertAdjacentHTML('afterbegin', '<div class="w-disc" aria-hidden="true"><div class="w-disc-in"></div></div>');
-  });
-  // 舞台を作って、作品の中身を 1 枚ずつ載せる（もとの節は空の場所取りに）
-  var pin = document.createElement('div'), stage = document.createElement('div');
-  pin.className = 'w-pin';
-  stage.className = 'w-stage';
-  secs[0].parentNode.insertBefore(pin, secs[0]);
-  pin.appendChild(stage);
-  var slides0 = 0, H = 0, VW = 0;
-  pin.style.setProperty('--n', 1);  // 作品は 1 画面ぶん（11-26 本人「ループ」「そのまま下に流せるように」。前は作品の数だけの長さを止めていた）
-  // 舞台の高さ＝アドレスバーが出ている時の画面の高さ（100svh）と今の高さの小さい方。どの時でも MORE まで見えるように
-  // 低くなった時は必ず測り直す。高くなった時は、100svh が使える端末はそのまま、使えない端末はアドレスバーより大きい変化（120 px 以上）だけ
-  var svhOk = !!(window.CSS && CSS.supports && CSS.supports('height', '100svh')), probe = document.createElement('div');
-  probe.style.cssText = 'position:fixed; left:0; top:0; width:0; height:100vh; visibility:hidden; pointer-events:none';
-  if (svhOk) probe.style.height = '100svh';
-  document.body.appendChild(probe);
-  function viewH(){ return Math.round(Math.min(probe.getBoundingClientRect().height || window.innerHeight, window.innerHeight)); }
-  function measure(force){
-    var h = viewH(), w = window.innerWidth;
-    if (!force && w === VW && (h === H || (!svhOk && h > H && h - H < 120))) return false;
-    H = h; VW = w;
-    pin.style.setProperty('--sh', (h / (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--z')) || 1)).toFixed(2) + 'px');  // CSS の px は拡大されるので割り戻す
-    return true;
-  }
-  measure(true);
-  var slides = secs.map(function(sec){
-    var sl = document.createElement('div');
-    pin.appendChild(sec);
-    sl.className = sec.className + ' w-slide';
-    sl.setAttribute('style', sec.getAttribute('style') || '');
-    sl.setAttribute('role', 'group');
-    sl.setAttribute('aria-labelledby', sec.getAttribute('aria-labelledby') || '');
-    while (sec.firstChild) sl.appendChild(sec.firstChild);
-    sec.classList.add('w-spacer');
-    sec.style.setProperty('--k', 0); slides0++;
-    stage.appendChild(sl);
-    return sl;
-  });
-  function mode(){ return html.getAttribute('data-works') || 'record'; }
-  html.setAttribute('data-works', 'jacket');  // 切り替えはジャケットのカード（前のレコードは "record"、フィルムは "film"、重ねるだけは "none"）
-  // ジャケットの札（番号と題）と、右から出る盤
-  slides.forEach(function(sl){
-    var w = sl.querySelector('.wrap'), idx = sl.querySelector('.w-idx'), h2 = sl.querySelector('h2');
-    if (!w) return;
-    w.insertAdjacentHTML('beforeend', '<span class="w-jlab" aria-hidden="true">' + (idx ? idx.textContent.split('/')[0].trim() : '') + '\u3000' + (h2 ? h2.textContent : '') + '</span><div class="w-jdisc" aria-hidden="true"><div class="w-disc-in"></div></div>');
-  });
-  var EO = 'cubic-bezier(.22,1,.36,1)', EI = 'cubic-bezier(.55,0,1,.45)', EFLICK = 'cubic-bezier(.3,.6,.4,1)';  // EFLICK＝はじいて飛ばす（出だしが速い）
-  function parts(sl){
-    return {media: sl.querySelector('.w-media'), shot: sl.querySelector('.w-shot'), disc: sl.querySelector('.w-disc'), holes: [].slice.call(sl.querySelectorAll('.w-holes')),
-            flash: sl.querySelector('.w-flash'), text: [sl.querySelector('.w-head'), sl.querySelector('.w-detail')].filter(Boolean)};
-  }
-  function anim(el, kf, o){ return el && el.animate ? el.animate(kf, o) : null; }
-  function add(sl, a){ if (a) (sl._an = sl._an || []).push(a); }
-  function kill(sl){ (sl._an || []).forEach(function(a){ try{ a.cancel(); }catch(e){} }); sl._an = []; clearTimeout(sl._t); }
-  // 出ていく作品：レコードは盤が戻ってジャケットが横へ、フィルムはコマが横へ流れる。題と表は先に消える
-  function leave(sl, dir){
-    kill(sl);
-    var q = parts(sl), m = mode();
-    sl.style.zIndex = 1;
-    if (!reduce){
-      if (m === 'record'){
-        add(sl, anim(q.disc, [{transform: 'translateY(0)'}, {transform: 'translateY(50%)'}], {duration: 200, easing: EI, fill: 'forwards'}));
-        add(sl, anim(q.media, [{transform: 'none', opacity: 1}, {transform: 'translateX(' + (-dir * 35) + '%) rotate(' + (-dir * 3) + 'deg)', opacity: 0}], {duration: 260, delay: 140, easing: EI, fill: 'forwards'}));
-      } else if (m === 'film'){
-        add(sl, anim(q.shot, [{transform: 'none', filter: 'blur(0px)'}, {transform: 'translateX(' + (-dir * 106) + '%)', filter: 'blur(3px)'}], {duration: 280, easing: EI, fill: 'forwards'}));
-        q.holes.forEach(function(h){ add(sl, anim(h, [{backgroundPosition: '0px 0px'}, {backgroundPosition: (-dir * 220) + 'px 0px'}], {duration: 280, easing: EI, fill: 'forwards'})); });
-      }
-      q.text.forEach(function(el){ add(sl, anim(el, [{opacity: 1, transform: 'none'}, {opacity: 0, transform: 'translateY(' + (-dir * 14) + 'px)'}], {duration: 220, easing: EI, fill: 'forwards'})); });
-    }
-    sl._t = setTimeout(function(){ kill(sl); sl.classList.remove('on', 'is-on'); sl.style.zIndex = ''; }, reduce ? 0 : 700);
-  }
-  // 来る作品：上に重ねて背景ごと現れ、ジャケット（コマ）が入り、盤が出て回る。題と表は後から順に
-  function come(sl, dir){
-    kill(sl);
-    var q = parts(sl), m = mode(), d0 = 160;
-    sl.classList.add('on', 'is-on');
-    sl.style.zIndex = 2;
-    if (reduce) return;
-    add(sl, anim(sl, [{opacity: 0}, {opacity: 1}], {duration: 320, delay: d0, easing: 'ease', fill: 'backwards'}));
-    if (m === 'record'){
-      add(sl, anim(q.media, [{transform: 'translateX(' + (dir * 35) + '%) rotate(' + (dir * 3) + 'deg)', opacity: 0}, {transform: 'none', opacity: 1}], {duration: 460, delay: d0, easing: EO, fill: 'backwards'}));
-      add(sl, anim(q.disc, [{transform: 'translateY(50%)'}, {transform: 'translateY(-5%)', offset: .75}, {transform: 'translateY(0)'}], {duration: 560, delay: d0 + 300, easing: EO, fill: 'backwards'}));
-    } else if (m === 'film'){
-      add(sl, anim(q.shot, [{transform: 'translateX(' + (dir * 106) + '%)', filter: 'blur(3px)'}, {transform: 'translateX(' + (-dir * 1.5) + '%)', filter: 'blur(0px)', offset: .8}, {transform: 'none', filter: 'blur(0px)'}], {duration: 460, delay: d0, easing: EO, fill: 'backwards'}));
-      q.holes.forEach(function(h){ add(sl, anim(h, [{backgroundPosition: (dir * 220) + 'px 0px'}, {backgroundPosition: '0px 0px'}], {duration: 460, delay: d0, easing: EO, fill: 'backwards'})); });
-      add(sl, anim(q.flash, [{opacity: 0}, {opacity: .22, offset: .15}, {opacity: 0, offset: .35}, {opacity: .1, offset: .5}, {opacity: 0}], {duration: 380, delay: d0 + 120}));
-    }
-    q.text.forEach(function(el, i){ add(sl, anim(el, [{opacity: 0, transform: 'translateY(' + (dir * 18) + 'px)'}, {opacity: 1, transform: 'none'}], {duration: 420, delay: d0 + 260 + i * 90, easing: EO, fill: 'backwards'})); });
-    sl._t = setTimeout(function(){ sl.style.zIndex = ''; sl._an = []; }, 1300);
-  }
-  // 今の作品＝want（横に送る・一覧で選ぶと替わる。スクロールでは替わらない）。7 の次は 1、1 の前は 7
-  var cur = -1, lastShow = 0, want = 0, wantDir = 0, N = slides.length;
-  secs.forEach(function(s, k){ if (location.hash === '#' + s.id) want = k; });
-  function nextOf(k){ return slides[(k + 1) % N]; }
-  function update(){
-    var i = want;
-    if (i === cur) return;
-    if (cur < 0){
-      slides[i].classList.add('on', 'is-on', 'jsettled');
-      if (mode() === 'jacket') nextOf(i).classList.add('peek');
-      cur = i; return;
-    }
-    var dir = wantDir || (i > cur ? 1 : -1);
-    if (mode() === 'jacket') jacketSwap(cur, i, dir);
-    else { leave(slides[cur], dir); come(slides[i], dir); }
-    cur = i;
-    lastShow = performance.now();
-  }
-  // ジャケット：次へ＝上のカードが左上へ抜け、下からのぞいていたカードが持ち上がる。新しく次のカードが下に入る。
-  // 前へ＝前のカードが左上から戻ってきて重なり、今のカードは下へ回ってのぞく側になる
-  var settleT = 0;
-  // 抜ける先。スマホは画面が細くて 55vw では半分しか出ず、消えるまで手前に残る（次へだけ遅く見えた）ので画面の外まで
-  function outPose(){
-    var z = parseFloat(getComputedStyle(html).getPropertyValue('--z')) || 1, ph = window.matchMedia('(max-width: 860px)').matches;  // 広い PC の拡大中は vw・vh も拡大されるので割り戻す
-    return 'translate(' + ((ph ? -85 : -55) / z).toFixed(2) + 'vw, ' + ((ph ? -10 : -16) / z).toFixed(2) + 'vh) rotate(-16deg)';
-  }
-  function peekPose(){ return window.matchMedia('(max-width: 860px)').matches ? 'translate(4px, 30px) rotate(1.2deg)' : 'translate(24px, 38px) rotate(2deg)'; }
-  function fadeAway(sl){
-    add(sl, anim(sl, [{opacity: 1}, {opacity: 0}], {duration: 220, fill: 'forwards'}));
-    sl._t = setTimeout(function(){ kill(sl); sl.classList.remove('on', 'is-on', 'peek'); sl.style.zIndex = ''; }, 240);
-  }
-  function jacketSwap(prev, i, dir){
-    var a = slides[prev], b = slides[i], oldPeek = nextOf(prev), newPeek = nextOf(i), P = peekPose(), OUT = outPose();
-    slides.forEach(function(sl){
-      kill(sl);
-      sl.style.zIndex = '';
-      if (!(dir > 0 && sl === a)) sl.classList.remove('jsettled');
-      if (sl !== a && sl !== b && sl !== oldPeek && sl !== newPeek) sl.classList.remove('on', 'is-on', 'peek');
-    });
-    clearTimeout(settleT);
-    settleT = setTimeout(function(){ if (slides[cur] === b) b.classList.add('jsettled'); }, reduce ? 0 : 200);  // 盤はカードが持ち上がる途中から出す（11-22 本人「レコード出るタイミング早めて」、前は 600→280。11-26 カードが速くなったので 200）
-    if (reduce){
-      a.classList.remove('on', 'is-on', 'peek'); if (oldPeek) oldPeek.classList.remove('peek');
-      b.classList.remove('peek'); b.classList.add('on', 'is-on'); if (newPeek) newPeek.classList.add('peek');
-      return;
-    }
-    if (dir > 0){
-      a.classList.remove('peek'); a.classList.add('on'); a.style.zIndex = 5;
-      // 次へ・前へで来るカードが落ち着くまでを約 0.24 s にそろえた（11-26 本人「左右送りの実行時間の差を減らして」。前は 次へ 0.49 s・前へ 0.28 s）
-      add(a, anim(a, [{transform: 'none', opacity: 1}, {transform: OUT, opacity: 1, offset: .85}, {transform: OUT, opacity: 0}], {duration: 480, easing: EFLICK, fill: 'forwards'}));
-      a._t = setTimeout(function(){ kill(a); a.classList.remove('on', 'is-on', 'jsettled'); a.style.zIndex = ''; }, 500);
-      b.classList.remove('peek'); b.classList.add('on', 'is-on'); b.style.zIndex = 4;
-      add(b, anim(b, [{transform: P, filter: 'brightness(.55)'}, {transform: 'none', filter: 'brightness(1)'}], {duration: 470, delay: 30, easing: EO, fill: 'backwards'}));
-      if (oldPeek && oldPeek !== b) fadeAway(oldPeek);
-    } else {
-      b.classList.remove('peek'); b.classList.add('on', 'is-on'); b.style.zIndex = 5;
-      add(b, anim(b, [{transform: OUT, opacity: 0}, {transform: OUT, opacity: 1, offset: .12}, {transform: 'none', opacity: 1}], {duration: 400, easing: EO, fill: 'backwards'}));
-      if (newPeek === a){
-        a.classList.remove('on', 'is-on'); a.classList.add('peek'); a.style.zIndex = 2;
-        add(a, anim(a, [{transform: 'none', filter: 'brightness(1)'}, {transform: P, filter: 'brightness(.55)'}], {duration: 440, delay: 30, easing: EO, fill: 'backwards'}));
-        a._t = setTimeout(function(){ a.style.zIndex = ''; }, 500);
-      } else {
-        a.classList.remove('is-on'); fadeAway(a);
-      }
-      if (oldPeek && oldPeek !== newPeek) fadeAway(oldPeek);
-    }
-    b._t = setTimeout(function(){ b.style.zIndex = ''; }, 560);
-    if (newPeek && newPeek !== a){
-      newPeek.classList.add('peek');
-      add(newPeek, anim(newPeek, [{opacity: 0}, {opacity: 1}], {duration: 280, delay: 200, fill: 'backwards'}));
-    }
-  }
-  // 作品の場所が画面の真ん中にかかっている間だけ、横の操作で作品を送る（縦のスクロールは本体に任せて、そのまま下の節へ流れる）
-  function inView(){ var r = pin.getBoundingClientRect(); return r.top < H * .5 && r.bottom > H * .5; }
-  function stopScroll(){ try{ window.dispatchEvent(new KeyboardEvent('keydown', {key: 'Home'})); }catch(e){} }
-  // その作品へ。dir＝送る向き（ループの 7→1 も「次」の動きにする）
-  var lastGo = 0;
-  function go(i, dir){
-    want = ((i % N) + N) % N; wantDir = dir || 0;
-    update();
-    wantDir = 0;
-  }
-  // 中身の高さを全作品で一番高い物にそろえ、1 枚に収まらない時は全作品を同じだけ縮める（作品ごとに文字の大きさや場所が変わらないように）
-  // ジャケットは、縮めた後の見た目の幅が決めた幅（スマホは画面の幅 −10 px、PC は 1080 px まで）になるよう、縮める前のカードを広げる（3 回で落ち着く）
-  function fit(){
-    var ws = slides.map(function(sl){ return sl.querySelector('.wrap'); }).filter(Boolean), maxH = 0, sc = 1, k;
-    var cs = getComputedStyle(slides[0]), avail = slides[0].clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
-    var jacket = mode() === 'jacket', sw = stage.clientWidth, Wv = sw <= 860 ? sw - 10 : sw < 1100 ? sw - 120 : Math.min(980, sw - 240);
-    for (k = 0; k < (jacket ? 3 : 1); k++){
-      ws.forEach(function(w){ w.style.transform = ''; w.style.minHeight = ''; w.style.width = jacket ? (Wv / Math.max(sc, .77)).toFixed(1) + 'px' : ''; });  // 広げるのは 1.3 倍まで
-      maxH = 0;
-      ws.forEach(function(w){ maxH = Math.max(maxH, w.scrollHeight); });
-      sc = maxH > avail && avail > 0 ? avail / maxH : 1;
-    }
-    ws.forEach(function(w){ w.style.minHeight = maxH + 'px'; if (sc < 1) w.style.transform = 'scale(' + sc.toFixed(3) + ')'; });
-    // ジャケットの盤の出る長さ：縮めた後の見た目で、カードの横の余白まで（盤の幅の 42% を上限に。真ん中までは出さず、ラベルの端が少し見える。本人「円盤真ん中までは出さないで」）
-    var vw = stage.clientWidth;
-    slides.forEach(function(sl){
-      var w = sl.querySelector('.wrap'), d = sl.querySelector('.w-jdisc');
-      if (!w || !d || !d.offsetWidth) return;
-      var margin = (vw - w.offsetWidth * sc) / 2, jp = Math.max(0, Math.min(margin - 16, d.offsetWidth * sc * .42));
-      d.style.setProperty('--jp', (jp / sc).toFixed(1) + 'px');
-    });
-  }
-  window.addEventListener('resize', function(){ if (measure(false)){ fit(); update(); } });
-  window.addEventListener('load', fit);
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
-  // MORE：もとの仕組みはもとの節を見ているので、舞台の作品から窓を開く形に差し替える
-  var wdlg = document.getElementById('w-dlg');
-  slides.forEach(function(sl){
-    var b = sl.querySelector('.w-more');
-    if (!b || !wdlg) return;
-    b.addEventListener('click', function(e){
-      e.stopImmediatePropagation();
-      if (!wdlg.showModal) return;
-      var ex = sl.querySelector('.w-extra'), idx = sl.querySelector('.w-idx'), wa = getComputedStyle(sl).getPropertyValue('--wa').trim();
-      wdlg.querySelector('.dlg-eb').textContent = 'Works ' + (idx ? idx.textContent : '');
-      wdlg.querySelector('h3').textContent = sl.querySelector('h2').textContent;
-      wdlg.querySelector('.dlg-more').innerHTML = ex ? ex.innerHTML : '';
-      if (wa) wdlg.style.setProperty('--wa', wa);
-      stopScroll();
-      html.classList.add('dlg-open');
-      wdlg.showModal();
-      wdlg.scrollTop = 0;
-    }, true);
-  });
-  // 作品のトラックリスト
-  // 舞台の上に作品の一覧。押すとその作品へ飛ぶ（本人「見たいのだけ見る」ができるように）。今の作品に印
-  var tl = document.createElement('nav'), tlItems = [];
-  tl.className = 'w-tl';
-  tl.setAttribute('aria-label', '作品の一覧');
-  slides.forEach(function(sl, k){
-    var idx = sl.querySelector('.w-idx'), h2 = sl.querySelector('h2'), b = document.createElement('button');
-    b.type = 'button';
-    b.className = 'w-tl-i';
-    b.style.setProperty('--c', getComputedStyle(sl).getPropertyValue('--wa').trim() || '#7DB8D1');
-    b.innerHTML = '<span class="n"></span><span class="t"></span>';
-    b.querySelector('.n').textContent = idx ? idx.textContent.split('/')[0].trim() : String(k + 1);
-    b.querySelector('.t').textContent = h2 ? h2.textContent : '';
-    b.addEventListener('click', function(){ if (k === cur) return; lastGo = performance.now(); go(k, k > cur ? 1 : -1); });
-    tl.appendChild(b);
-    tlItems.push(b);
-  });
-  var bar = document.createElement('div');
-  bar.className = 'w-tlbar';
-  ['prev', 'next'].forEach(function(kind){
-    var b = document.createElement('button'), d = kind === 'prev' ? -1 : 1;
-    b.type = 'button';
-    b.className = 'w-arr ' + kind;
-    b.setAttribute('aria-label', d < 0 ? '前の作品' : '次の作品');
-    b.addEventListener('click', function(){ if (cur < 0 || performance.now() - lastGo < 250) return; lastGo = performance.now(); go(cur + d, d); });
-    bar.appendChild(b);
-  });
-  bar.insertBefore(tl, bar.lastChild);  // ‹ 一覧 ›
-  stage.appendChild(bar);
-  html.classList.add('has-tl');
-  function tlMark(){
-    var i = -1;
-    slides.forEach(function(sl, k){ if (sl.classList.contains('is-on')) i = k; });
-    if (i < 0 || tlItems[i].getAttribute('aria-current') === 'true') return;
-    tlItems.forEach(function(b, k){ if (k === i) b.setAttribute('aria-current', 'true'); else b.removeAttribute('aria-current'); });
-    if (tl.scrollWidth > tl.clientWidth + 1) tl.scrollLeft = tlItems[i].offsetLeft - (tl.clientWidth - tlItems[i].offsetWidth) / 2;
-  }
-  if ('MutationObserver' in window) slides.forEach(function(sl){ new MutationObserver(tlMark).observe(sl, {attributes: true, attributeFilter: ['class']}); });
-  // 作品の横スライド
-  // 作品カードの上で横に動かすと作品が替わる（左へ＝次、右へ＝前）。スマホはスワイプ、PC はタッチパッドの横の動き（Shift＋ホイール）と ← → キー、一覧の両わきの矢印。7 の次は 1
-  // 一覧（札の列）の上では列が流れるだけ（本人「一覧と作品カードは別に」）。作品の場所が画面の真ん中にかかっている間だけ
-  function sideGo(dir){
-    if (cur < 0 || !inView()) return false;
-    lastGo = performance.now();
-    go(cur + dir, dir);
-    return true;
-  }
-  function offCard(t){ return !t || !t.closest || !!t.closest('.w-tl, dialog, #drawer'); }
-  var sx = 0, sy = 0, st = 0, sAxis = 'n';
-  stage.addEventListener('touchstart', function(e){
-    if (e.touches.length !== 1 || offCard(e.target)){ sAxis = 'n'; return; }
-    sx = e.touches[0].clientX; sy = e.touches[0].clientY; st = performance.now(); sAxis = '';
-  }, {passive: true});
-  stage.addEventListener('touchmove', function(e){
-    if (sAxis === 'n' || e.touches.length !== 1){ sAxis = 'n'; return; }
-    var dx = e.touches[0].clientX - sx, dy = e.touches[0].clientY - sy;
-    if (!sAxis && Math.abs(dx) + Math.abs(dy) > 10) sAxis = Math.abs(dx) > Math.abs(dy) * 1.2 ? 'x' : 'y';
-    if (sAxis === 'x' && e.cancelable) e.preventDefault();
-  }, {passive: false});
-  stage.addEventListener('touchend', function(e){
-    var ax = sAxis;
-    sAxis = 'n';
-    if (ax !== 'x' || !e.changedTouches.length) return;
-    var dx = e.changedTouches[0].clientX - sx, dt = performance.now() - st;
-    if (Math.abs(dx) > 60 || (Math.abs(dx) > 30 && dt < 250)) sideGo(dx < 0 ? 1 : -1);
-  }, {passive: true});
-  stage.addEventListener('touchcancel', function(){ sAxis = 'n'; }, {passive: true});
-  // タッチパッドの横の動き：1 回の動きで 1 作品（慣性の続きは飲み込む）。端の作品でも横の身ぶり（戻る・進む）にはさせない
-  var hLast = 0, hAbs = 0, hAcc = 0, hLock = false, hGo = 0;
-  window.addEventListener('wheel', function(e){
-    var ax = Math.abs(e.deltaX), ay = Math.abs(e.deltaY);
-    if (e.ctrlKey || ax <= ay || offCard(e.target) || !e.target.closest('.w-stage')) return;
-    if (html.classList.contains('dlg-open') || !inView() || cur < 0) return;
-    e.preventDefault();
-    var now = performance.now(), ad = ax * (e.deltaMode === 1 ? 16 : 1);
-    var fresh = now - hLast > 250 || ad > hAbs * 1.4 + 4;
-    hLast = now; hAbs = ad;
-    if (now - hGo < 700 || (hLock && !fresh)){ hAcc = 0; return; }
-    hLock = false;
-    hAcc += ad;
-    if (hAcc < 30) return;
-    hAcc = 0;
-    if (sideGo(e.deltaX > 0 ? 1 : -1)){ hLock = true; hGo = now; }
-  }, {passive: false});
-  window.addEventListener('keydown', function(e){
-    if (e.ctrlKey || e.metaKey || e.altKey || (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight')) return;
-    var t = e.target;
-    if (t && t.closest && t.closest('input, textarea, select, [contenteditable], #smap, dialog')) return;
-    if (!inView() || cur < 0) return;
-    e.preventDefault();
-    if (performance.now() - lastShow < 450) return;
-    sideGo(e.key === 'ArrowRight' ? 1 : -1);
-  }, true);
-  fit();
-  update();
-})();
-</script>
-<!-- DEV-ONLY: 作品の動画（確認用だけ） -->
-<script>
-// 波形の帯の左を ▶ にする。押すと画像の所に動画が出て音付きで流れ、波形が進み具合になる（波形を押すとその位置へ）。
-// 動画は dev/video/<名前>.mp4（下の表の名前）を置けば、その作品から押せるようになる。無い作品は ▶ が薄く「準備中」
-(function(){
-  var NAMES = {works: 'idreal', 'work-2': 'horror', 'work-3': 'osumitsuki', 'work-4': 'ribbond', 'work-5': 'soundmarker', 'work-6': 'friend-a', 'work-7': 'friend-b'};
-  var slides = [].slice.call(document.querySelectorAll('.w-slide')), spacers = [].slice.call(document.querySelectorAll('.w-spacer')), playing = null;
-  slides.forEach(function(sl, k){
-    var lab = sl.querySelector('.w-wave-lab'), shot = sl.querySelector('.w-shot'), cv = sl.querySelector('.w-wave canvas'), sp = spacers[k];
-    if (!lab || !shot || !sp) return;
-    var name = NAMES[sp.id], url = name ? 'video/' + name + '.mp4' : '', no = (lab.querySelector('b') || {}).textContent || '', title = (sl.querySelector('h2') || {}).textContent || '';
-    var btn = document.createElement('button'), video = null, raf = 0;
-    btn.type = 'button';
-    btn.className = 'w-play';
-    btn.disabled = true;
-    btn.setAttribute('aria-label', title + ' の動画（準備中）');
-    btn.innerHTML = '<i class="w-play-ic" aria-hidden="true"></i><span class="w-play-t"><small>準備中</small><b>' + no + '</b></span>';
-    lab.parentNode.replaceChild(btn, lab);
-    function progress(){
-      cancelAnimationFrame(raf);
-      if (!video) return;
-      if (cv && video.duration) cv.dispatchEvent(new CustomEvent('wprogress', {detail: video.currentTime / video.duration}));
-      if (!video.paused && !video.ended) raf = requestAnimationFrame(progress);
-    }
-    function state(){
-      var on = !!video && !video.paused && !video.ended;
-      btn.classList.toggle('is-playing', on);
-      btn.setAttribute('aria-label', title + (on ? ' の動画を止める' : ' の動画を再生'));
-    }
-    function ensure(){
-      if (video) return video;
-      video = document.createElement('video');
-      video.preload = 'auto';
-      video.playsInline = true;
-      video.setAttribute('playsinline', '');
-      video.src = url;
-      shot.appendChild(video);
-      video.addEventListener('play', function(){ if (playing && playing !== video) playing.pause(); playing = video; state(); progress(); });
-      video.addEventListener('pause', state);
-      video.addEventListener('ended', function(){ state(); progress(); });
-      video.addEventListener('click', toggle);
-      return video;
-    }
-    function toggle(){
-      if (btn.disabled) return;
-      var v = ensure();
-      if (v.paused || v.ended){ if (v.ended) v.currentTime = 0; var pr = v.play(); if (pr && pr['catch']) pr['catch'](function(){}); }
-      else v.pause();
-    }
-    btn.addEventListener('click', toggle);
-    if (cv) cv.addEventListener('wseek', function(e){
-      if (btn.disabled) return;
-      var v = ensure(), go = function(){ v.currentTime = e.detail * v.duration; if (v.paused){ var pr = v.play(); if (pr && pr['catch']) pr['catch'](function(){}); } progress(); };
-      if (v.readyState >= 1) go(); else v.addEventListener('loadedmetadata', go, {once: true});
-    });
-    // 作品が切り替わったら止める
-    new MutationObserver(function(){ if (video && !video.paused && !sl.classList.contains('on')) video.pause(); }).observe(sl, {attributes: true, attributeFilter: ['class']});
-    // 動画のファイルがあれば押せるように
-    function enable(u){ url = u; btn.disabled = false; btn.querySelector('small').textContent = 'PLAY'; state(); }
-    btn._enable = enable;  // 確かめ用（仮の動画で試す時）
-    if (url) fetch(url, {method: 'HEAD', cache: 'no-store'}).then(function(r){ if (r.ok) enable(url); }, function(){});
-  });
-  // 作品の舞台が画面から外れたら止める
-  var stage = document.querySelector('.w-stage');
-  if (stage && 'IntersectionObserver' in window) new IntersectionObserver(function(es){ es.forEach(function(e){ if (!e.isIntersecting && playing) playing.pause(); }); }).observe(stage);
-})();
-</script>
-<!-- /DEV-ONLY -->
 </body>
 </html>
