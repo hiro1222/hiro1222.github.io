@@ -647,7 +647,13 @@ html[data-works="jacket"] .w-slide.is-on .w-jdisc .w-disc-in{animation:w-spin 4.
 @media (prefers-reduced-motion: reduce){ html[data-works="jacket"] .w-slide.is-on .w-jdisc .w-disc-in{animation:none} }
 /* 作品のトラックリスト */
 /* 舞台の上に作品の一覧（色の点・番号・題）。押すとその作品へ飛ぶ。今の作品はカードと同じ生成りに。入りきらない時は横に送れる */
-.w-tl{position:absolute; z-index:6; top:calc(env(safe-area-inset-top, 0px) + var(--bar) + 12px); left:50%; transform:translateX(-50%); max-width:calc(100% - 24px); display:flex; align-items:center; gap:2px; padding:3px; border:1px solid rgba(236,230,218,.14); border-radius:999px; background:rgba(8,12,16,.6); overflow-x:auto; overscroll-behavior-x:contain; scrollbar-width:none; scroll-behavior:smooth; -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px)}
+.w-tlbar{position:absolute; z-index:6; top:calc(env(safe-area-inset-top, 0px) + var(--bar) + 12px); left:50%; transform:translateX(-50%); width:max-content; max-width:calc(100% - 24px); display:flex; align-items:center; gap:8px}
+.w-arr{flex:none; position:relative; width:38px; height:38px; padding:0; border:1px solid rgba(236,230,218,.14); border-radius:50%; background:rgba(8,12,16,.6); color:rgba(227,233,238,.8); cursor:pointer; -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px)}
+.w-arr::before{content:""; position:absolute; left:50%; top:50%; width:9px; height:9px; border:solid currentColor; border-width:0 0 2px 2px; transform:translate(-30%, -50%) rotate(45deg)}
+.w-arr.next::before{transform:translate(-70%, -50%) rotate(-135deg)}
+.w-arr:hover{color:#fff; background:rgba(255,255,255,.1)}
+.w-arr:focus-visible{outline:2px solid #ECE6DA; outline-offset:1px}
+.w-tl{position:relative; min-width:0; display:flex; align-items:center; gap:2px; padding:3px; border:1px solid rgba(236,230,218,.14); border-radius:999px; background:rgba(8,12,16,.6); overflow-x:auto; overscroll-behavior-x:contain; scrollbar-width:none; scroll-behavior:smooth; -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px)}
 .w-tl::-webkit-scrollbar{display:none}
 .w-tl-i{flex:none; display:flex; align-items:center; gap:7px; height:30px; padding:0 14px 0 11px; border:0; border-radius:999px; background:none; color:rgba(227,233,238,.66); font:inherit; font-size:13px; line-height:1; white-space:nowrap; cursor:pointer; transition:background-color .2s, color .2s}
 .w-tl-i::before{content:""; flex:none; width:8px; height:8px; border-radius:50%; background:var(--c); opacity:.6}
@@ -658,7 +664,8 @@ html[data-works="jacket"] .w-slide.is-on .w-jdisc .w-disc-in{animation:w-spin 4.
 .w-tl-i:focus-visible{outline:2px solid #ECE6DA; outline-offset:1px}
 html[data-works="jacket"].has-tl .w-stage > .w-slide{padding-top:calc(env(safe-area-inset-top, 0px) + var(--bar) + 60px)}
 @media (max-width:860px){
-  .w-tl{top:calc(env(safe-area-inset-top, 0px) + var(--bar) + 6px); max-width:calc(100% - 10px)}
+  .w-tlbar{top:calc(env(safe-area-inset-top, 0px) + var(--bar) + 6px); max-width:calc(100% - 10px); gap:5px}
+  .w-arr{width:32px; height:32px}
   .w-tl-i{height:28px; padding:0 11px 0 9px; gap:6px; font-size:12px}
   html[data-works="jacket"].has-tl .w-stage > .w-slide{padding-top:calc(env(safe-area-inset-top, 0px) + var(--bar) + 46px)}
 }
@@ -2611,7 +2618,7 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
   secs[0].parentNode.insertBefore(pin, secs[0]);
   pin.appendChild(stage);
   var slides0 = 0, H = 0, VW = 0;
-  pin.style.setProperty('--n', secs.length);
+  pin.style.setProperty('--n', 1);  // 作品は 1 画面ぶん（11-26 本人「ループ」「そのまま下に流せるように」。前は作品の数だけの長さを止めていた）
   // 舞台の高さ＝アドレスバーが出ている時の画面の高さ（100svh）と今の高さの小さい方。どの時でも MORE まで見えるように
   // 低くなった時は必ず測り直す。高くなった時は、100svh が使える端末はそのまま、使えない端末はアドレスバーより大きい変化（120 px 以上）だけ
   var svhOk = !!(window.CSS && CSS.supports && CSS.supports('height', '100svh')), probe = document.createElement('div');
@@ -2636,7 +2643,7 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
     sl.setAttribute('aria-labelledby', sec.getAttribute('aria-labelledby') || '');
     while (sec.firstChild) sl.appendChild(sec.firstChild);
     sec.classList.add('w-spacer');
-    sec.style.setProperty('--k', slides0++);
+    sec.style.setProperty('--k', 0); slides0++;
     stage.appendChild(sl);
     return sl;
   });
@@ -2692,18 +2699,19 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
     q.text.forEach(function(el, i){ add(sl, anim(el, [{opacity: 0, transform: 'translateY(' + (dir * 18) + 'px)'}, {opacity: 1, transform: 'none'}], {duration: 420, delay: d0 + 260 + i * 90, easing: EO, fill: 'backwards'})); });
     sl._t = setTimeout(function(){ sl.style.zIndex = ''; sl._an = []; }, 1300);
   }
-  // 今の作品＝舞台の場所のうち、画面の上がどの作品の場所の半分を過ぎたか
-  var cur = -1, lastShow = 0, ticking = false;
-  function index(){ var r = pin.getBoundingClientRect(); return Math.max(0, Math.min(slides.length - 1, Math.round(-r.top / H))); }
+  // 今の作品＝want（横に送る・一覧で選ぶと替わる。スクロールでは替わらない）。7 の次は 1、1 の前は 7
+  var cur = -1, lastShow = 0, want = 0, wantDir = 0, N = slides.length;
+  secs.forEach(function(s, k){ if (location.hash === '#' + s.id) want = k; });
+  function nextOf(k){ return slides[(k + 1) % N]; }
   function update(){
-    var i = index();
+    var i = want;
     if (i === cur) return;
     if (cur < 0){
       slides[i].classList.add('on', 'is-on', 'jsettled');
-      if (mode() === 'jacket' && slides[i + 1]) slides[i + 1].classList.add('peek');
+      if (mode() === 'jacket') nextOf(i).classList.add('peek');
       cur = i; return;
     }
-    var dir = i > cur ? 1 : -1;
+    var dir = wantDir || (i > cur ? 1 : -1);
     if (mode() === 'jacket') jacketSwap(cur, i, dir);
     else { leave(slides[cur], dir); come(slides[i], dir); }
     cur = i;
@@ -2718,7 +2726,7 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
     sl._t = setTimeout(function(){ kill(sl); sl.classList.remove('on', 'is-on', 'peek'); sl.style.zIndex = ''; }, 240);
   }
   function jacketSwap(prev, i, dir){
-    var a = slides[prev], b = slides[i], oldPeek = slides[prev + 1] || null, newPeek = slides[i + 1] || null, P = peekPose();
+    var a = slides[prev], b = slides[i], oldPeek = nextOf(prev), newPeek = nextOf(i), P = peekPose();
     slides.forEach(function(sl){
       kill(sl);
       sl.style.zIndex = '';
@@ -2757,76 +2765,16 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
       add(newPeek, anim(newPeek, [{opacity: 0}, {opacity: 1}], {duration: 320, delay: 320, fill: 'backwards'}));
     }
   }
-  window.addEventListener('scroll', function(){
-    if (ticking) return;
-    ticking = true;
-    requestAnimationFrame(function(){
-      ticking = false;
-      update();
-      var pn = pinned();
-      if (pn && !wasPinned){
-        arrived = performance.now(); locked = true;
-        if (arrived - lastWheel < 1500){ clearTimeout(anchorT); anchorT = setTimeout(anchor, 650); }
-      }
-      wasPinned = pn;
-    });
-  }, {passive: true});
-  // 舞台に着いた後、見えない所で今の作品の場所の頭へそろえる（着いた勢いで少し奥へ入っていると、上へ戻るのに余分に回すことになるので）
-  var anchorT = 0, touching = false;
-  window.addEventListener('touchstart', function(){ touching = true; }, {passive: true});
-  window.addEventListener('touchend', function(){ touching = false; }, {passive: true});
-  window.addEventListener('touchcancel', function(){ touching = false; }, {passive: true});
-  function anchor(){
-    if (touching || !pinned() || cur < 0) return;
-    var y = secs[cur].getBoundingClientRect().top + window.scrollY;
-    if (Math.abs(window.scrollY - y) <= 2) return;
-    stopScroll();
-    try{ window.scrollTo({top: y, left: 0, behavior: 'instant'}); }catch(e){ window.scrollTo(0, y); }
-  }
-  // ホイール 1 目盛り・キー 1 回で次の作品へ（舞台が止まっている間だけ。最初の作品の上・最後の作品の下は本体に任せる）。
-  // 舞台は止まっているので、見えない所で作品の場所の頭へ移るだけ。慣性の続きは止まるまで飲み込む
+  // 作品の場所が画面の真ん中にかかっている間だけ、横の操作で作品を送る（縦のスクロールは本体に任せて、そのまま下の節へ流れる）
+  function inView(){ var r = pin.getBoundingClientRect(); return r.top < H * .5 && r.bottom > H * .5; }
   function stopScroll(){ try{ window.dispatchEvent(new KeyboardEvent('keydown', {key: 'Home'})); }catch(e){} }
-  function pinned(){ var r = pin.getBoundingClientRect(); return r.top <= 2 && r.bottom >= H - 2; }
-  function go(i){
-    stopScroll();
-    var y = secs[i].getBoundingClientRect().top + window.scrollY;
-    try{ window.scrollTo({top: y, left: 0, behavior: 'instant'}); }catch(e){ window.scrollTo(0, y); }
+  // その作品へ。dir＝送る向き（ループの 7→1 も「次」の動きにする）
+  var lastGo = 0;
+  function go(i, dir){
+    want = ((i % N) + N) % N; wantDir = dir || 0;
     update();
+    wantDir = 0;
   }
-  // 新しい操作か、慣性の続きかを見分ける：間が 250 ms 空いた・前より強くなった・マウスの 1 目盛り（50 以上）で動きが終わっている、のどれかなら新しい操作
-  // 動きの間（0.7 s）と、舞台に着いた直後（0.6 s。プロフィール・連絡先から回したホイールの残りで飛ばさない）は飲み込む
-  var lastWheel = 0, lastAbs = 0, acc = 0, locked = false, lastGo = 0, arrived = 0, wasPinned = false;
-  window.addEventListener('wheel', function(e){
-    if (reduce || e.ctrlKey || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
-    if (e.target.closest && e.target.closest('#drawer, dialog')) return;
-    if (html.classList.contains('dlg-open')) return;
-    var now = performance.now(), ad = Math.abs(e.deltaY) * (e.deltaMode === 1 ? 16 : 1);
-    var fresh = now - lastWheel > 250 || ad > lastAbs * 1.4 + 4 || (ad >= 50 && now - lastGo > 750);
-    lastWheel = now; lastAbs = ad;
-    if (!pinned() || cur < 0){ acc = 0; return; }
-    if (now - lastGo < 700 || now - arrived < 600 || (locked && !fresh)){ acc = 0; e.preventDefault(); e.stopImmediatePropagation(); return; }
-    locked = false;
-    var dir = e.deltaY > 0 ? 1 : -1, i = cur + dir;
-    if (i < 0 || i >= slides.length) return;
-    e.preventDefault(); e.stopImmediatePropagation();
-    acc += ad;
-    if (acc < 30) return;
-    acc = 0; locked = true; lastGo = now;
-    go(i);
-  }, {capture: true, passive: false});
-  window.addEventListener('keydown', function(e){
-    if (reduce || e.ctrlKey || e.metaKey || e.altKey) return;
-    var t = e.target, dir = (e.key === 'ArrowDown' || e.key === 'PageDown' || (e.key === ' ' && !e.shiftKey)) ? 1 : (e.key === 'ArrowUp' || e.key === 'PageUp' || (e.key === ' ' && e.shiftKey)) ? -1 : 0;
-    if (!dir || !pinned() || cur < 0) return;
-    if (t && t.closest && t.closest('input, textarea, select, [contenteditable], #smap, dialog')) return;
-    if (e.key === ' ' && t && t.closest && t.closest('button, a')) return;
-    var i = cur + dir;
-    if (i < 0 || i >= slides.length) return;
-    e.preventDefault(); e.stopImmediatePropagation();
-    if (performance.now() - lastShow < 450) return;
-    lastGo = performance.now();
-    go(i);
-  }, true);
   // 中身の高さを全作品で一番高い物にそろえ、1 枚に収まらない時は全作品を同じだけ縮める（作品ごとに文字の大きさや場所が変わらないように）
   // ジャケットは、縮めた後の見た目の幅が決めた幅（スマホは画面の幅 −10 px、PC は 1080 px まで）になるよう、縮める前のカードを広げる（3 回で落ち着く）
   function fit(){
@@ -2884,11 +2832,22 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
     b.innerHTML = '<span class="n"></span><span class="t"></span>';
     b.querySelector('.n').textContent = idx ? idx.textContent.split('/')[0].trim() : String(k + 1);
     b.querySelector('.t').textContent = h2 ? h2.textContent : '';
-    b.addEventListener('click', function(){ if (k === cur) return; lastGo = performance.now(); go(k); });
+    b.addEventListener('click', function(){ if (k === cur) return; lastGo = performance.now(); go(k, k > cur ? 1 : -1); });
     tl.appendChild(b);
     tlItems.push(b);
   });
-  stage.appendChild(tl);
+  var bar = document.createElement('div');
+  bar.className = 'w-tlbar';
+  ['prev', 'next'].forEach(function(kind){
+    var b = document.createElement('button'), d = kind === 'prev' ? -1 : 1;
+    b.type = 'button';
+    b.className = 'w-arr ' + kind;
+    b.setAttribute('aria-label', d < 0 ? '前の作品' : '次の作品');
+    b.addEventListener('click', function(){ if (cur < 0 || performance.now() - lastGo < 250) return; lastGo = performance.now(); go(cur + d, d); });
+    bar.appendChild(b);
+  });
+  bar.insertBefore(tl, bar.lastChild);  // ‹ 一覧 ›
+  stage.appendChild(bar);
   html.classList.add('has-tl');
   function tlMark(){
     var i = -1;
@@ -2899,13 +2858,12 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
   }
   if ('MutationObserver' in window) slides.forEach(function(sl){ new MutationObserver(tlMark).observe(sl, {attributes: true, attributeFilter: ['class']}); });
   // 作品の横スライド
-  // 作品カードの上で横に動かすと作品が替わる（左へ＝次、右へ＝前）。スマホはスワイプ、PC はタッチパッドの横の動き（Shift＋ホイール）と ← → キー
-  // 一覧（札の列）の上では列が流れるだけ（本人「一覧と作品カードは別に」）。舞台が止まっている間だけ
+  // 作品カードの上で横に動かすと作品が替わる（左へ＝次、右へ＝前）。スマホはスワイプ、PC はタッチパッドの横の動き（Shift＋ホイール）と ← → キー、一覧の両わきの矢印。7 の次は 1
+  // 一覧（札の列）の上では列が流れるだけ（本人「一覧と作品カードは別に」）。作品の場所が画面の真ん中にかかっている間だけ
   function sideGo(dir){
-    var i = cur + dir;
-    if (cur < 0 || i < 0 || i >= slides.length || !pinned()) return false;
-    lastGo = performance.now(); locked = true;
-    go(i);
+    if (cur < 0 || !inView()) return false;
+    lastGo = performance.now();
+    go(cur + dir, dir);
     return true;
   }
   function offCard(t){ return !t || !t.closest || !!t.closest('.w-tl, dialog, #drawer'); }
@@ -2933,7 +2891,7 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
   window.addEventListener('wheel', function(e){
     var ax = Math.abs(e.deltaX), ay = Math.abs(e.deltaY);
     if (e.ctrlKey || ax <= ay || offCard(e.target) || !e.target.closest('.w-stage')) return;
-    if (html.classList.contains('dlg-open') || !pinned() || cur < 0) return;
+    if (html.classList.contains('dlg-open') || !inView() || cur < 0) return;
     e.preventDefault();
     var now = performance.now(), ad = ax * (e.deltaMode === 1 ? 16 : 1);
     var fresh = now - hLast > 250 || ad > hAbs * 1.4 + 4;
@@ -2949,7 +2907,7 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
     if (e.ctrlKey || e.metaKey || e.altKey || (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight')) return;
     var t = e.target;
     if (t && t.closest && t.closest('input, textarea, select, [contenteditable], #smap, dialog')) return;
-    if (!pinned() || cur < 0) return;
+    if (!inView() || cur < 0) return;
     e.preventDefault();
     if (performance.now() - lastShow < 450) return;
     sideGo(e.key === 'ArrowRight' ? 1 : -1);
