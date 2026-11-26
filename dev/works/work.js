@@ -79,6 +79,29 @@
       go(a.getAttribute('href'));
     });
   });
+  //帯の真ん中の作品（なぞっている時はその作品）の画像を、ぼかして帯の後ろに
+  var showBg = window.ShotBg ? window.ShotBg(document.querySelector('.wo-bg')) : null, bgHov = null, bgTk = false;
+  function bgPaint(li){
+    if (!showBg || !li) return;
+    var img = li.querySelector('.ws-th img');
+    showBg(img ? (img.currentSrc || img.src) : null, getComputedStyle(li).getPropertyValue('--wa').trim());
+  }
+  function bgCentered(){
+    var r = list.getBoundingClientRect(), cx = r.left + r.width / 2, best = null, bd = 1e9;
+    [].slice.call(list.children).forEach(function(li){ var b = li.getBoundingClientRect(), d = Math.abs(b.left + b.width / 2 - cx); if (d < bd){ bd = d; best = li; } });
+    return best;
+  }
+  function bgUpdate(){ bgPaint(bgHov || bgCentered()); }
+  if (list && showBg){
+    [].slice.call(list.children).forEach(function(li){
+      li.addEventListener('pointerenter', function(e){ if (e.pointerType === 'mouse'){ bgHov = li; bgUpdate(); } });
+      li.addEventListener('pointerleave', function(){ if (bgHov === li){ bgHov = null; bgUpdate(); } });
+      li.addEventListener('focusin', function(){ bgHov = li; bgUpdate(); });
+      li.addEventListener('focusout', function(){ if (bgHov === li){ bgHov = null; bgUpdate(); } });
+    });
+    list.addEventListener('scroll', function(){ if (bgTk) return; bgTk = true; requestAnimationFrame(function(){ bgTk = false; if (!bgHov) bgUpdate(); }); }, {passive: true});
+    bgUpdate();
+  }
   //矢印は 1 作品ずつ。押す前に端の周に寄っていたら戻しておく
   document.querySelectorAll('.ws-arr').forEach(function(b){
     b.addEventListener('click', function(){

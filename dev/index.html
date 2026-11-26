@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+JP:wght@400;500;600&family=Shippori+Mincho+B1:wght@600;800&display=swap">
-<link rel="stylesheet" href="assets/works-list.css?v=5">
+<link rel="stylesheet" href="assets/works-list.css?v=7">
 <style>
 /* 上に固定のバー。下は全画面の節が 6 枚、節ごとに背景が 1 つ。スクロールは節の頭に吸い付く。
    スマホ（860px 以下）はバーの代わりに左上のボタン → 左から出るサイドバー。
@@ -856,6 +856,7 @@ button{font:inherit}
   <!-- WORKS:BEGIN（tools/make_works.py が tools/works.json から作る。ここは手で直さない） -->
   <!-- 03 作品：トラックリストの形の一覧。押すと作品ごとのページ（works/〇〇.html）へ -->
   <section class="panel dark p-works" id="works" aria-labelledby="h-works">
+    <div class="bg wl-bg" aria-hidden="true"><i></i><i></i></div>
     <div class="wrap">
       <div class="wl-head">
         <div class="head">
@@ -2073,6 +2074,7 @@ button{font:inherit}
 <!-- /DEV-ONLY -->
 <script src="assets/sfx.js?v=1"></script>
 <script src="assets/progress.js?v=1"></script>
+<script src="assets/shotbg.js?v=1"></script>
 <script>
 // 作品一覧：なぞると行ごとの音（上から順にメロディ）、押すと決定の音を鳴らしてから作品のページへ（音が OFF なら鳴らさずすぐ）
 (function(){
@@ -2091,6 +2093,27 @@ button{font:inherit}
   });
   // 作品のページから戻った時に、押した印を消す（戻るボタンでページが保存されていた時）
   window.addEventListener('pageshow', function(){ document.querySelectorAll('.wl-a.is-go').forEach(function(a){ a.classList.remove('is-go'); }); });
+  // 選んでいる作品（なぞっている行、なければ画面の真ん中に近い行）の画像を、ぼかして一覧の後ろに
+  var rows = [].slice.call(document.querySelectorAll('.wl-a')), show = window.ShotBg ? window.ShotBg(document.querySelector('.wl-bg')) : null, hov = null, tk = false;
+  if (!show || !rows.length) return;
+  function paint(a){
+    var img = a.querySelector('.wl-jk img');
+    show(img ? (img.currentSrc || img.src) : null, getComputedStyle(a.parentNode).getPropertyValue('--wa').trim());
+  }
+  function centered(){
+    var mid = window.innerHeight / 2, best = rows[0], bd = 1e9;
+    rows.forEach(function(a){ var r = a.getBoundingClientRect(), d = Math.abs(r.top + r.height / 2 - mid); if (d < bd){ bd = d; best = a; } });
+    return best;
+  }
+  function update(){ paint(hov || centered()); }
+  rows.forEach(function(a){
+    a.addEventListener('pointerenter', function(e){ if (e.pointerType === 'mouse'){ hov = a; update(); } });
+    a.addEventListener('pointerleave', function(){ if (hov === a) hov = null; });  // 離れても次に選ぶまでは今の画像のまま
+    a.addEventListener('focus', function(){ hov = a; update(); });
+    a.addEventListener('blur', function(){ if (hov === a) hov = null; });
+  });
+  window.addEventListener('scroll', function(){ if (tk) return; tk = true; requestAnimationFrame(function(){ tk = false; if (!hov) update(); }); }, {passive: true});
+  update();
 })();
 </script>
 </body>

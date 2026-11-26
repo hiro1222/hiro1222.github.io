@@ -76,6 +76,7 @@ def list_block():
     return ('<!-- WORKS:BEGIN（tools/make_works.py が tools/works.json から作る。ここは手で直さない） -->\n'
             '  <!-- 03 作品：トラックリストの形の一覧。押すと作品ごとのページ（works/〇〇.html）へ -->\n'
             '  <section class="panel dark p-works" id="works" aria-labelledby="h-works">\n'
+            '    <div class="bg wl-bg" aria-hidden="true"><i></i><i></i></div>\n'
             '    <div class="wrap">\n'
             '      <div class="wl-head">\n'
             '        <div class="head">\n'
@@ -201,6 +202,7 @@ def page(w):
     <a class="wp-next" href="%(nx)s.html" rel="next"><small>次の作品</small><b>%(nx_t)s</b></a>
   </nav>
   <section class="wp-other" aria-labelledby="h-other">
+    <div class="wo-bg" aria-hidden="true"><i></i><i></i></div>
     <div class="wp-in">
       <h2 class="wp-other-h" id="h-other">ほかの作品</h2>
     </div>
@@ -217,6 +219,7 @@ def page(w):
 <dialog class="wp-dlg" id="pdf-dlg" aria-label="作品資料"><div class="wp-dlg-bar"><a id="pdf-open" href="#" target="_blank" rel="noopener">新しいタブで開く</a><button type="button" data-close>閉じる ×</button></div><iframe id="pdf-frame" title="作品資料（PDF）"></iframe></dialog>
 <script src="../assets/sfx.js?v=%(v)s"></script>
 <script src="../assets/progress.js?v=%(v)s"></script>
+<script src="../assets/shotbg.js?v=%(v)s"></script>
 <script src="work.js?v=%(v)s"></script>
 </body>
 </html>
@@ -229,7 +232,7 @@ def page(w):
         'facts': facts(w), 'pdf': pdf,
         'pv': pv['slug'], 'pv_t': '%02d %s' % (WORKS.index(pv) + 1, pv['title']),
         'nx': nx['slug'], 'nx_t': '%02d %s' % (WORKS.index(nx) + 1, nx['title']),
-        'strip': strip_items(w), 'v': '5',
+        'strip': strip_items(w), 'v': '6',
     }
     return s
 
