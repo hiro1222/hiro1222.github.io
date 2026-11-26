@@ -229,7 +229,7 @@ def page(w):
         'facts': facts(w), 'pdf': pdf,
         'pv': pv['slug'], 'pv_t': '%02d %s' % (WORKS.index(pv) + 1, pv['title']),
         'nx': nx['slug'], 'nx_t': '%02d %s' % (WORKS.index(nx) + 1, nx['title']),
-        'strip': strip_items(w), 'v': '4',
+        'strip': strip_items(w), 'v': '5',
     }
     return s
 

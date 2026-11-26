@@ -31,25 +31,63 @@
     el.querySelector('b').textContent = (no ? no.textContent + ' ' : '') + a.getAttribute('data-t');
   }
   if (cur >= 0 && N > 1){ setNav('.wp-prev', (cur - 1 + N) % N); setNav('.wp-next', (cur + 1) % N); }
-  //今の作品を帯の真ん中へ
+  //帯はループ：同じ並びを前後にもう 1 周ずつ写して、真ん中の周を見せる。端の周へ寄ったら 1 周ぶん戻す（同じ並びなので継ぎ目は見えない）
+  var curI = cur >= 0 ? items[cur].getAttribute('data-i') : null, orig = list ? [].slice.call(list.children) : [], loop = !!list && N > 1;
+  if (loop){
+    var pre = document.createDocumentFragment(), post = document.createDocumentFragment();
+    orig.forEach(function(li){
+      [pre, post].forEach(function(f){
+        var c = li.cloneNode(true);
+        c.setAttribute('aria-hidden', 'true');
+        c.classList.add('ws-clone');
+        c.querySelectorAll('a').forEach(function(x){ x.tabIndex = -1; x.removeAttribute('aria-current'); });
+        f.appendChild(c);
+      });
+    });
+    list.insertBefore(pre, list.firstChild);
+    list.appendChild(post);
+  }
+  function period(){ return loop ? list.children[2 * N].offsetLeft - list.children[N].offsetLeft : 0; }
+  function jump(dx){ list.style.scrollBehavior = 'auto'; list.scrollLeft += dx; list.style.scrollBehavior = ''; }
+  //真ん中の周から外れていたら、見た目はそのまま 1 周ぶん戻す
+  function wrap(){
+    if (!loop) return;
+    var P = period(), base = list.children[N].offsetLeft - list.children[0].offsetLeft;
+    if (!P) return;
+    if (list.scrollLeft < base - P * .5) jump(P);
+    else if (list.scrollLeft > base + P * .5) jump(-P);
+  }
+  //今の作品を帯の真ん中へ（真ん中の周の物）
   if (list && cur >= 0){
-    var li = items[cur].parentNode;
+    var li = orig[cur];
     list.style.scrollBehavior = 'auto';
-    list.scrollLeft = li.offsetLeft - (list.clientWidth - li.offsetWidth) / 2;
+    list.scrollLeft = li.offsetLeft - list.children[0].offsetLeft - (list.clientWidth - li.offsetWidth) / 2;
     list.style.scrollBehavior = '';
   }
-  items.forEach(function(a, k){
+  if (loop){
+    var endT = 0;
+    list.addEventListener('scroll', function(){ clearTimeout(endT); endT = setTimeout(wrap, 140); }, {passive: true});
+    window.addEventListener('resize', wrap);
+  }
+  [].slice.call(document.querySelectorAll('.ws-i a')).forEach(function(a){
     a.addEventListener('pointerenter', function(e){ if (e.pointerType === 'mouse') S.note(+a.getAttribute('data-i')); });
     a.addEventListener('focus', function(){ S.note(+a.getAttribute('data-i')); });
     a.addEventListener('click', function(e){
       if (e.metaKey || e.ctrlKey || e.shiftKey || e.button) return;
       e.preventDefault();
-      if (k === cur){ S.tick(); return; }
+      if (a.getAttribute('data-i') === curI){ S.tick(); return; }
       go(a.getAttribute('href'));
     });
   });
+  //矢印は 1 作品ずつ。押す前に端の周に寄っていたら戻しておく
   document.querySelectorAll('.ws-arr').forEach(function(b){
-    b.addEventListener('click', function(){ if (list){ S.tick(); list.scrollBy({left: (b.classList.contains('next') ? 1 : -1) * list.clientWidth * .8, behavior: reduce ? 'auto' : 'smooth'}); } });
+    b.addEventListener('click', function(){
+      if (!list) return;
+      S.tick();
+      wrap();
+      var step = orig.length > 1 ? orig[1].offsetLeft - orig[0].offsetLeft : list.clientWidth * .8;
+      list.scrollBy({left: (b.classList.contains('next') ? 1 : -1) * step, behavior: reduce ? 'auto' : 'smooth'});
+    });
   });
   document.querySelectorAll('.wp-prev, .wp-next').forEach(function(a){
     a.addEventListener('click', function(e){ if (e.metaKey || e.ctrlKey || e.shiftKey || e.button) return; e.preventDefault(); go(a.href); });
