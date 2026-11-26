@@ -2655,7 +2655,7 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
     if (!w) return;
     w.insertAdjacentHTML('beforeend', '<span class="w-jlab" aria-hidden="true">' + (idx ? idx.textContent.split('/')[0].trim() : '') + '\u3000' + (h2 ? h2.textContent : '') + '</span><div class="w-jdisc" aria-hidden="true"><div class="w-disc-in"></div></div>');
   });
-  var EO = 'cubic-bezier(.22,1,.36,1)', EI = 'cubic-bezier(.55,0,1,.45)';
+  var EO = 'cubic-bezier(.22,1,.36,1)', EI = 'cubic-bezier(.55,0,1,.45)', EFLICK = 'cubic-bezier(.3,.6,.4,1)';  // EFLICK＝はじいて飛ばす（出だしが速い）
   function parts(sl){
     return {media: sl.querySelector('.w-media'), shot: sl.querySelector('.w-shot'), disc: sl.querySelector('.w-disc'), holes: [].slice.call(sl.querySelectorAll('.w-holes')),
             flash: sl.querySelector('.w-flash'), text: [sl.querySelector('.w-head'), sl.querySelector('.w-detail')].filter(Boolean)};
@@ -2719,14 +2719,19 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
   }
   // ジャケット：次へ＝上のカードが左上へ抜け、下からのぞいていたカードが持ち上がる。新しく次のカードが下に入る。
   // 前へ＝前のカードが左上から戻ってきて重なり、今のカードは下へ回ってのぞく側になる
-  var OUT = 'translate(-55vw, -16vh) rotate(-16deg)', settleT = 0;
+  var settleT = 0;
+  // 抜ける先。スマホは画面が細くて 55vw では半分しか出ず、消えるまで手前に残る（次へだけ遅く見えた）ので画面の外まで
+  function outPose(){
+    var z = parseFloat(getComputedStyle(html).getPropertyValue('--z')) || 1, ph = window.matchMedia('(max-width: 860px)').matches;  // 広い PC の拡大中は vw・vh も拡大されるので割り戻す
+    return 'translate(' + ((ph ? -85 : -55) / z).toFixed(2) + 'vw, ' + ((ph ? -10 : -16) / z).toFixed(2) + 'vh) rotate(-16deg)';
+  }
   function peekPose(){ return window.matchMedia('(max-width: 860px)').matches ? 'translate(4px, 30px) rotate(1.2deg)' : 'translate(24px, 38px) rotate(2deg)'; }
   function fadeAway(sl){
     add(sl, anim(sl, [{opacity: 1}, {opacity: 0}], {duration: 220, fill: 'forwards'}));
     sl._t = setTimeout(function(){ kill(sl); sl.classList.remove('on', 'is-on', 'peek'); sl.style.zIndex = ''; }, 240);
   }
   function jacketSwap(prev, i, dir){
-    var a = slides[prev], b = slides[i], oldPeek = nextOf(prev), newPeek = nextOf(i), P = peekPose();
+    var a = slides[prev], b = slides[i], oldPeek = nextOf(prev), newPeek = nextOf(i), P = peekPose(), OUT = outPose();
     slides.forEach(function(sl){
       kill(sl);
       sl.style.zIndex = '';
@@ -2734,7 +2739,7 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
       if (sl !== a && sl !== b && sl !== oldPeek && sl !== newPeek) sl.classList.remove('on', 'is-on', 'peek');
     });
     clearTimeout(settleT);
-    settleT = setTimeout(function(){ if (slides[cur] === b) b.classList.add('jsettled'); }, reduce ? 0 : 280);  // 盤はカードが持ち上がる途中から出す（11-22 本人「レコード出るタイミング早めて」、前は 600）
+    settleT = setTimeout(function(){ if (slides[cur] === b) b.classList.add('jsettled'); }, reduce ? 0 : 200);  // 盤はカードが持ち上がる途中から出す（11-22 本人「レコード出るタイミング早めて」、前は 600→280。11-26 カードが速くなったので 200）
     if (reduce){
       a.classList.remove('on', 'is-on', 'peek'); if (oldPeek) oldPeek.classList.remove('peek');
       b.classList.remove('peek'); b.classList.add('on', 'is-on'); if (newPeek) newPeek.classList.add('peek');
@@ -2742,27 +2747,28 @@ document.querySelectorAll('.p-work .w-idx').forEach(function(x){ x.textContent =
     }
     if (dir > 0){
       a.classList.remove('peek'); a.classList.add('on'); a.style.zIndex = 5;
-      add(a, anim(a, [{transform: 'none', opacity: 1}, {transform: OUT, opacity: 1, offset: .85}, {transform: OUT, opacity: 0}], {duration: 560, easing: EI, fill: 'forwards'}));
-      a._t = setTimeout(function(){ kill(a); a.classList.remove('on', 'is-on', 'jsettled'); a.style.zIndex = ''; }, 580);
+      // 次へ・前へで来るカードが落ち着くまでを約 0.24 s にそろえた（11-26 本人「左右送りの実行時間の差を減らして」。前は 次へ 0.49 s・前へ 0.28 s）
+      add(a, anim(a, [{transform: 'none', opacity: 1}, {transform: OUT, opacity: 1, offset: .85}, {transform: OUT, opacity: 0}], {duration: 480, easing: EFLICK, fill: 'forwards'}));
+      a._t = setTimeout(function(){ kill(a); a.classList.remove('on', 'is-on', 'jsettled'); a.style.zIndex = ''; }, 500);
       b.classList.remove('peek'); b.classList.add('on', 'is-on'); b.style.zIndex = 4;
-      add(b, anim(b, [{transform: P, filter: 'brightness(.55)'}, {transform: 'none', filter: 'brightness(1)'}], {duration: 500, delay: 140, easing: EO, fill: 'backwards'}));
+      add(b, anim(b, [{transform: P, filter: 'brightness(.55)'}, {transform: 'none', filter: 'brightness(1)'}], {duration: 470, delay: 30, easing: EO, fill: 'backwards'}));
       if (oldPeek && oldPeek !== b) fadeAway(oldPeek);
     } else {
       b.classList.remove('peek'); b.classList.add('on', 'is-on'); b.style.zIndex = 5;
-      add(b, anim(b, [{transform: OUT, opacity: 0}, {transform: OUT, opacity: 1, offset: .12}, {transform: 'none', opacity: 1}], {duration: 600, easing: EO, fill: 'backwards'}));
+      add(b, anim(b, [{transform: OUT, opacity: 0}, {transform: OUT, opacity: 1, offset: .12}, {transform: 'none', opacity: 1}], {duration: 400, easing: EO, fill: 'backwards'}));
       if (newPeek === a){
         a.classList.remove('on', 'is-on'); a.classList.add('peek'); a.style.zIndex = 2;
-        add(a, anim(a, [{transform: 'none', filter: 'brightness(1)'}, {transform: P, filter: 'brightness(.55)'}], {duration: 480, delay: 120, easing: EO, fill: 'backwards'}));
-        a._t = setTimeout(function(){ a.style.zIndex = ''; }, 640);
+        add(a, anim(a, [{transform: 'none', filter: 'brightness(1)'}, {transform: P, filter: 'brightness(.55)'}], {duration: 440, delay: 30, easing: EO, fill: 'backwards'}));
+        a._t = setTimeout(function(){ a.style.zIndex = ''; }, 500);
       } else {
         a.classList.remove('is-on'); fadeAway(a);
       }
       if (oldPeek && oldPeek !== newPeek) fadeAway(oldPeek);
     }
-    b._t = setTimeout(function(){ b.style.zIndex = ''; }, 760);
+    b._t = setTimeout(function(){ b.style.zIndex = ''; }, 560);
     if (newPeek && newPeek !== a){
       newPeek.classList.add('peek');
-      add(newPeek, anim(newPeek, [{opacity: 0}, {opacity: 1}], {duration: 320, delay: 320, fill: 'backwards'}));
+      add(newPeek, anim(newPeek, [{opacity: 0}, {opacity: 1}], {duration: 280, delay: 200, fill: 'backwards'}));
     }
   }
   // 作品の場所が画面の真ん中にかかっている間だけ、横の操作で作品を送る（縦のスクロールは本体に任せて、そのまま下の節へ流れる）
