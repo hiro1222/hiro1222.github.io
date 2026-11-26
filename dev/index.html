@@ -176,23 +176,23 @@ button{font:inherit}
 .sm-lab{position:absolute; left:14px; top:7px; font-family:var(--f-label); font-weight:600; font-size:8.5px; letter-spacing:.22em; line-height:1; white-space:nowrap; color:var(--accent-hi)}
 .sm-led{position:absolute; left:9px; top:calc(20px + var(--map) * .24); width:8px; height:8px; border-radius:50%; background:#24323C; transition:background .15s, box-shadow .15s}
 .smap.on .sm-led{background:var(--accent-hi); box-shadow:0 0 6px 1px rgba(125,184,209,.6)}
-/* 画面（3D と右上の小さな地図、下にいる部屋の名前・響きの長さ）。3D の色は下の script の G3、地図の色は PAL
-   11-26 本人「画質悪めの 3D 空間にしてそれらしい音が流れる」→ 160×120 で描いて点のまま引き伸ばす（4:3） */
-.sm-screen{position:relative; width:calc(var(--map) + 12px); padding:0; overflow:hidden; background:#0B1217; border-radius:3px; box-shadow:inset 0 0 0 1px rgba(0,0,0,.28); outline:none}
+/* 画面（3D と右上の小さな地図、下にいる部屋の名前・響きの長さ）。4:3
+   11-26 本人「画質悪めの 3D 空間に」→ 同日「前方に飛ばしたレイの距離から直線で組み立てる白黒だけに」：黒地に白い線だけ（下の script の g3Draw）。地図も白黒に */
+.sm-screen{position:relative; width:calc(var(--map) + 12px); padding:0; overflow:hidden; background:#000; border-radius:3px; box-shadow:inset 0 0 0 1px rgba(0,0,0,.28); outline:none}
 .sm-screen:focus-visible{outline:2px solid var(--accent-hi); outline-offset:3px}
-.sm-3d{display:block; width:100%; aspect-ratio:4 / 3; height:auto; image-rendering:pixelated; image-rendering:crisp-edges; cursor:pointer}  /* 指で触っても歩かない（ページが動く） */
-.sm-mini{position:absolute; top:6px; right:6px; width:28%; aspect-ratio:1 / 1; height:auto; border-radius:2px; opacity:.8; pointer-events:none; box-shadow:0 0 0 1px rgba(0,0,0,.45)}
+.sm-3d{display:block; width:100%; aspect-ratio:4 / 3; height:auto; cursor:pointer}  /* 指で触っても歩かない（ページが動く） */
+.sm-mini{position:absolute; top:6px; right:6px; width:28%; aspect-ratio:1 / 1; height:auto; border-radius:2px; opacity:.8; filter:grayscale(1); pointer-events:none; box-shadow:0 0 0 1px rgba(255,255,255,.25)}
 /* 3D が使えない端末は、前の上から見た地図だけ */
 .smap.flat .sm-3d{display:none}
 .smap.flat .sm-mini{position:static; display:block; width:100%; opacity:1; border-radius:0; box-shadow:none; pointer-events:auto; cursor:pointer}
-.sm-room{display:flex; justify-content:space-between; gap:8px; padding:4px 7px 5px; font-family:var(--f-mono); font-size:11.5px; line-height:1.4; color:#AFC3CE}
+.sm-room{display:flex; justify-content:space-between; gap:8px; padding:4px 7px 5px; font-family:var(--f-mono); font-size:11.5px; line-height:1.4; color:#D6D6D6}
 .sm-room span{padding:0 2px}
 .sm-room.flash .sm-rn{animation:sm-flash .7s steps(4, end)}
-@keyframes sm-flash{from{background:#AFC3CE; color:#0B1217}}
+@keyframes sm-flash{from{background:#D6D6D6; color:#000}}
 /* スタート画面（A で始める。始めるまでは歩かない・鳴らない、ランプも消えている。11-24 本人「最初っからならないようにスタート画面」） */
-.sm-start{position:absolute; inset:0; z-index:3; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; border-radius:3px; background:rgba(11,18,23,.62); color:#D3DEE3}
+.sm-start{position:absolute; inset:0; z-index:3; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; border-radius:3px; background:rgba(0,0,0,.6); color:#FFF}
 .sm-start b{font-family:var(--f-label); font-weight:700; font-size:20px; letter-spacing:.22em; padding-left:.22em; line-height:1}
-.sm-start span{font-family:var(--f-mono); font-size:12px; font-weight:600; letter-spacing:.26em; padding-left:.26em; line-height:1; color:var(--accent-hi); animation:sm-blink 1.1s steps(1, end) infinite}
+.sm-start span{font-family:var(--f-mono); font-size:12px; font-weight:600; letter-spacing:.26em; padding-left:.26em; line-height:1; color:#FFF; animation:sm-blink 1.1s steps(1, end) infinite}
 @keyframes sm-blink{50%{opacity:0}}
 @media (prefers-reduced-motion:reduce){ .sm-start span{animation:none} }
 .smap.go .sm-start{display:none}
@@ -497,7 +497,7 @@ button{font:inherit}
             <p class="sm-lab" aria-hidden="true">SOUND MAP</p>
             <span class="sm-led" aria-hidden="true"></span>
             <div class="sm-screen" tabindex="0" aria-label="3D の画面（Z で始める。上下の矢印で進む・下がる、左右で向きを変える・Z で手をたたく、扉の前の Z で開け閉め・X を押しながら走る）">
-              <canvas class="sm-3d" width="160" height="120" role="img" aria-label="一人称で見た建物の中。大広間・小部屋・廊下と外の広場があり、大広間と小部屋の間に扉、小部屋の机にオルゴールがある"></canvas>
+              <canvas class="sm-3d" width="320" height="240" role="img" aria-label="一人称で見た建物の中を、前に飛ばしたレイの距離から白い線で組み立てた画面。大広間・小部屋・廊下と外の広場があり、大広間と小部屋の間に扉がある"></canvas>
               <canvas class="sm-mini" width="160" height="160" role="img" aria-label="右上の小さな地図。丸が自分で、向いている方に三角の視界が出る"></canvas>
               <p class="sm-room" aria-live="polite"><span class="sm-rn">大広間</span><span class="sm-rt">響き 2.4 秒</span></p>
               <div class="sm-start" aria-hidden="true"><b>SOUND MAP</b><span>PRESS A</span></div>
@@ -1597,6 +1597,8 @@ button{font:inherit}
   // open は開き具合 0〜1（角度は ×90°）。通れるのは 6 割より開いた時、見通せる（音も抜ける）のは 15% より開いた時
   var DOOR = {x: 11, y0: 2, y1: 3, hx: 11.5, hy: 2, cx: 11.5, cy: 3, open: 0, target: 0, sec: .9};  // 90° を 0.9 秒（Unreal の扉は 45°/秒）
   // オルゴール：扉の向こう（小部屋の右寄り）で鳴り続ける。上に乗れない
+  // 11-26 本人「オルゴールいったん消して」→ MB_ON で音・地図の箱・当たりをまとめて止めている（true で戻る。音のファイルは残してある）
+  var MB_ON = false;
   var MB = {x: 15.5, y: 2.5, url: 'audio/musicbox.mp3', loop0: .5, loopLen: 751304 / 48000, vol: 1.6};  // 音量は仮（耳で決める）
   function onDoor(x, y){ return x === DOOR.x && y >= DOOR.y0 && y <= DOOR.y1; }
   function solid(x, y){ var c = at(x, y); return c === '#' || c === 'T' || (onDoor(x, y) && DOOR.open < .6); }
@@ -1605,7 +1607,7 @@ button{font:inherit}
     var h = .32;
     return solid(Math.floor(x - h), Math.floor(y - h)) || solid(Math.floor(x + h), Math.floor(y - h)) ||
            solid(Math.floor(x - h), Math.floor(y + h)) || solid(Math.floor(x + h), Math.floor(y + h)) ||
-           (Math.abs(x - MB.x) < h + .3 && Math.abs(y - MB.y) < h + .25) ||
+           (MB_ON && Math.abs(x - MB.x) < h + .3 && Math.abs(y - MB.y) < h + .25) ||
            (DOOR.open > .02 && panelDist(x, y) < h + .04);  // 開いた扉の板も通れない（3D で板をすり抜けないように）
   }
   // 扉の板（蝶番から長さ 2 マスの線）までの距離
@@ -1818,7 +1820,7 @@ button{font:inherit}
   }
   var mb = null, hideSmooth = 1;
   function mbStart(){
-    if (mb || !rig || !started) return;
+    if (!MB_ON || mb || !rig || !started) return;
     var c = rig.ctx;
     mb = {loading: true};
     mbrInit();
@@ -1942,7 +1944,7 @@ button{font:inherit}
     g.drawImage(bg, 0, 0);
     drawView();
     drawDoor();
-    drawMB();
+    if (MB_ON) drawMB();
     // 響き：輪は音の広がり、部屋のうっすらした光は響きの残り（長い部屋ほど長く残る）
     rings = rings.filter(function(r){
       var R = ROOMS[r.room], life = R.rt || .3, al = r.a * Math.exp(-6.91 * r.t / life);
@@ -1988,215 +1990,111 @@ button{font:inherit}
     if (flash){ hud.classList.remove('flash'); void hud.offsetWidth; hud.classList.add('flash'); }
   }
 
-  // ---------- 3D（11-26 本人「画質悪めの 3D 空間にして、それらしい音が流れる」） ----------
-  // 地図のマス（1 マス 1 m）から立ち上げた一人称。160×120 で描いて点のまま引き伸ばす。焼いた音と同じ形なので、音はそのまま使える
+  // ---------- 3D（11-26 本人「前方に飛ばしたレイの距離から直線で組み立てる白黒だけに」） ----------
+  // 前の荒い 3D（WebGL、9957e3b）から変えた。地図の視界の三角と同じように、向いている方 ±VIEW_A へ VIEW_N + 1 本のレイを飛ばし、
+  // 当たった距離から縦の線を 1 本ずつ立てる（長さは 1/距離、床から部屋の高さまで）。隣のレイと続いている面なら、上と下の端を直線でつなぐ
+  // 白い線だけで、遠いほど薄く。戸口は上の壁（2.2 m から上）を手前に描き、その下から奥が見える。扉の板も線で
   // 部屋の高さは焼いた時の広さ（bake_footmap2 の sizeM＝体積の立方根：大広間 8.4・小部屋 3.4・廊下 3.6 m）から
-  // WebGL が使えない端末は前の上から見た地図だけ（.smap.flat）
   var G3 = null, gcv = root.querySelector('.sm-3d');
-  var HGT = {H: 5.9, S: 2.6, C: 2.9}, DOOR_TOP = 2.2, EYE = 1.6;
-  var LIGHT = {H: [.80, .86, .93], S: [1.0, .84, .62], C: [.60, .68, .80], O: [.46, .54, .70]};  // 部屋ごとの明かりの色（小部屋は電球の暖かい色）
-  var FOG = {inC: [.035, .055, .072], inK: .045, outC: [.06, .085, .11], outK: .085};  // 遠くを沈める色と濃さ（外は地図の端が見えないよう濃く）
+  var HGT = {H: 5.9, S: 2.6, C: 2.9}, DOOR_TOP = 2.2, EYE = 1.6, FENCE = 1.1, PILLAR = 3.2, RAY_MAX = 24;
   function g3Init(){
-    if (!gcv) return null;
-    var gl = null;
-    try{ gl = gcv.getContext('webgl', {antialias: false, alpha: false, depth: true, powerPreference: 'low-power'}) || gcv.getContext('experimental-webgl'); }catch(e){}
-    if (!gl) return null;
-    var VS = 'attribute vec3 aP;attribute vec3 aC;attribute vec2 aT;uniform mat4 uPV;uniform mat4 uM;varying vec3 vC;varying vec2 vT;varying vec3 vW;' +
-             'void main(){vec4 w=uM*vec4(aP,1.0);vW=w.xyz;vC=aC;vT=aT;gl_Position=uPV*w;}';
-    // 模様（明るさ）×頂点の色 → 手をたたいた部屋をうっすら光らせる → 遠くを沈める → 色の段を 24 段に落として 4×4 の網点でぼかす
-    var FS = 'precision mediump float;uniform sampler2D uTex;uniform sampler2D uDth;uniform vec3 uEye;uniform vec3 uFog;uniform float uFogK;uniform vec4 uPulse;uniform vec4 uBox;' +
-             'varying vec3 vC;varying vec2 vT;varying vec3 vW;' +
-             'void main(){vec3 c=vC*texture2D(uTex,vT).r;' +
-             'if(vW.x>uBox.x&&vW.x<uBox.z&&vW.z>uBox.y&&vW.z<uBox.w)c+=uPulse.rgb*uPulse.a;' +
-             'float f=1.0-exp(-distance(vW,uEye)*uFogK);c=mix(c,uFog,clamp(f,0.0,1.0));' +
-             'float t=texture2D(uDth,gl_FragCoord.xy/4.0).r;c=floor(c*24.0+t)/24.0;gl_FragColor=vec4(c,1.0);}';
-    function sh(type, src){ var q = gl.createShader(type); gl.shaderSource(q, src); gl.compileShader(q); return gl.getShaderParameter(q, gl.COMPILE_STATUS) ? q : null; }
-    var vs = sh(gl.VERTEX_SHADER, VS), fs = sh(gl.FRAGMENT_SHADER, FS);
-    if (!vs || !fs) return null;
-    var pr = gl.createProgram();
-    gl.attachShader(pr, vs); gl.attachShader(pr, fs); gl.linkProgram(pr);
-    if (!gl.getProgramParameter(pr, gl.LINK_STATUS)) return null;
-    gl.useProgram(pr);
-    var o = {gl: gl, w: gcv.width, h: gcv.height, fm: 0, a: {}, u: {}};
-    ['aP', 'aC', 'aT'].forEach(function(n){ o.a[n] = gl.getAttribLocation(pr, n); gl.enableVertexAttribArray(o.a[n]); });
-    ['uPV', 'uM', 'uTex', 'uDth', 'uEye', 'uFog', 'uFogK', 'uPulse', 'uBox'].forEach(function(n){ o.u[n] = gl.getUniformLocation(pr, n); });
-    // 模様：明るさだけの小さな絵（床＝目地、壁＝打ちっぱなしの継ぎ目と穴）。くり返して貼る
-    var sd = 11;
-    function rn(){ sd = (sd * 16807) % 2147483647; return sd / 2147483647; }
-    function tex(n, fill, mip){
-      var d = new Uint8Array(n * n), x, y, t = gl.createTexture();
-      for (y = 0; y < n; y++) for (x = 0; x < n; x++) d[y * n + x] = Math.max(0, Math.min(255, fill(x, y)));
-      gl.bindTexture(gl.TEXTURE_2D, t);
-      gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
-      gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, n, n, 0, gl.LUMINANCE, gl.UNSIGNED_BYTE, d);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-      if (mip){ gl.generateMipmap(gl.TEXTURE_2D); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST_MIPMAP_LINEAR); }
-      else gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-      return t;
-    }
-    o.tFloor = tex(32, function(x, y){ return (x === 0 || y === 0) ? 150 : 206 + (rn() - .5) * 34 + (rn() < .04 ? -40 : 0); }, true);
-    o.tWall = tex(32, function(x, y){
-      if ((x === 5 || x === 6 || x === 25 || x === 26) && (y === 8 || y === 9 || y === 24 || y === 25)) return 118;  // 型枠の穴
-      return (x === 0 || y === 0 || y === 16) ? 172 : 214 + (rn() - .5) * 26;
-    }, true);
-    o.tWhite = tex(1, function(){ return 255; }, false);
-    var BAY = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5];
-    o.tDth = tex(4, function(x, y){ return BAY[y * 4 + x] * 16; }, false);
-    gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, o.tDth); gl.uniform1i(o.u.uDth, 1);
-    gl.activeTexture(gl.TEXTURE0); gl.uniform1i(o.u.uTex, 0);
-    // 形を組む（壁・天井／床／物／扉の 4 つ。頂点は 位置 3・色 3・模様の座標 2）
-    var W = [], F = [], P = [], D = [];
-    sd = 3;
-    function push(arr, p, c, t){ arr.push(p[0], p[1], p[2], c[0], c[1], c[2], t[0], t[1]); }
-    function quad(arr, a, b, c, d, ca, cb, cc, cd, ta, tb, tc, td){ push(arr, a, ca, ta); push(arr, b, cb, tb); push(arr, c, cc, tc); push(arr, a, ca, ta); push(arr, c, cc, tc); push(arr, d, cd, td); }
-    function mulc(c, k){ return [c[0] * k, c[1] * k, c[2] * k]; }
-    function lit(base, rm, k){ var L = LIGHT[rm] || LIGHT.O; return [base[0] * L[0] * k, base[1] * L[1] * k, base[2] * L[2] * k]; }
-    var WALL = [.74, .77, .79], FLOOR = [.58, .60, .61], CEIL = [.50, .53, .56], Z2 = [0, 0];
-    // 縦の面（x0,z0 → x1,z1、高さ y0〜y1、下ほど暗く）。模様の横は面に沿った長さ
-    function vface(arr, x0, z0, x1, z1, y0, y1, col, u0, lo){
-      var len = Math.sqrt((x1 - x0) * (x1 - x0) + (z1 - z0) * (z1 - z0)), cl = mulc(col, lo == null ? .7 : lo);
-      quad(arr, [x0, y0, z0], [x1, y0, z1], [x1, y1, z1], [x0, y1, z0], cl, cl, col, col, [u0, y0], [u0 + len, y0], [u0 + len, y1], [u0, y1]);
-    }
-    function hface(arr, x0, z0, x1, z1, y, col, sc){ quad(arr, [x0, y, z0], [x1, y, z0], [x1, y, z1], [x0, y, z1], col, col, col, col, [x0 / sc, z0 / sc], [x1 / sc, z0 / sc], [x1 / sc, z1 / sc], [x0 / sc, z1 / sc]); }
-    // 箱（模様なし。上は明るく、横は向きで暗さを変える）
-    function box(arr, x0, y0, z0, x1, y1, z1, col, rm){
-      var tp = lit(col, rm, 1), sx = lit(col, rm, .8), sz = lit(col, rm, .66), bt = lit(col, rm, .4);
-      quad(arr, [x0, y1, z0], [x1, y1, z0], [x1, y1, z1], [x0, y1, z1], tp, tp, tp, tp, Z2, Z2, Z2, Z2);
-      quad(arr, [x0, y0, z0], [x1, y0, z0], [x1, y0, z1], [x0, y0, z1], bt, bt, bt, bt, Z2, Z2, Z2, Z2);
-      quad(arr, [x0, y0, z0], [x0, y0, z1], [x0, y1, z1], [x0, y1, z0], sx, sx, sx, sx, Z2, Z2, Z2, Z2);
-      quad(arr, [x1, y0, z0], [x1, y0, z1], [x1, y1, z1], [x1, y1, z0], sx, sx, sx, sx, Z2, Z2, Z2, Z2);
-      quad(arr, [x0, y0, z0], [x1, y0, z0], [x1, y1, z0], [x0, y1, z0], sz, sz, sz, sz, Z2, Z2, Z2, Z2);
-      quad(arr, [x0, y0, z1], [x1, y0, z1], [x1, y1, z1], [x0, y1, z1], sz, sz, sz, sz, Z2, Z2, Z2, Z2);
-    }
-    function roomOf(x, y){ var c = at(x, y); return c === '#' ? '' : c === 'T' ? 'O' : floorOf(x, y); }
-    function inMap(x, y){ return x >= 0 && y >= 0 && x < MW && y < MH; }
-    function nearH(x, y, dflt){ var h = 0, dx, dy, r; for (dy = -1; dy <= 1; dy++) for (dx = -1; dx <= 1; dx++){ r = roomOf(x + dx, y + dy); if (HGT[r]) h = Math.max(h, HGT[r]); } return h || dflt; }
-    var NB = [[1, 0], [-1, 0], [0, 1], [0, -1]], x, y, c, r, h, j;
-    // 隣のマスに向いた辺の縦の面
-    function side(arr, x, y, d, y0, y1, col){
-      if (d[0] > 0) vface(arr, x + 1, y, x + 1, y + 1, y0, y1, col, y);
-      else if (d[0] < 0) vface(arr, x, y + 1, x, y, y0, y1, col, y);
-      else if (d[1] > 0) vface(arr, x + 1, y + 1, x, y + 1, y0, y1, col, x);
-      else vface(arr, x, y, x + 1, y, y0, y1, col, x);
-    }
-    for (y = 0; y < MH; y++) for (x = 0; x < MW; x++){
-      c = at(x, y); j = .93 + rn() * .12;
-      if (c === '#'){
-        h = nearH(x, y, 3);
-        NB.forEach(function(d){
-          var nx = x + d[0], ny = y + d[1];
-          if (!inMap(nx, ny) || at(nx, ny) === '#') return;
-          side(W, x, y, d, 0, h, mulc(lit(WALL, roomOf(nx, ny), d[0] ? .9 : .76), .94 + rn() * .1));
-        });
-        continue;
-      }
-      r = roomOf(x, y);
-      hface(F, x, y, x + 1, y + 1, 0, mulc(lit(FLOOR, r, 1), j), r === 'O' ? 4 : r === 'H' ? 3 : 2);
-      if (c === 'D'){
-        // 戸口：上は 2.2 m から壁（まぐさ）。下の面と、部屋に向いた面
-        h = nearH(x, y, 3);
-        hface(W, x, y, x + 1, y + 1, DOOR_TOP, lit(CEIL, r, .5), 2);
-        NB.forEach(function(d){
-          var nx = x + d[0], ny = y + d[1], nc = at(nx, ny);
-          if (!inMap(nx, ny) || nc === '#' || nc === 'D') return;
-          side(W, x, y, d, DOOR_TOP, h, lit(WALL, roomOf(nx, ny), d[0] ? .9 : .76));
-        });
-      } else if (HGT[r]) hface(W, x, y, x + 1, y + 1, HGT[r], mulc(lit(CEIL, r, .62), j), 2);
-      if (c === 'T'){
-        // 外の柱（0.7 m 角・3.2 m）
-        vface(W, x + .15, y + .15, x + .85, y + .15, 0, 3.2, lit(WALL, 'O', .76), 0);
-        vface(W, x + .85, y + .15, x + .85, y + .85, 0, 3.2, lit(WALL, 'O', .9), 0);
-        vface(W, x + .85, y + .85, x + .15, y + .85, 0, 3.2, lit(WALL, 'O', .76), 0);
-        vface(W, x + .15, y + .85, x + .15, y + .15, 0, 3.2, lit(WALL, 'O', .9), 0);
-      }
-      // 地図の端（外の広場）：低い塀 1.1 m
-      if (x === 0) vface(W, 0, y + 1, 0, y, 0, 1.1, lit(WALL, 'O', .62), y, .8);
-      if (x === MW - 1) vface(W, MW, y, MW, y + 1, 0, 1.1, lit(WALL, 'O', .62), y, .8);
-      if (y === 0) vface(W, x, 0, x + 1, 0, 0, 1.1, lit(WALL, 'O', .5), x, .8);
-      if (y === MH - 1) vface(W, x + 1, MH, x, MH, 0, 1.1, lit(WALL, 'O', .5), x, .8);
-    }
-    // 塀の上と、塀の向こうの地面（霧で沈む）
-    hface(W, -.25, -.25, MW + .25, 0, 1.1, lit(WALL, 'O', .7), 2); hface(W, -.25, MH, MW + .25, MH + .25, 1.1, lit(WALL, 'O', .7), 2);
-    hface(W, -.25, 0, 0, MH, 1.1, lit(WALL, 'O', .7), 2); hface(W, MW, 0, MW + .25, MH, 1.1, lit(WALL, 'O', .7), 2);
-    hface(F, -40, -40, MW + 40, MH + 40, -.02, lit(FLOOR, 'O', .55), 4);
-    // 小部屋の机とオルゴール（音が鳴っている所。高さ 0.6 m は焼いた時の音源の高さ）
-    var WOOD = [.46, .33, .22], tx0 = MB.x - .3, tx1 = MB.x + .3, tz0 = MB.y - .25, tz1 = MB.y + .25;
-    box(P, tx0, .52, tz0, tx1, .58, tz1, WOOD, 'S');
-    [[tx0 + .03, tz0 + .03], [tx1 - .07, tz0 + .03], [tx0 + .03, tz1 - .07], [tx1 - .07, tz1 - .07]].forEach(function(q){ box(P, q[0], 0, q[1], q[0] + .04, .52, q[1] + .04, WOOD, 'S'); });
-    box(P, MB.x - .14, .58, MB.y - .1, MB.x + .14, .74, MB.y + .1, [.13, .40, .52], 'S');
-    box(P, MB.x - .15, .74, MB.y - .11, MB.x + .15, .78, MB.y + .11, [.20, .52, .66], 'S');
-    box(P, MB.x + .14, .64, MB.y - .02, MB.x + .19, .68, MB.y + .02, [.89, .79, .53], 'S');  // ねじ
-    // 扉（蝶番を原点に、板は +x へ長さ 2 m。uM で回す）
-    box(D, .02, 0, -.04, 1.98, DOOR_TOP - .02, .04, [.44, .34, .26], 'H');
-    box(D, 1.72, .98, -.09, 1.8, 1.06, .09, [.89, .79, .53], 'H');  // 取っ手
-    function up(arr){ var b = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, b); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(arr), gl.STATIC_DRAW); return {b: b, n: arr.length / 8}; }
-    o.mW = up(W); o.mF = up(F); o.mP = up(P); o.mD = up(D);
-    o.proj = m4persp(62 * Math.PI / 180, o.w / o.h, .05, 80);
-    o.I = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
-    gl.enable(gl.DEPTH_TEST);
-    gl.disable(gl.CULL_FACE);
-    gl.viewport(0, 0, o.w, o.h);
-    return o;
+    var c = null;
+    try{ c = gcv && gcv.getContext('2d'); }catch(e){}
+    return c ? {c: c} : null;
   }
-  // 行列（列ごとに 4 つ）
-  function m4persp(fy, a, n, f){ var t = 1 / Math.tan(fy / 2), d = n - f; return new Float32Array([t / a, 0, 0, 0, 0, t, 0, 0, 0, 0, (f + n) / d, -1, 0, 0, 2 * f * n / d, 0]); }
-  function m4look(e, c){
-    var z = [e[0] - c[0], e[1] - c[1], e[2] - c[2]], l = Math.sqrt(z[0] * z[0] + z[1] * z[1] + z[2] * z[2]);
-    z = [z[0] / l, z[1] / l, z[2] / l];
-    var x = [z[2], 0, -z[0]], lx = Math.sqrt(x[0] * x[0] + x[2] * x[2]) || 1;  // 上（0,1,0）× z
-    x = [x[0] / lx, 0, x[2] / lx];
-    var y = [z[1] * x[2] - z[2] * x[1], z[2] * x[0] - z[0] * x[2], z[0] * x[1] - z[1] * x[0]];
-    return new Float32Array([x[0], y[0], z[0], 0, x[1], y[1], z[1], 0, x[2], y[2], z[2], 0,
-      -(x[0] * e[0] + x[1] * e[1] + x[2] * e[2]), -(y[0] * e[0] + y[1] * e[1] + y[2] * e[2]), -(z[0] * e[0] + z[1] * e[1] + z[2] * e[2]), 1]);
+  // 描く細かさは表示の大きさ×画面の密度（2 倍まで）
+  function g3Fit(){
+    var w = gcv.getBoundingClientRect().width, k = Math.min(2, window.devicePixelRatio || 1), W = Math.max(160, Math.round(w * k)), H = Math.round(W * 3 / 4);
+    if (gcv.width !== W || gcv.height !== H){ gcv.width = W; gcv.height = H; }
   }
-  function m4mul(a, b){ var o = new Float32Array(16), i, j, k, s; for (i = 0; i < 4; i++) for (j = 0; j < 4; j++){ s = 0; for (k = 0; k < 4; k++) s += a[k * 4 + j] * b[i * 4 + k]; o[i * 4 + j] = s; } return o; }
-  // 霧の濃さ（外へ出たらゆっくり濃く）と、歩いている間だけ頭が少し上下する（1 歩で 1 回）。まだ動いていれば true
+  function roomKey(x, y){ var c = at(x, y); return (c === '#' || c === 'T') ? '' : floorOf(x, y); }
+  // 壁のマスの高さ（となりの部屋で一番高い所。外から建物を見た時）
+  function wallH(x, y){ var h = 0, dx, dy, r; for (dy = -1; dy <= 1; dy++) for (dx = -1; dx <= 1; dx++){ r = roomKey(x + dx, y + dy); if (HGT[r]) h = Math.max(h, HGT[r]); } return h || 3; }
+  // 扉の板（蝶番から長さ 2 マスの線）までの距離。当たらなければ Infinity
+  function panelT(ox, oy, dx, dy){
+    var a = Math.PI / 2 * (1 - DOOR.open), qx = Math.cos(a) * 2, qy = Math.sin(a) * 2, px = DOOR.hx - ox, py = DOOR.hy - oy, den = dx * qy - dy * qx;
+    if (Math.abs(den) < 1e-9) return Infinity;
+    var t = (px * qy - py * qx) / den, u = (px * dy - py * dx) / den;
+    return (t > 0 && u >= 0 && u <= 1) ? t : Infinity;
+  }
+  // レイをマスの境目ごとにたどる。通った戸口の上の壁（lint）と、最後に当たった物（kind 1 壁・柱・塀、2 扉、0 届かない）
+  function cast3(ox, oy, dx, dy){
+    var tx = Math.floor(ox), ty = Math.floor(oy), sx = dx > 0 ? 1 : -1, sy = dy > 0 ? 1 : -1;
+    var ddx = dx ? Math.abs(1 / dx) : 1e9, ddy = dy ? Math.abs(1 / dy) : 1e9;
+    var nx = dx ? (dx > 0 ? tx + 1 - ox : ox - tx) * ddx : 1e9, ny = dy ? (dy > 0 ? ty + 1 - oy : oy - ty) * ddy : 1e9;
+    var inD = at(tx, ty) === 'D', rm = inD ? room : roomKey(tx, ty), lint = [], pt = panelT(ox, oy, dx, dy), t, c, out;
+    for (;;){
+      if (nx < ny){ t = nx; nx += ddx; tx += sx; } else { t = ny; ny += ddy; ty += sy; }
+      if (pt < t) return {t: pt, h: DOOR_TOP, kind: 2, lint: lint};
+      if (t >= RAY_MAX) return {t: RAY_MAX, h: 0, kind: 0, lint: lint};
+      out = tx < 0 || ty < 0 || tx >= MW || ty >= MH;
+      c = out ? '#' : MAP[ty][tx];
+      if (c === '#' || c === 'T') return {t: t, h: out ? FENCE : c === 'T' ? PILLAR : (HGT[rm] || wallH(tx, ty)), kind: 1, lint: lint};
+      if (c === 'D'){ if (!inD) lint.push({t: t, top: HGT[rm] || wallH(tx, ty)}); inD = true; }
+      else { inD = false; rm = c; }
+    }
+  }
+  // 歩いている間だけ頭が少し上下する（1 歩で 1 回）。まだ動いていれば true
   function g3Step(dt){
     if (!G3) return false;
-    var tgt = HGT[room] ? 0 : 1;
-    G3.fm += (tgt - G3.fm) * (1 - Math.exp(-dt * 3));
-    if (Math.abs(tgt - G3.fm) < .005) G3.fm = tgt;
     var bt = me.moving && !reduce ? .022 * Math.abs(Math.sin(me.walked * Math.PI / 1.05)) - .011 : 0;
     me.bob += (bt - me.bob) * (1 - Math.exp(-dt * 18));
-    return G3.fm !== tgt || Math.abs(me.bob - bt) > .001;
+    return Math.abs(me.bob - bt) > .001;
   }
   function g3Draw(){
-    var o = G3, gl = o.gl, k = o.fm, u = o.u;
-    var fogC = [0, 1, 2].map(function(i){ return FOG.inC[i] + (FOG.outC[i] - FOG.inC[i]) * k; }), fogK = FOG.inK + (FOG.outK - FOG.inK) * k;
-    var ey = EYE + me.bob, e = [me.x, ey, me.y];
-    gl.clearColor(fogC[0], fogC[1], fogC[2], 1);
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    gl.uniformMatrix4fv(u.uPV, false, m4mul(o.proj, m4look(e, [me.x + Math.cos(me.ang), ey, me.y + Math.sin(me.ang)])));
-    gl.uniform3f(u.uEye, e[0], e[1], e[2]);
-    gl.uniform3f(u.uFog, fogC[0], fogC[1], fogC[2]);
-    gl.uniform1f(u.uFogK, fogK);
-    // 手をたたいた部屋が、響きの長さだけうっすら光って消える（地図の輪と同じ減り方）
-    var pa = 0, bx = [0, 0, 0, 0], i, rg, R;
-    for (i = rings.length - 1; i >= 0; i--){
-      rg = rings[i]; R = ROOMS[rg.room];
-      if (rg.w !== 2 || !R.box) continue;
-      pa = rg.a * Math.exp(-6.91 * rg.t / (R.rt || .3)) * .5;
-      bx = [R.box[0] - .01, R.box[1] - .01, R.box[2] + 1.01, R.box[3] + 1.01];
+    g3Fit();
+    var c = G3.c, W = gcv.width, H = gcv.height, ta = Math.tan(VIEW_A), f = W / 2 / ta, hz = H / 2, eye = EYE + me.bob, lw = Math.max(1, W / 300);
+    var fx = Math.cos(me.ang), fy = Math.sin(me.ang), n = VIEW_N, R = [], i, j, k;
+    c.fillStyle = '#000'; c.fillRect(0, 0, W, H);
+    c.lineWidth = lw; c.lineCap = 'butt';
+    // 手をたたいた部屋の線が、響きの長さだけ明るくなって戻る（地図の輪と同じ減り方）
+    var pa = 0, bx = null, rg, RM;
+    for (k = rings.length - 1; k >= 0; k--){
+      rg = rings[k]; RM = ROOMS[rg.room];
+      if (rg.w !== 2 || !RM.box) continue;
+      pa = rg.a * Math.exp(-6.91 * rg.t / (RM.rt || .3)); bx = RM.box;
       break;
     }
-    gl.uniform4f(u.uPulse, .12, .26, .36, pa);
-    gl.uniform4f(u.uBox, bx[0], bx[1], bx[2], bx[3]);
-    function one(m, t, model){
-      gl.bindBuffer(gl.ARRAY_BUFFER, m.b);
-      gl.vertexAttribPointer(o.a.aP, 3, gl.FLOAT, false, 32, 0);
-      gl.vertexAttribPointer(o.a.aC, 3, gl.FLOAT, false, 32, 12);
-      gl.vertexAttribPointer(o.a.aT, 2, gl.FLOAT, false, 32, 24);
-      gl.bindTexture(gl.TEXTURE_2D, t);
-      gl.uniformMatrix4fv(u.uM, false, model);
-      gl.drawArrays(gl.TRIANGLES, 0, m.n);
+    function Y(z, d){ return hz - (z - eye) * f / d; }
+    function alpha(t, x, y){
+      var a = Math.max(.16, Math.min(1, 1.12 - t / 13));
+      if (bx && x > bx[0] - .05 && x < bx[2] + 1.05 && y > bx[1] - .05 && y < bx[3] + 1.05) a = Math.min(1, a + pa);
+      return a;
     }
-    one(o.mW, o.tWall, o.I);
-    one(o.mF, o.tFloor, o.I);
-    one(o.mP, o.tWhite, o.I);
-    var a = Math.PI / 2 * (1 - DOOR.open), ca = Math.cos(a), sa = Math.sin(a);
-    one(o.mD, o.tWhite, new Float32Array([ca, 0, sa, 0, 0, 1, 0, 0, -sa, 0, ca, 0, DOOR.hx, 0, DOOR.hy, 1]));
+    function seg(x0, y0, x1, y1, a){ c.strokeStyle = 'rgba(255,255,255,' + a.toFixed(3) + ')'; c.beginPath(); c.moveTo(x0, y0); c.lineTo(x1, y1); c.stroke(); }
+    for (i = 0; i <= n; i++){
+      var s = 2 * i / n - 1, dx = fx - fy * s * ta, dy = fy + fx * s * ta, l = Math.sqrt(dx * dx + dy * dy);
+      dx /= l; dy /= l;
+      var h = cast3(me.x, me.y, dx, dy), X = W / 2 + s * (W / 2 - lw), cs = 1 / l, r = {X: X, kind: h.kind, L: null}, clip = -1e9, q, d, y0, y1, a;
+      // 戸口の上の壁：手前から。手前の物が奥の上の方を隠す
+      for (j = 0; j < h.lint.length; j++){
+        q = h.lint[j]; d = q.t * cs; a = alpha(q.t, me.x + dx * q.t, me.y + dy * q.t);
+        y0 = Math.max(Y(q.top, d), clip); y1 = Y(DOOR_TOP, d);
+        if (y1 > y0) seg(X, y0, X, y1, a);
+        if (!j) r.L = {d: d, y0: y0, y1: y1, a: a};
+        clip = Math.max(clip, y1);
+      }
+      if (h.kind){
+        d = h.t * cs; a = alpha(h.t, me.x + dx * h.t, me.y + dy * h.t);
+        r.d = d; r.a = a; r.top = Y(h.h, d); r.bot = Y(0, d); r.topVis = r.top >= clip;
+        y0 = Math.max(r.top, clip);
+        if (r.bot > y0) seg(X, y0, X, r.bot, a);
+      }
+      R.push(r);
+    }
+    // 隣のレイが同じ物の続き（距離の差が 2 割ほどまで）なら、上と下の端を直線でつなぐ
+    function near(a, b){ return Math.abs(a - b) < .2 * Math.min(a, b) + .15; }
+    for (i = 0; i < n; i++){
+      var p = R[i], p2 = R[i + 1];
+      if (p.kind && p.kind === p2.kind && near(p.d, p2.d)){
+        seg(p.X, p.bot, p2.X, p2.bot, Math.min(p.a, p2.a));
+        if (p.topVis && p2.topVis) seg(p.X, p.top, p2.X, p2.top, Math.min(p.a, p2.a));
+      }
+      if (p.L && p2.L && near(p.L.d, p2.L.d)){
+        seg(p.X, p.L.y1, p2.X, p2.L.y1, Math.min(p.L.a, p2.L.a));
+        seg(p.X, p.L.y0, p2.X, p2.L.y0, Math.min(p.L.a, p2.L.a));
+      }
+    }
   }
   G3 = g3Init();
   if (!G3) root.classList.add('flat');
@@ -2300,7 +2198,7 @@ button{font:inherit}
   if (idrOn()) idrInit();  // 地図と、立っているまわりの音の中身を先に取っておく
   fitRes();
   draw();
-  window.addEventListener('resize', fitRes);
+  window.addEventListener('resize', function(){ fitRes(); draw(); });
 })();
 </script>
 <!-- /DEV-ONLY -->
